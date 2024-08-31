@@ -1,14 +1,15 @@
 from django.contrib import admin
 
-from tours.models import Tour, Photo, TourDate, FreeOfChargeService, AdditionalOption
+from tours.models import Tour, Photo, TourDate, FreeOfChargeService, AdditionalOption, \
+    Route, Ship, CabinType, Lunch
 
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
-    list_display = ('name', 'pick_up_time', 'duration', 'cost')
+    list_display = ('name', 'start_date', 'pick_up_time', 'duration', 'cost')
     search_fields = ('name',)
     filter_horizontal = (
-    'tour_photo_gallery', 'dates', 'free_services', 'additional_options')
+    'tour_photo_gallery', 'free_services', 'additional_options')
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
@@ -25,3 +26,19 @@ class FreeOfChargeServiceAdmin(admin.ModelAdmin):
 @admin.register(AdditionalOption)
 class AdditionalOptionAdmin(admin.ModelAdmin):
     list_display = ('option_name', 'option_description')
+
+@admin.register(Route)
+class RouteAdmin(admin.ModelAdmin):
+    list_display = ("name", "description")
+
+@admin.register(Ship)
+class ShipAdmin(admin.ModelAdmin):
+    list_display = ("name", "type")
+
+@admin.register(CabinType)
+class CabinTypeAdmin(admin.ModelAdmin):
+    list_display = ("type", "description")
+
+@admin.register(Lunch)
+class LunchAdmin(admin.ModelAdmin):
+    list_display = ("name", "ingredients")
