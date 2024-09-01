@@ -69,4 +69,12 @@ preview = true
 convention = "pep257"
 
 [tool.pylint]
+disable = [
+    "C0114",  # Missing module docstring
+    "C0115",
+    "R0903",
+    "E1101",
+    "C0116",  # Missing function or method docstring
+    "W0611",  # Unused import
+]
 max-line-length = 88

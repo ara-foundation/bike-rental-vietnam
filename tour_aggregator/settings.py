@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "tours.apps.TourConfig",
     "rest_framework",
+    "api",
 ]
 
 MIDDLEWARE = [
