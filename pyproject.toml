@@ -74,6 +74,7 @@ disable = [
     "C0115",
     "R0903",
     "E1101",
+    "E0307",
     "C0116",  # Missing function or method docstring
     "W0611",  # Unused import
 ]
