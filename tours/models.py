@@ -76,7 +76,8 @@ class Tour(models.Model):
     tour_description = models.TextField()
     tour_photo_gallery = models.ManyToManyField('Photo', blank=True)
     route = models.ManyToManyField("Route", blank=True)
-    ship = models.ManyToManyField("Ship", blank=True)
+    ship = models.OneToOneField("Ship", on_delete=models.SET_NULL,
+                                   null=True, blank=True)
     lunch = models.ManyToManyField("Lunch", blank=True)
     start_date = models.ForeignKey('TourDate', on_delete=models.SET_NULL,
                                    null=True, blank=True)
