@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модели велосипедов</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6">Модели велосипедов</h1>
+
+        <form method="get" class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {{ filter.form.as_p }}
+            </div>
+            <button class="btn btn-primary mt-4" type="submit">Фильтровать</button>
+        </form>
+
+        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for bikemodel in page_obj %}
+                <li class="bg-white rounded-lg shadow-md p-4">
+                    <a href="{% url 'bikemodel_detail' bikemodel.id %}" class="text-blue-600 hover:text-blue-800">
+                        {{ bikemodel }}
+                    </a>
+                </li>
+            {% empty %}
+                <li class="col-span-full text-center text-gray-500">Модели не найдены</li>
+            {% endfor %}
+        </ul>
+
+        {% if is_paginated %}
+        <div class="mt-8">
+            <ul class="pagination flex justify-center space-x-2">
+                {% if page_obj.has_previous %}
+                    <li><a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" class="btn btn-sm">Предыдущая</a></li>
+                {% endif %}
+                <li class="btn btn-sm btn-disabled">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</li>
+                {% if page_obj.has_next %}
+                    <li><a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="btn btn-sm">Следующая</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
