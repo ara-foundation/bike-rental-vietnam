@@ -1,0 +1,25 @@
+.pagination .page-item.disabled .page-link {
+    color: #ADFF2F; /* Серый цвет */
+}
+
+select {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+select option {
+    background-color: #ffffff;
+    color: #495057;
+}
+
+select option:hover {
+    background-color: #e9ecef;
+}
+
+select option:checked {
+    background-color: #007bff;
+    color: #ffffff;
+}
