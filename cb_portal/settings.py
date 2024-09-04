@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'bike_rental',
     'import_export',
     'django_filters',
-    'crispy_forms',
-    'crispy_bootstrap4',
+    'widget_tweaks',  # Добавьте эту строку
 ]
 
 MIDDLEWARE = [
@@ -130,5 +129,3 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
