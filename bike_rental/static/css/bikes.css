@@ -23,3 +23,57 @@ select option:checked {
     background-color: #007bff;
     color: #ffffff;
 }
+
+.list-group-item {
+    background-color: #206665;
+    color: #ecc209;;
+    border-color: #98FB98;
+}
+
+.list-group-item:hover {
+    background-color: #your-hover-bg-color;
+    color: #your-hover-text-color;
+}
+
+.list-group-item a {
+    color: #ecc209;
+    text-decoration: none;
+}
+
+.list-group-item a:hover {
+    color: #your-link-hover-color;
+    text-decoration: underline;
+}
+
+.custom-header {
+    background-color: #073642;
+    color: #ecc209;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-weight: bold;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    border: 2px solid #2aa198;
+}
+
+.custom-header:hover {
+    background-color: #0a4b5a;
+    transition: background-color 0.3s ease;
+}
+
+.form-row {
+    display: flex;
+    align-items: flex-end;
+}
+
+.form-row .col {
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-bottom: 0;
+}
+
+/* .form-row .btn {
+    margin-top: 1.5rem;
+} */
