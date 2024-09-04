@@ -1,4 +1,4 @@
-{% load crispy_forms_tags %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -16,15 +16,15 @@
         <form method="get" class="mb-4">
             <div class="form-row align-items-end">
                 <div class="col">
-                    {{ filter.form.brand|as_crispy_field }}
+                    {{ filter.form.brand|add_class:"form-control" }}
                 </div>
                 <div class="col">
-                    {{ filter.form.model|as_crispy_field }}
+                    {{ filter.form.model|add_class:"form-control" }}
                 </div>
                 <div class="col">
-                    {{ filter.form.transmission|as_crispy_field }}
+                    {{ filter.form.transmission|add_class:"form-control" }}
                 </div>
-                <div class="col align-self-center">
+                <div class="col-auto">
                     <button class="btn btn-primary" type="submit">Фильтровать</button>
                 </div>
             </div>

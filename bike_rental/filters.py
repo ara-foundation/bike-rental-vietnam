@@ -9,7 +9,7 @@ class BikeModelFilter(django_filters.FilterSet):
         field_name='brand',
         lookup_expr='exact',
         label="Brand",
-        empty_label="All"
+        empty_label="All brands"
     )
 
     # Фильтр по модели байка с выпадающим списком
@@ -18,7 +18,7 @@ class BikeModelFilter(django_filters.FilterSet):
         label="Model",
         to_field_name='model',
         field_name='model',
-        empty_label="All"
+        empty_label="All models"
     )
 
     # Фильтр по трансмиссии с выпадающим списком
@@ -27,7 +27,7 @@ class BikeModelFilter(django_filters.FilterSet):
         label="Transmission",
         to_field_name='transmission',
         field_name='transmission',
-        empty_label="All"
+        empty_label="Transmission"
     )
 
     class Meta:
