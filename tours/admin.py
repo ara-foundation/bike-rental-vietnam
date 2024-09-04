@@ -37,11 +37,27 @@ class TourAdmin(admin.ModelAdmin):
     exclude = ("author",)
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        # Restrict tour providers to see only their own tours
-        if request.user.groups.filter(name="Tour Provider").exists():
+        qs = (
+            super()
+            .get_queryset(request)
+            .select_related("author", "ship", "start_date")
+            .prefetch_related(
+                "tour_photo_gallery",
+                "lunch",
+                "route",
+                "free_services",
+                "additional_options",
+            )
+        )
+
+        # To cache the group check to avoid repeated queries
+        is_tour_provider = request.user.groups.filter(name="Tour Provider").exists()
+
+        if is_tour_provider:
             return qs.filter(author=request.user)
-        return qs
+        if request.user.is_superuser:
+            return qs
+        return qs.none()
 
     def has_change_permission(self, request, obj=None):
         # Allow tour providers to edit only their own tours
@@ -83,8 +99,45 @@ class TourAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("tour", "date", "email_of_initiator", "phone_number", "messenger")
+    list_display = (
+        "tour",
+        "date",
+        "email_of_initiator",
+        "phone_number",
+        "messenger",
+        "author",
+    )
     search_fields = ("email_of_initiator", "phone_number", "messenger")
+    exclude = ("author",)
+
+    def get_queryset(self, request):
+        # Get the base queryset
+        qs = super().get_queryset(request)
+
+        # Check if the user is part of the "Tour Provider" group
+        if request.user.groups.filter(name="Tour Provider").exists():
+            # Filter orders to show only those related to tours the provider has created
+            return qs.filter(tour__author=request.user)
+
+        # Check if the user is part of the "Client Group" group
+        if request.user.groups.filter(name="Client Group").exists():
+            # Filter orders to show only those created by
+            # the client (based on the author field)
+            return qs.filter(author=request.user)
+
+        # For superusers, return all orders
+        if request.user.is_superuser:
+            return qs
+
+        # In all other cases (if a user is not in any group), return an empty queryset
+        return qs.none()
+
+    def save_model(self, request, obj, form, change):
+        if not change or obj.author is None:
+            # Automatically set the author to the
+            # logged-in user if this is a new object or if author is not set
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(Photo)

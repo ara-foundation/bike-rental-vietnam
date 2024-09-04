@@ -98,7 +98,7 @@ class Tour(models.Model):
 
 
 class Order(models.Model):
-    tour = models.ForeignKey("Tour", on_delete=models.CASCADE)
+    tour = models.ForeignKey("Tour", on_delete=models.CASCADE, related_name="orders")
     passengers = models.TextField()
     date = models.DateField(default=timezone.now)
     email_of_initiator = models.EmailField()
@@ -109,6 +109,7 @@ class Order(models.Model):
     name_of_tour = models.TextField()
     duration_of_tour = models.DurationField()
     status = models.BooleanField(default=False)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name_of_tour
