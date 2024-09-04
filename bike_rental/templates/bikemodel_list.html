@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,17 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Модели велосипедов</title>
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/solar/bootstrap.min.css" rel="stylesheet">
-    <link href="bikes.css" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/bikes.css' %}">
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="mb-4">Модели велосипедов</h1>
+        <h1 class="custom-header">Модели велосипедов</h1>
 
         <form method="get" class="mb-4">
-            {{ filter.form.as_p }}
-            <button class="btn btn-primary" type="submit">Фильтровать</button>
+            <div class="form-row align-items-end">
+                <div class="col">
+                    {{ filter.form.brand|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.model|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.transmission|as_crispy_field }}
+                </div>
+                <div class="col align-self-center">
+                    <button class="btn btn-primary" type="submit">Фильтровать</button>
+                </div>
+            </div>
         </form>
 
         <ul class="list-group mb-4">
