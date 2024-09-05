@@ -1,0 +1,23 @@
+from django import forms
+from .models import Order, Client
+
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ['name', 'contact', 'email']
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['start_date', 'duration', 'amount_bikes']
+
+    def __init__(self, *args, **kwargs):
+        self.bike = kwargs.pop('bike', None)
+        super(OrderForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        amount_bikes = cleaned_data.get('amount_bikes')
+        if self.bike and amount_bikes > self.bike.amount:
+            raise forms.ValidationError("Not enough bikes available.")
+        return cleaned_data
