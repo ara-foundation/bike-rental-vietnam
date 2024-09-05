@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
 class BikeBrand(models.Model):
     name = models.CharField(max_length=255)
@@ -34,6 +35,31 @@ class Bike(models.Model):
     availability = models.BooleanField(default=True)
     photos = models.ImageField(upload_to='images/', null=True, blank=True)
     description = models.TextField()
+    price_per_day = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
+    price_per_week = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
+    price_per_month = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
 
     def __str__(self):
         return f"{self.bike_model} - {self.amount} available"
+
+
+class Client(models.Model):
+    name = models.CharField(max_length=255)
+    contact = models.CharField(max_length=255)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+
+class Order(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='orders')
+    bike = models.ForeignKey(Bike, on_delete=models.PROTECT, related_name='orders')
+    start_date = models.DateField()
+    duration = models.IntegerField(validators=[MinValueValidator(1)])
+    amount_bikes = models.IntegerField(validators=[MinValueValidator(1)])
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.id} - {self.client.name}"
