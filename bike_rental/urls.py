@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import BikeModelListView, bikemodel_detail, bike_offer, bike_order, order_confirmation
 from django.conf import settings
-from django.conf.urls.static import static
+# from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', BikeModelListView.as_view(), name='bikemodel_list'),
     path('bikemodels/', BikeModelListView.as_view(), name='bikemodel_list'),
     path('bikemodel/<int:id>/', bikemodel_detail, name='bikemodel_detail'),
     path('bike/<int:id>/', bike_offer, name='bike_offer'),
