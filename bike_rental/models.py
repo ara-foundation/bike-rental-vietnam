@@ -18,6 +18,7 @@ class BikeModel(models.Model):
     tank = models.FloatField(default=0)  # Значение по умолчанию
     clearance = models.IntegerField()
     description = models.TextField()
+    bike_model_photo = models.ImageField(upload_to='bike_model_photos/', null=True, blank=True)
 
     class Meta:
         ordering = ['brand__name', 'model']
@@ -29,11 +30,11 @@ class BikeModel(models.Model):
 
 
 class Bike(models.Model):
-    bike_model = models.ForeignKey(BikeModel, on_delete=models.PROTECT, related_name='bikes')
+    bike_model = models.ForeignKey(BikeModel, on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to='bike_photos/', null=True, blank=True)  # Изменено с 'images/' на 'bike_photos/'
     deposit_amount = models.IntegerField()
     amount = models.IntegerField()
     availability = models.BooleanField(default=True)
-    photos = models.ImageField(upload_to='images/', null=True, blank=True)
     description = models.TextField()
     price_per_day = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
     price_per_week = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
@@ -44,9 +45,8 @@ class Bike(models.Model):
 
 
 class Client(models.Model):
-    name = models.CharField(max_length=255)
-    contact = models.CharField(max_length=255)
-    email = models.EmailField()
+    name = models.CharField(max_length=100)
+    contact = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name

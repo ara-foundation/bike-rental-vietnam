@@ -4,7 +4,7 @@ from .models import Order, Client
 class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
-        fields = ['name', 'contact', 'email']
+        fields = ['name', 'contact']
 
 class OrderForm(forms.ModelForm):
     class Meta:
