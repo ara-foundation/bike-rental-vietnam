@@ -11,5 +11,5 @@ urlpatterns = [
     path('order/<int:order_id>/confirmation/', order_confirmation, name='order_confirmation'),
 ]
 
-if settings.DEBUG:
-    urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# if settings.DEBUG:
+#     urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
