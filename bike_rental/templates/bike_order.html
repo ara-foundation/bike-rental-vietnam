@@ -12,14 +12,61 @@
     <div class="container mt-4">
         <h1 class="mb-4">Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}</h1>
 
-        <form method="post">
-            {% csrf_token %}
-            <h2>Client Information</h2>
-            {{ client_form.as_p }}
-            <h2>Order Details</h2>
-            {{ order_form.as_p }}
-            <button type="submit" class="btn btn-primary">Submit Order</button>
-        </form>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Client Information</h2>
+                    <div class="mb-3">
+                        {% for field in client_form %}
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                <div>
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <h2>Order Details</h2>
+                    <div class="mb-3">
+                        {% for field in order_form %}
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                <div>
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Order</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body p-0">
+                        {% if bike.photo %}
+                        <img src="{{ bike.photo.url }}" alt="{{ bike.bike_model }}" class="img-fluid rounded w-100">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <span class="text-muted">No photo available</span>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <a href="{% url 'bike_offer' bike.id %}" class="btn btn-secondary mt-4">Back to bike offer</a>
     </div>

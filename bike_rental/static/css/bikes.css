@@ -77,3 +77,7 @@ select option:checked {
 /* .form-row .btn {
     margin-top: 1.5rem;
 } */
+
+.btn.btn-primary {
+    margin-top: 1.5rem; /* Это эквивалентно mt-4 в Bootstrap */
+}
