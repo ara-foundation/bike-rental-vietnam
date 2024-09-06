@@ -1,1 +1,2 @@
-web: uvicorn cb_portal:app --host=0.0.0.0 --port=${PORT:-5000}
+release: python manage.py migrate
+web: gunicorn cb_portal.wsgi
