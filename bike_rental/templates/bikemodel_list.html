@@ -1,80 +1,129 @@
-{% load widget_tweaks %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bike models</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/solar/bootstrap.min.css" rel="stylesheet">
-    {% load static %}
+    <title>Модели велосипедов</title>
     <link rel="stylesheet" href="{% static 'css/bikes.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/sandstone/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="custom-header">Choose bike model</h1>
+        <h1 class="custom-header">Choose a bike model</h1>
 
-        <form method="get" class="mb-4">
-            <div class="form-row align-items-end">
-                <div class="col">
-                    {{ filter.form.brand|add_class:"form-control" }}
+        <form method="get" id="filter-form">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-3">
+                    <div class="form-group w-100">
+                        {{ filter.form.brand }}
+                    </div>
                 </div>
-                <div class="col">
-                    {{ filter.form.model|add_class:"form-control" }}
+                <div class="col-md-3">
+                    <div class="form-group w-100">
+                        {{ filter.form.model }}
+                    </div>
                 </div>
-                <div class="col">
-                    {{ filter.form.transmission|add_class:"form-control" }}
+                <div class="col-md-3">
+                    <div class="form-group w-100">
+                        {{ filter.form.transmission }}
+                    </div>
                 </div>
-                <div class="col-auto">
-                    <button class="btn btn-primary" type="submit">Find</button>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">Search <i class="bi bi-search ms-1"></i></button>
                 </div>
             </div>
         </form>
-
-        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
-            {% for bikemodel in bikemodel_list %}
-                <div class="col mb-4">
+        <!-- Список моделей велосипедов -->
+        <div class="row mt-4">
+            {% for bikemodel in bikemodels %}
+                <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
                             {% if bikemodel.bike_model_photo %}
                                 <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
                             {% else %}
-                                <img src="{% static 'images/no_image.png' %}" alt="No image" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
+                                    <span class="text-muted">Изображение отсутствует</span>
+                                </div>
                             {% endif %}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="{% url 'bikemodel_detail' bikemodel.id %}">{{ bikemodel.brand.name }} {{ bikemodel.model }}</a>
-                            </h5>
+                            <h5 class="card-title">{{ bikemodel.brand.name }} {{ bikemodel.model }}</h5>
+                            <p class="card-text">Transmission: {{ bikemodel.transmission }}</p>
+                            <a href="{% url 'bikemodel_detail' bikemodel.id %}" class="btn btn-primary">Check offers</a>
                         </div>
                     </div>
                 </div>
             {% empty %}
                 <div class="col-12">
-                    <p class="text-center">available bike models not found.</p>
+                    <p class="text-center">Модели велосипедов не найдены.</p>
                 </div>
             {% endfor %}
         </div>
-
-        {% if is_paginated %}
+        <!-- Ниже списка моделей велосипедов -->
         <nav aria-label="Page navigation">
-            <ul class="pagination">
+            <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">Previos</a>
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                            Previous
+                        </a>
                     </li>
                 {% endif %}
-                <li class="page-item disabled">
-                    <span class="page-link">Page {{ page_obj.number }} from {{ page_obj.paginator.num_pages }}</span>
+                
+                <li class="page-item active">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
                 </li>
+                
                 {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                            Next
+                        </a>
                     </li>
                 {% endif %}
             </ul>
         </nav>
-        {% endif %}
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSelect = document.getElementById('id_brand');
+            const modelSelect = document.getElementById('id_model');
+            const transmissionSelect = document.getElementById('id_transmission');
+
+            brandSelect.addEventListener('change', function() {
+                const brandId = this.value;
+                fetch(`{% url "get_models" %}?brand=${brandId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let options = '<option value="">Все модели</option>';
+                        data.forEach(item => {
+                            options += `<option value="${item.id}">${item.model}</option>`;
+                        });
+                        modelSelect.innerHTML = options;
+                        transmissionSelect.innerHTML = '<option value="">Все трансмиссии</option>';
+                    });
+            });
+
+            modelSelect.addEventListener('change', function() {
+                const modelId = this.value;
+                fetch(`{% url "get_transmissions" %}?model=${modelId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let options = '<option value="">Все трансмиссии</option>';
+                        data.forEach(item => {
+                            options += `<option value="${item}">${item}</option>`;
+                        });
+                        transmissionSelect.innerHTML = options;
+                    });
+            });
+        });
+    </script>
 </body>
 </html>

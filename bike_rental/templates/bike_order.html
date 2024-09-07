@@ -17,30 +17,44 @@
                 <form method="post">
                     {% csrf_token %}
                     <h2>Client Information</h2>
-                    <div class="mb-3">
-                        {% for field in client_form %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                {{ field.label_tag }}
-                                <div>
-                                    {{ field }}
-                                </div>
-                                {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                <label for="{{ client_form.name.id_for_label }}" class="form-label">
+                                    {{ client_form.name.label }} 
+                                </label> <br>
+                                {{ client_form.name }}
+                                {% if client_form.name.help_text %}
+                                    <small class="form-text text-muted">{{ client_form.name.help_text }}</small>
                                 {% endif %}
-                                {% for error in field.errors %}
+                                {% for error in client_form.name.errors %}
                                     <div class="invalid-feedback d-block">{{ error }}</div>
                                 {% endfor %}
                             </div>
-                        {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ client_form.contact.id_for_label }}" class="form-label">
+                                    {{ client_form.contact.label }}
+                                </label> <br>
+                                {{ client_form.contact }}
+                                {% if client_form.contact.help_text %}
+                                    <small class="form-text text-muted">{{ client_form.contact.help_text }}</small>
+                                {% endif %}
+                                {% for error in client_form.contact.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                     <h2>Order Details</h2>
                     <div class="mb-3">
                         {% for field in order_form %}
                             <div class="form-group">
-                                {{ field.label_tag }}
-                                <div>
-                                    {{ field }}
-                                </div>
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                </label>
+                                {{ field }}
                                 {% if field.help_text %}
                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                 {% endif %}
@@ -50,7 +64,7 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit Order</button>
+                    <button type="submit" class="btn btn-primary mt-3">Submit Order</button>
                 </form>
             </div>
             <div class="col-md-6">
