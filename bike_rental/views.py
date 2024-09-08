@@ -7,6 +7,7 @@ from .filters import BikeModelFilter
 from django.urls import reverse
 from .forms import ClientForm, OrderForm
 from django.views.generic import ListView
+from datetime import datetime
 
 class BikeModelListView(ListView):
     model = BikeModel
@@ -43,6 +44,8 @@ def bike_order(request, id):
         if client_form.is_valid() and order_form.is_valid():
             client = client_form.save()
             order = order_form.save(commit=False)
+            start_date = order_form.cleaned_data['start_date']
+            order.start_date = datetime.strptime(f"{datetime.now().year}-{start_date.strftime('%m-%d')}", '%Y-%m-%d').date()
             order.client = client
             order.bike = bike
             order.total_price = calculate_total_price(bike, order.duration, order.amount_bikes)

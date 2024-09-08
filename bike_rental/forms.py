@@ -7,6 +7,11 @@ class ClientForm(forms.ModelForm):
         fields = ['name', 'contact']
 
 class OrderForm(forms.ModelForm):
+    start_date = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'DD-MM'}),
+        input_formats=['%d-%m']
+    )
+    
     class Meta:
         model = Order
         fields = ['start_date', 'duration', 'amount_bikes']
@@ -20,4 +25,5 @@ class OrderForm(forms.ModelForm):
         amount_bikes = cleaned_data.get('amount_bikes')
         if self.bike and amount_bikes > self.bike.amount:
             raise forms.ValidationError("Not enough bikes available.")
+        return cleaned_data
         return cleaned_data
