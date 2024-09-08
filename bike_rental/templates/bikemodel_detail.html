@@ -1,92 +1,89 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ bikemodel.brand.name }} {{ bikemodel.model }} - Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/solar/bootstrap.min.css" rel="stylesheet">
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/bikes.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/sandstone/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="mb-4">{{ bikemodel.brand.name }} {{ bikemodel.model }}</h1>
-        
+        <h1 class="custom-header">Available offers for {{ bikemodel.brand.name }} {{ bikemodel.model }}</h1>
+
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6 mb-4">
                 <div class="card h-100">
+                    <div class="card-img-top-wrapper" style="height: 300px; overflow: hidden;">
+                        {% if bikemodel.bike_model_photo %}
+                            <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
+                                <span class="text-muted">Photo not available</span>
+                            </div>
+                        {% endif %}
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title">Specifications</h5>
                         <dl class="row">
                             <dt class="col-sm-5">Transmission:</dt>
                             <dd class="col-sm-7">{{ bikemodel.transmission }}</dd>
-
                             <dt class="col-sm-5">Number of gears:</dt>
                             <dd class="col-sm-7">{{ bikemodel.gears }}</dd>
-
                             <dt class="col-sm-5">Engine displacement:</dt>
                             <dd class="col-sm-7">{{ bikemodel.displacement }} cc</dd>
-
                             <dt class="col-sm-5">Fuel system:</dt>
                             <dd class="col-sm-7">{{ bikemodel.fuel_system }}</dd>
-
                             <dt class="col-sm-5">Fuel tank capacity:</dt>
                             <dd class="col-sm-7">{{ bikemodel.tank }} liters</dd>
-
                             <dt class="col-sm-5">Ground clearance:</dt>
                             <dd class="col-sm-7">{{ bikemodel.clearance }} mm</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 mb-4">
                 <div class="card h-100">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        {% if bikemodel.bike_model_photo %}
-                            <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="img-fluid rounded" style="max-height: 100%; object-fit: contain;">
-                        {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px; width: 100%;">
-                                <span class="text-muted">Photo not available</span>
-                            </div>
-                        {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Description</h5>
+                        <p class="card-text">{{ bikemodel.description }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="card-title">Description</h5>
-                <p class="card-text">{{ bikemodel.description }}</p>
-            </div>
-        </div>
-
-        <h2 class="mt-4">Available Bikes</h2>
-        <ul class="list-group">
+        <h2 class="mt-4 mb-3">Available Bikes</h2>
+        <div class="row">
             {% for bike in bikes %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <div class="bike-image-container" style="width: 160px; height: 120px; overflow: hidden; margin-right: 20px;">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
                             {% if bike.photo %}
-                                <img src="{{ bike.photo.url }}" alt="{{ bike.bike_model }}" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ bike.photo.url }}" alt="{{ bike.bike_model }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
                             {% else %}
-                                <div class="bg-light d-flex align-items-center justify-content-center" style="width: 100%; height: 100%;">
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
                                     <span class="text-muted">No photo</span>
                                 </div>
                             {% endif %}
                         </div>
-                        <div>
-                            {{ bike }} - ${{ bike.price_per_day }} per day
+                        <div class="card-body">
+                            <h5 class="card-title">{{ bike }}</h5>
+                            <p class="card-text">${{ bike.price_per_day }} per day</p>
+                            <a href="{% url 'bike_offer' bike.id %}" class="btn btn-primary">Check Offer</a>
                         </div>
                     </div>
-                    <a href="{% url 'bike_offer' bike.id %}" class="btn btn-primary mt-4">Check Offer</a>
-                </li>
+                </div>
             {% empty %}
-                <li class="list-group-item">No available bikes for this model</li>
+                <div class="col-12">
+                    <p class="text-center">No available bikes for this model</p>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
 
-        <a href="{% url 'bikemodel_list' %}" class="btn btn-primary mt-4">Back to model list</a>
+        <a href="{% url 'bikemodel_list' %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to model list</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
