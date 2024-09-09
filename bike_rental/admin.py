@@ -3,8 +3,16 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import Bike, BikeModel, BikeBrand, Client, Order
 
-class BikeBrandAdmin(ImportExportModelAdmin):
-    pass  # Если нет дополнительных настроек, используйте pass
+class BikeBrandAdmin(admin.ModelAdmin):
+    list_display = ['name', 'logo_preview']
+    readonly_fields = ['logo_preview']
+
+    def logo_preview(self, obj):
+        if obj.logo:
+            return mark_safe(f'<img src="{obj.logo.url}" width="100" height="100" />')
+        return "No logo"
+
+    logo_preview.short_description = 'Logo preview'
 
 class BikeModelAdmin(admin.ModelAdmin):
     list_display = ['brand', 'model', 'transmission']
