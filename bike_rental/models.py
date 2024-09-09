@@ -30,7 +30,7 @@ class BikeModel(models.Model):
 
 
 class Bike(models.Model):
-    bike_model = models.ForeignKey(BikeModel, on_delete=models.CASCADE)
+    bike_model = models.ForeignKey(BikeModel, on_delete=models.PROTECT)
     photo = models.ImageField(upload_to='bike_photos/', null=True, blank=True)  # Изменено с 'images/' на 'bike_photos/'
     deposit_amount = models.IntegerField()
     amount = models.IntegerField()
