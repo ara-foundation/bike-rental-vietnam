@@ -1,40 +1,30 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <link rel="stylesheet" href="{% static 'css/bikes.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/sandstone/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-</head>
-<body>
-    <div class="container mt-4">
-        <h1 class="custom-header">Order Confirmation</h1>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Order Details</h5>
-                <dl class="row">
-                    <dt class="col-sm-4">Order ID:</dt>
-                    <dd class="col-sm-8">{{ order.id }}</dd>
-                    <dt class="col-sm-4">Client:</dt>
-                    <dd class="col-sm-8">{{ order.client.name }}</dd>
-                    <dt class="col-sm-4">Bike:</dt>
-                    <dd class="col-sm-8">{{ order.bike.bike_model }}</dd>
-                    <dt class="col-sm-4">Start Date:</dt>
-                    <dd class="col-sm-8">{{ order.start_date }}</dd>
-                    <dt class="col-sm-4">Duration:</dt>
-                    <dd class="col-sm-8">{{ order.duration }} days</dd>
-                    <dt class="col-sm-4">Number of Bikes:</dt>
-                    <dd class="col-sm-8">{{ order.amount_bikes }}</dd>
-                    <dt class="col-sm-4">Total Price:</dt>
-                    <dd class="col-sm-8">${{ order.total_price }}</dd>
-                </dl>
-            </div>
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmation{% endblock %}
+
+{% block header %}Order Confirmation{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Order Details</h5>
+            <dl class="row">
+                <dt class="col-sm-4">Order ID:</dt>
+                <dd class="col-sm-8">{{ order.id }}</dd>
+                <dt class="col-sm-4">Client:</dt>
+                <dd class="col-sm-8">{{ order.client.name }}</dd>
+                <dt class="col-sm-4">Bike:</dt>
+                <dd class="col-sm-8">{{ order.bike.bike_model }}</dd>
+                <dt class="col-sm-4">Start Date:</dt>
+                <dd class="col-sm-8">{{ order.start_date }}</dd>
+                <dt class="col-sm-4">Duration:</dt>
+                <dd class="col-sm-8">{{ order.duration }} days</dd>
+                <dt class="col-sm-4">Number of Bikes:</dt>
+                <dd class="col-sm-8">{{ order.amount_bikes }}</dd>
+                <dt class="col-sm-4">Total Price:</dt>
+                <dd class="col-sm-8">${{ order.total_price }}</dd>
+            </dl>
         </div>
-        <a href="{% url 'bikemodel_list' %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to Bike Models</a>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <a href="{% url 'bikemodel_list' %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to Bike Models</a>
+{% endblock %}

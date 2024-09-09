@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 
 class BikeBrand(models.Model):
     name = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to='brand_logos/', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -30,7 +31,7 @@ class BikeModel(models.Model):
 
 
 class Bike(models.Model):
-    bike_model = models.ForeignKey(BikeModel, on_delete=models.CASCADE)
+    bike_model = models.ForeignKey(BikeModel, on_delete=models.PROTECT)
     photo = models.ImageField(upload_to='bike_photos/', null=True, blank=True)  # Изменено с 'images/' на 'bike_photos/'
     deposit_amount = models.IntegerField()
     amount = models.IntegerField()
