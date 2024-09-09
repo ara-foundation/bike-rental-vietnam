@@ -17,22 +17,86 @@
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .card-img-top-wrapper {
+    height: 200px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
 .card-img-top {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     transition: transform 0.3s ease-in-out;
 }
 
 .card:hover .card-img-top {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
 .brand-logo {
     filter: drop-shadow(3px 3px 20px rgba(0,0,0,25));
+    width: 35px; /* Уменьшаем размер логотипа */
+    height: 35px;
+    margin-right: 10px; /* Уменьшаем отступ справа */
+    object-fit: contain;
+}
+
+.card-body .row .col-4 {
+    font-size: 0.8rem;
+}
+
+.price-per-day {
+    font-size: 1.2rem;
+    color: #ff8411e9;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.bike-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 10px; /* Добавляем отступы по бокам */
+}
+
+.brand-model {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Позволяет контейнеру расширяться */
+    margin-right: 10px; /* Добавляем отступ справа */
+}
+
+.brand-logo {
+    width: 35px;
+    height: 35px;
+    margin-right: 20px;
+}
+
+.card-title {
+    font-family: 'Arial', sans-serif; /* Изменяем шрифт */
+    font-size: 1.5rem; /* Изменяем размер шрифта */
+    font-weight: bold; /* Делаем шрифт жирным */
+    color: #326388; /* Меняем цвет текста */
+    /* Остальные стили остаются без изменений */
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 40px);
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
 }

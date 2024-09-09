@@ -31,7 +31,11 @@ class BikeModelListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['brands'] = BikeBrand.objects.all()
-        context['transmissions'] = BikeModel.objects.values_list('transmission', flat=True).distinct()
+        
+        transmissions = set(BikeModel.objects.values_list('transmission', flat=True))
+        transmission_order = ['auto', 'semi-auto', 'manual']
+        sorted_transmissions = [t for t in transmission_order if t in transmissions] + sorted(transmissions - set(transmission_order))
+        context['transmissions'] = sorted_transmissions
         
         selected_brand_id = self.request.GET.get('brand')
         if selected_brand_id:

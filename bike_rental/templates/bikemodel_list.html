@@ -57,24 +57,41 @@
     {% for bikemodel in bikemodels %}
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
+                <div class="card-img-top-wrapper">
                     {% if bikemodel.bike_model_photo %}
-                        <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                        <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top">
                     {% else %}
-                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
-                            <span class="text-muted">No photo available</span>
-                        </div>
+                        <span class="text-muted">No photo available</span>
                     {% endif %}
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">
-                        {% if bikemodel.brand.logo %}
-                            <img src="{{ bikemodel.brand.logo.url }}" alt="{{ bikemodel.brand.name }} logo" class="brand-logo" style="width: 35px; height: 35px; margin-right: 5px; vertical-align: middle;">
+                    <div class="bike-header">
+                        <div class="brand-model">
+                            {% if bikemodel.brand.logo %}
+                                <img src="{{ bikemodel.brand.logo.url }}" alt="{{ bikemodel.brand.name }} logo" class="brand-logo">
+                            {% endif %}
+                            <h5 class="card-title">{{ bikemodel.model }}</h5>
+                        </div>
+                        <a href="{% url 'bikemodel_detail' bikemodel.id %}" class="btn btn-primary btn-sm">View Offers</a>
+                    </div>
+                    <div class="row mb-3">
+                        {% with specs=bikemodel.get_specs_with_icons %}
+                            {% for spec, data in specs.items %}
+                                {% if spec in 'transmission,displacement,fuel_system,max_speed,seat_height,fuel_consumption' %}
+                                    <div class="col-4 text-center mb-2">
+                                        <i class="bi {{ data.icon }}" title="{{ spec|title }}"></i> {{ data.value }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    </div>
+                    {% with min_price=bikemodel.get_min_price_per_day %}
+                        {% if min_price %}
+                            <p class="card-text price-per-day"><i class="bi bi-currency-dollar" title="Price per day"></i> from {{ min_price }} usd/day</p>
+                        {% else %}
+                            <p class="card-text price-per-day"><i class="bi bi-currency-dollar" title="Price per day"></i> N/A</p>
                         {% endif %}
-                        {{ bikemodel.model }}
-                    </h5>
-                    <p class="card-text">Transmission: {{ bikemodel.transmission }}</p>
-                    <a href="{% url 'bikemodel_detail' bikemodel.id %}" class="btn btn-primary">View Details</a>
+                    {% endwith %}
                 </div>
             </div>
         </div>

@@ -20,18 +20,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Specifications</h5>
                     <dl class="row">
-                        <dt class="col-sm-5">Transmission:</dt>
-                        <dd class="col-sm-7">{{ bikemodel.transmission }}</dd>
-                        <dt class="col-sm-5">Number of gears:</dt>
-                        <dd class="col-sm-7">{{ bikemodel.gears }}</dd>
-                        <dt class="col-sm-5">Engine displacement:</dt>
-                        <dd class="col-sm-7">{{ bikemodel.displacement }} cc</dd>
-                        <dt class="col-sm-5">Fuel system:</dt>
-                        <dd class="col-sm-7">{{ bikemodel.fuel_system }}</dd>
-                        <dt class="col-sm-5">Fuel tank capacity:</dt>
-                        <dd class="col-sm-7">{{ bikemodel.tank }} liters</dd>
-                        <dt class="col-sm-5">Ground clearance:</dt>
-                        <dd class="col-sm-7">{{ bikemodel.clearance }} mm</dd>
+                        {% for spec, data in bikemodel.get_specs_with_icons.items %}
+                            <dt class="col-sm-5"><i class="bi {{ data.icon }}"></i> {{ spec|title }}:</dt>
+                            <dd class="col-sm-7">{{ data.value }}</dd>
+                        {% endfor %}
                     </dl>
                 </div>
             </div>

@@ -20,6 +20,10 @@ class BikeModel(models.Model):
     clearance = models.IntegerField()
     description = models.TextField()
     bike_model_photo = models.ImageField(upload_to='bike_model_photos/', null=True, blank=True)
+    seat_height = models.IntegerField(null=True, blank=True)
+    fuel_consumption = models.FloatField(null=True, blank=True)
+    weight = models.IntegerField(null=True, blank=True)
+    max_speed = models.IntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ['brand__name', 'model']
@@ -28,6 +32,27 @@ class BikeModel(models.Model):
 
     def __str__(self):
         return f"{self.brand.name} {self.model}"
+
+    def get_min_price_per_day(self):
+        bikes = self.bike_set.all()
+        if bikes:
+            return min(bike.price_per_day for bike in bikes)
+        return None
+
+    def get_specs_with_icons(self):
+        specs = {
+            'transmission': {'value': self.transmission, 'icon': 'bi-gear'},
+            'gears': {'value': self.gears, 'icon': 'bi-gear-fill'},
+            'displacement': {'value': f"{self.displacement} cc", 'icon': 'bi-speedometer2'},
+            'fuel_system': {'value': self.fuel_system, 'icon': 'bi-droplet'},
+            'tank': {'value': f"{self.tank} liters", 'icon': 'bi-droplet-fill'},
+            'clearance': {'value': f"{self.clearance} mm", 'icon': 'bi-arrows-expand'},
+            'seat_height': {'value': f"{self.seat_height} mm", 'icon': 'bi-person'},
+            'fuel_consumption': {'value': f"{self.fuel_consumption} l/100km", 'icon': 'bi-lightning'},
+            'weight': {'value': f"{self.weight} kg", 'icon': 'bi-box'},
+            'max_speed': {'value': f"{self.max_speed} km/h", 'icon': 'bi-speedometer'},
+        }
+        return {k: v for k, v in specs.items() if v['value'] is not None}
 
 
 class Bike(models.Model):
@@ -43,6 +68,19 @@ class Bike(models.Model):
 
     def __str__(self):
         return f"{self.bike_model} - {self.amount} available"
+
+    def calculate_rental_price(self, duration):
+        if duration >= 30:
+            months = duration // 30
+            remaining_days = duration % 30
+            price = (months * self.price_per_month) + (remaining_days * (self.price_per_day))
+        elif duration >= 7:
+            weeks = duration // 7
+            remaining_days = duration % 7
+            price = (weeks * self.price_per_week) + (remaining_days * self.price_per_day)
+        else:
+            price = duration * self.price_per_day
+        return price
 
 
 class Client(models.Model):

@@ -85,6 +85,7 @@
                         <h5 class="card-title">Bike Details</h5>
                         <p class="card-text">Model: {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}</p>
                         <p class="card-text">Price per day: ${{ bike.price_per_day }}</p>
+                        <p class="card-text">Total price: $<span id="totalPrice">{{ bike.price_per_day }}</span></p>
                     </div>
                 </div>
             </div>
@@ -98,13 +99,46 @@
         const calendarIcon = document.querySelector('#calendar-icon');
         const durationInput = document.querySelector('#customRange3');
         const durationValue = document.querySelector('#durationValue');
+        const pricePerDay = {{ bike.price_per_day }};
+        const pricePerWeek = {{ bike.price_per_week }};
+        const pricePerMonth = {{ bike.price_per_month }};
+        const totalPriceElement = document.querySelector('#totalPrice');
+        const amountBikesInput = document.querySelector('#id_amount_bikes');
 
         function updateDurationValue() {
             durationValue.textContent = durationInput.value;
         }
 
-        durationInput.addEventListener('input', updateDurationValue);
+        function calculateRentalPrice(duration) {
+            if (duration >= 30) {
+                const months = Math.floor(duration / 30);
+                const remainingDays = duration % 30;
+                return (months * pricePerMonth) + (remainingDays * pricePerDay);
+            } else if (duration >= 7) {
+                const weeks = Math.floor(duration / 7);
+                const remainingDays = duration % 7;
+                return (weeks * pricePerWeek) + (remainingDays * pricePerDay);
+            } else {
+                return duration * pricePerDay;
+            }
+        }
+
+        function updateTotalPrice() {
+            const duration = parseInt(durationInput.value);
+            const amountBikes = parseInt(amountBikesInput.value);
+            const rentalPrice = calculateRentalPrice(duration);
+            const totalPrice = rentalPrice * amountBikes;
+            totalPriceElement.textContent = totalPrice.toFixed(2);
+        }
+
+        durationInput.addEventListener('input', function() {
+            updateDurationValue();
+            updateTotalPrice();
+        });
+        amountBikesInput.addEventListener('input', updateTotalPrice);
+
         updateDurationValue();
+        updateTotalPrice();
 
         $(startDateInput).datepicker({
             format: 'dd-mm',
@@ -138,6 +172,7 @@
         });
 
         durationInput.value = '1';  // Устанавливаем значение по умолчанию
+        updateTotalPrice();
     });
     </script>
     

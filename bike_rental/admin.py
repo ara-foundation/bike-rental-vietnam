@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import Bike, BikeModel, BikeBrand, Client, Order
 
-class BikeBrandAdmin(admin.ModelAdmin):
+class BikeBrandAdmin(ImportExportModelAdmin):
     list_display = ['name', 'logo_preview']
     readonly_fields = ['logo_preview']
 
@@ -14,7 +14,7 @@ class BikeBrandAdmin(admin.ModelAdmin):
 
     logo_preview.short_description = 'Logo preview'
 
-class BikeModelAdmin(admin.ModelAdmin):
+class BikeModelAdmin(ImportExportModelAdmin):
     list_display = ['brand', 'model', 'transmission']
     list_filter = ['brand', 'transmission']
     search_fields = ['model', 'brand__name']
