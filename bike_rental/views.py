@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import ListView
 
 from .forms import ClientForm, OrderForm
-from .models import Bike, BikeBrand, BikeModel, Order
+from .models import Bike, BikeBrand, BikeModel, BikeOrder
 
 
 class BikeModelListView(ListView):
@@ -105,7 +105,7 @@ def calculate_total_price(bike, duration, amount_bikes):
 
 
 def order_confirmation(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
+    order = get_object_or_404(BikeOrder, id=order_id)
     context = {"order": order}
     context = add_design_settings(context)
     return render(request, "order_confirmation.html", context)

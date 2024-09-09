@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Client, Order
+from .models import BikeOrder, Client
 
 ERR_MESSAGE = "Not enough bikes available."
 
@@ -40,7 +40,7 @@ class OrderForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Order
+        model = BikeOrder
         fields = ["start_date", "duration", "amount_bikes"]
 
     def __init__(self, *args, **kwargs):

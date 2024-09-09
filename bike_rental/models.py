@@ -62,7 +62,7 @@ class Client(models.Model):
         return self.name
 
 
-class Order(models.Model):
+class BikeOrder(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="orders")
     bike = models.ForeignKey(Bike, on_delete=models.PROTECT, related_name="orders")
     start_date = models.DateField()
