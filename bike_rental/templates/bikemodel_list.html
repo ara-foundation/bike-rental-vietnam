@@ -57,13 +57,11 @@
     {% for bikemodel in bikemodels %}
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
+                <div class="card-img-top-wrapper">
                     {% if bikemodel.bike_model_photo %}
-                        <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                        <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top">
                     {% else %}
-                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
-                            <span class="text-muted">No photo available</span>
-                        </div>
+                        <span class="text-muted">No photo available</span>
                     {% endif %}
                 </div>
                 <div class="card-body">

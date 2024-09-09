@@ -17,20 +17,28 @@
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .card-img-top-wrapper {
+    height: 200px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
 .card-img-top {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     transition: transform 0.3s ease-in-out;
 }
 
 .card:hover .card-img-top {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
 .brand-logo {
