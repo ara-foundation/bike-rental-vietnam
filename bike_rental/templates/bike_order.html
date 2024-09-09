@@ -1,33 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        .form-range {
-            --value: 1;
-            --min: 1;
-            --max: 30;
-        }
-        .form-range::-webkit-slider-runnable-track {
-            background: linear-gradient(to right, #0d6efd 0%, #0d6efd calc((var(--value) - var(--min)) / (var(--max) - var(--min)) * 100%), #dee2e6 calc((var(--value) - var(--min)) / (var(--max) - var(--min)) * 100%), #dee2e6 100%);
-        }
-        .form-range::-moz-range-track {
-            background: linear-gradient(to right, #0d6efd 0%, #0d6efd calc((var(--value) - var(--min)) / (var(--max) - var(--min)) * 100%), #dee2e6 calc((var(--value) - var(--min)) / (var(--max) - var(--min)) * 100%), #dee2e6 100%);
-        }
-    </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/bikes.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/sandstone/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-</head>
-<body>
-    <div class="container mt-4">
-        <h1 class="custom-header">Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}</h1>
+{% extends 'base.html' %}
+{% block title %}Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+{% endblock %}
+
+{% block header %}Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
+{% block content %}
         <div class="row">
             <div class="col-md-6 mb-4">
                 <div class="card h-100">
@@ -106,12 +91,8 @@
         </div>
 
         <a href="{% url 'bike_offer' bike.id %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to bike offer</a>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script>
+         
+         <script>
     document.addEventListener('DOMContentLoaded', function() {
         const startDateInput = document.querySelector('#id_start_date');
         const calendarIcon = document.querySelector('#calendar-icon');
@@ -159,5 +140,5 @@
         durationInput.value = '1';  // Устанавливаем значение по умолчанию
     });
     </script>
-</body>
-</html>
+    
+{% endblock %}

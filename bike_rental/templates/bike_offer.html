@@ -1,96 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ bike.bike_model.brand.name }} {{ bike.bike_model.model }} - Offer</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/bikes.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/sandstone/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-</head>
-<body>
-    <div class="container mt-4">
-        <h1 class="custom-header">Offer for {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }} - Offer</h1>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Offer Details</h5>
-                        <dl class="row">
-                            <dt class="col-sm-5">Deposit Amount:</dt>
-                            <dd class="col-sm-7">${{ bike.deposit_amount }}</dd>
-
-                            <dt class="col-sm-5">Available:</dt>
-                            <dd class="col-sm-7">{{ bike.amount }}</dd>
-
-                            <dt class="col-sm-5">Price per Day:</dt>
-                            <dd class="col-sm-7">${{ bike.price_per_day }}</dd>
-
-                            <dt class="col-sm-5">Price per Week:</dt>
-                            <dd class="col-sm-7">${{ bike.price_per_week }}</dd>
-
-                            <dt class="col-sm-5">Price per Month:</dt>
-                            <dd class="col-sm-7">${{ bike.price_per_month }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-img-top-wrapper" style="height: 300px; overflow: hidden;">
-                        {% if bike.photo %}
-                            <img src="{{ bike.photo.url }}" alt="{{ bike.bike_model }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
-                        {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
-                                <span class="text-muted">No photo available</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="card-body">
-                        <a href="{% url 'bike_order' bike.id %}" class="btn btn-primary w-100">Order Bike</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card mt-4">
+{% extends 'base.html' %}
+{% block title %}{{ bike.bike_model.brand.name }} {{ bike.bike_model.model }} - Offer{% endblock %}
+{% block header %}Offer for {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Description</h5>
-                <p class="card-text">{{ bike.description }}</p>
+                <h5 class="card-title">Offer Details</h5>
+                <dl class="row">
+                    <dt class="col-sm-5">Deposit Amount:</dt>
+                    <dd class="col-sm-7">${{ bike.deposit_amount }}</dd>
+
+                    <dt class="col-sm-5">Available:</dt>
+                    <dd class="col-sm-7">{{ bike.amount }}</dd>
+
+                    <dt class="col-sm-5">Price per Day:</dt>
+                    <dd class="col-sm-7">${{ bike.price_per_day }}</dd>
+
+                    <dt class="col-sm-5">Price per Week:</dt>
+                    <dd class="col-sm-7">${{ bike.price_per_week }}</dd>
+
+                    <dt class="col-sm-5">Price per Month:</dt>
+                    <dd class="col-sm-7">${{ bike.price_per_month }}</dd>
+                </dl>
             </div>
         </div>
-
-        <a href="{% url 'bikemodel_detail' bike.bike_model.id %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to Model Details</a>
-        <!-- <a href="{% url 'bikemodel_detail' bike.bike_model.id %}" class="btn btn-secondary mt-4">Back to Model Details</a> -->
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const startDateInput = document.querySelector('#id_start_date');
-            
-            startDateInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 4) value = value.slice(0, 4);
-                if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
-                e.target.value = value;
-            });
-        
-            document.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const dateValue = startDateInput.value;
-                if (dateValue.length === 5) {
-                    const [day, month] = dateValue.split('-');
-                    const currentYear = new Date().getFullYear();
-                    startDateInput.value = `${currentYear}-${month}-${day}`;
-                    this.submit();
-                } else {
-                    alert('Please enter the date in DD-MM format');
-                }
-            });
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-img-top-wrapper" style="height: 300px; overflow: hidden;">
+                {% if bike.photo %}
+                <img src="{{ bike.photo.url }}" alt="{{ bike.bike_model }}" class="card-img-top"
+                    style="object-fit: cover; height: 100%; width: 100%;">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
+                    <span class="text-muted">No photo available</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <a href="{% url 'bike_order' bike.id %}" class="btn btn-primary w-100">Order Bike</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Description</h5>
+        <p class="card-text">{{ bike.description }}</p>
+    </div>
+</div>
+
+<a href="{% url 'bikemodel_detail' bike.bike_model.id %}" class="btn btn-secondary mt-4"><i
+        class="bi bi-arrow-left me-2"></i>Back to Model Details</a>
+<!-- <a href="{% url 'bikemodel_detail' bike.bike_model.id %}" class="btn btn-secondary mt-4">Back to Model Details</a> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const startDateInput = document.querySelector('#id_start_date');
+
+        startDateInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) value = value.slice(0, 4);
+            if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
+            e.target.value = value;
         });
-        </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const dateValue = startDateInput.value;
+            if (dateValue.length === 5) {
+                const [day, month] = dateValue.split('-');
+                const currentYear = new Date().getFullYear();
+                startDateInput.value = `${currentYear}-${month}-${day}`;
+                this.submit();
+            } else {
+                alert('Please enter the date in DD-MM format');
+            }
+        });
+    });
+</script>
+{% endblock %}
