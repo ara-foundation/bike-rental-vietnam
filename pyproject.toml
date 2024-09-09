@@ -52,8 +52,8 @@ lint.select = [
     "PERF", # Perflint
     "FURB", # refurb
 ]
-ignore = ["S105"]
-lint.per-file-ignores.ignore = ["ANN101", "CPY001"] # annotations for self
+ignore = ["S105", "ERA001", "A002", "S308", "UP008"]
+lint.per-file-ignores.ignore = ["ANN101", "CPY001", "ERA001"] # annotations for self
 src = ["src", "tests"]
 preview = true
 
@@ -63,6 +63,7 @@ preview = true
     "S101", # use of assert detected
     "TCH002", # third party import (for pytest)
     "S105",
+    "ERA001",
 ]
 
 [tool.ruff.lint.pydocstyle]

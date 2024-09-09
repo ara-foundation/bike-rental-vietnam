@@ -6,51 +6,94 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('bike_rental', '0005_alter_bikemodel_gears'),
+        ("bike_rental", "0005_alter_bikemodel_gears"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Client',
+            name="Client",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('contact', models.CharField(max_length=255)),
-                ('email', models.EmailField(max_length=254)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("contact", models.CharField(max_length=255)),
+                ("email", models.EmailField(max_length=254)),
             ],
         ),
         migrations.AlterModelOptions(
-            name='bikemodel',
-            options={'ordering': ['brand__name', 'model'], 'verbose_name': 'Bike Model', 'verbose_name_plural': 'Bike Models'},
+            name="bikemodel",
+            options={
+                "ordering": ["brand__name", "model"],
+                "verbose_name": "Bike Model",
+                "verbose_name_plural": "Bike Models",
+            },
         ),
         migrations.AddField(
-            model_name='bike',
-            name='price_per_day',
+            model_name="bike",
+            name="price_per_day",
             field=models.DecimalField(decimal_places=0, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='bike',
-            name='price_per_month',
+            model_name="bike",
+            name="price_per_month",
             field=models.DecimalField(decimal_places=0, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='bike',
-            name='price_per_week',
+            model_name="bike",
+            name="price_per_week",
             field=models.DecimalField(decimal_places=0, default=0.0, max_digits=10),
         ),
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_date', models.DateField()),
-                ('duration', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('amount_bikes', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('total_price', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('bike', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='orders', to='bike_rental.bike')),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='orders', to='bike_rental.client')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_date", models.DateField()),
+                (
+                    "duration",
+                    models.IntegerField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "amount_bikes",
+                    models.IntegerField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                ("total_price", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "bike",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="orders",
+                        to="bike_rental.bike",
+                    ),
+                ),
+                (
+                    "client",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="orders",
+                        to="bike_rental.client",
+                    ),
+                ),
             ],
         ),
     ]

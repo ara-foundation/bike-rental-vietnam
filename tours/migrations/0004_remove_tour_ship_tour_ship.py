@@ -5,19 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tours', '0003_alter_cabintype_photo_alter_ship_photo'),
+        ("tours", "0003_alter_cabintype_photo_alter_ship_photo"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='tour',
-            name='ship',
+            model_name="tour",
+            name="ship",
         ),
         migrations.AddField(
-            model_name='tour',
-            name='ship',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='tours.ship'),
+            model_name="tour",
+            name="ship",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="tours.ship",
+            ),
         ),
     ]

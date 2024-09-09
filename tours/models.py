@@ -97,7 +97,7 @@ class Tour(models.Model):
         return self.name
 
 
-class Order(models.Model):
+class TourOrder(models.Model):
     tour = models.ForeignKey("Tour", on_delete=models.CASCADE, related_name="orders")
     passengers = models.TextField()
     date = models.DateField(default=timezone.now)

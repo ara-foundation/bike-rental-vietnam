@@ -5,12 +5,12 @@ from tours.models import (
     CabinType,
     FreeOfChargeService,
     Lunch,
-    Order,
     Photo,
     Route,
     Ship,
     Tour,
     TourDate,
+    TourOrder,
 )
 
 
@@ -97,7 +97,7 @@ class TourAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-@admin.register(Order)
+@admin.register(TourOrder)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         "tour",

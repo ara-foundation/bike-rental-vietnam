@@ -5,15 +5,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('bike_rental', '0010_alter_bike_photo'),
+        ("bike_rental", "0010_alter_bike_photo"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='bike',
-            name='bike_model',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='bike_rental.bikemodel'),
+            model_name="bike",
+            name="bike_model",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="bike_rental.bikemodel"
+            ),
         ),
     ]

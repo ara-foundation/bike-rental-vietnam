@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tours', '0002_cabintype_lunch_tour_author_alter_tour_start_date_and_more'),
+        ("tours", "0002_cabintype_lunch_tour_author_alter_tour_start_date_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cabintype',
-            name='photo',
-            field=models.ImageField(blank=True, upload_to='cabins/'),
+            model_name="cabintype",
+            name="photo",
+            field=models.ImageField(blank=True, upload_to="cabins/"),
         ),
         migrations.AlterField(
-            model_name='ship',
-            name='photo',
-            field=models.ImageField(blank=True, upload_to='images/'),
+            model_name="ship",
+            name="photo",
+            field=models.ImageField(blank=True, upload_to="images/"),
         ),
     ]
