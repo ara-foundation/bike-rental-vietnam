@@ -108,3 +108,15 @@ def add_design_settings(context):
     context['theme_color'] = settings.THEME_COLOR
     context['custom_css'] = settings.CUSTOM_CSS
     return context
+
+def bike_tours(request):
+    context = add_design_settings({})
+    return render(request, 'bike_tours.html', context)
+
+def car_tours(request):
+    context = add_design_settings({})
+    return render(request, 'car_tours.html', context)
+
+def bus_tours(request):
+    context = add_design_settings({})
+    return render(request, 'bus_tours.html', context)
