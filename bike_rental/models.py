@@ -1,5 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
+
+User = get_user_model()
 
 
 class BikeBrand(models.Model):
@@ -49,6 +52,7 @@ class Bike(models.Model):
     price_per_day = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
     price_per_week = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
     price_per_month = models.DecimalField(max_digits=10, decimal_places=0, default=0.0)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.bike_model} - {self.amount} available"

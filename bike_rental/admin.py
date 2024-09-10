@@ -35,11 +35,36 @@ class BikeModelAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Bike)
 class BikeAdmin(ImportExportModelAdmin):
-    list_display = ["bike_model", "amount", "price_per_day", "availability"]
-    list_filter = ["availability", "bike_model__brand"]
+    list_display = ["bike_model", "amount", "price_per_day", "availability", "owner"]
+    list_filter = ["availability", "bike_model__brand", "owner"]
     search_fields = ["bike_model__brand__name", "bike_model__model"]
     readonly_fields = ["photo_preview"]
+    exclude = ("owner",)
+
+    def get_queryset(self, request):
+        # Get the base queryset
+        qs = super().get_queryset(request)
+
+        # Check if the user is part of the "Bike Owner" group
+        if request.user.groups.filter(name="Bike Owner").exists():
+            # Filter bikes to show only those related to owner
+            return qs.filter(owner=request.user)
+
+        # For superusers, return all bikes
+        if request.user.is_superuser:
+            return qs
+
+        # In all other cases (if a user is not in any group), return an empty queryset
+        return qs.none()
+
+    def save_model(self, request, obj, form, change):
+        if not change or obj.owner is None:
+            # Automatically set the owner to the
+            # logged-in user if this is a new object or if owner is not set
+            obj.owner = request.user
+        super().save_model(request, obj, form, change)
 
     def photo_preview(self, obj):
         if obj.photo:
@@ -58,7 +83,6 @@ class OrderAdmin(ImportExportModelAdmin):
 
 
 # Register your models here.
-admin.site.register(Bike, BikeAdmin)
 admin.site.register(BikeModel, BikeModelAdmin)
 admin.site.register(BikeBrand, BikeBrandAdmin)
 admin.site.register(Client, ClientAdmin)
