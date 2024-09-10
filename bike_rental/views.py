@@ -3,12 +3,12 @@ from django.http import HttpResponse, JsonResponse
 # from django_filters.views import FilterView
 from django.core.paginator import Paginator
 from .models import BikeModel, Bike, Order, BikeBrand
-
 from django.urls import reverse
 from .forms import ClientForm, OrderForm
 from django.views.generic import ListView
 from datetime import datetime
 from django.conf import settings
+import random
 
 class BikeModelListView(ListView):
     model = BikeModel
@@ -108,3 +108,78 @@ def add_design_settings(context):
     context['theme_color'] = settings.THEME_COLOR
     context['custom_css'] = settings.CUSTOM_CSS
     return context
+
+def bike_tours(request):
+    tours = range(1, 16)  # 15 тестовых туров
+    paginator = Paginator(tours, 10)  # 10 туров на страницу
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        'paginate_by': 10,
+    }
+    context = add_design_settings(context)
+    return render(request, 'bike_tours.html', context)
+
+def car_tours(request):
+    tours = range(1, 16)  # 15 тестовых туров
+    paginator = Paginator(tours, 5)  # 5 туров на страницу
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        'paginate_by': 5,
+    }
+    context = add_design_settings(context)
+    return render(request, 'car_tours.html', context)
+
+def boat_tours(request):
+    tours = range(1, 16)  # 15 тестовых туров
+    paginator = Paginator(tours, 8)  # 8 туров на страницу
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        'paginate_by': 8,
+    }
+    context = add_design_settings(context)
+    return render(request, 'boat_tours.html', context)
+
+def bike_tour_order(request, tour_id):
+    # Генерируем случайные данные для тура
+    difficulty_levels = ['Easy', 'Intermediate', 'Hard']
+    themes = ['Mountain', 'City', 'Countryside', 'Coastal']
+    
+    context = {
+        'tour_id': tour_id,
+        'difficulty': random.choice(difficulty_levels),
+        'themes': random.sample(themes, k=random.randint(1, 3))
+    }
+    
+    if request.method == 'POST':
+        # Обработка отправленной формы
+        context.update({
+            'booking_date': request.POST.get('date'),
+            'participants': request.POST.get('participants')
+        })
+        return render(request, 'bike_tour_order_confirmation.html', context)
+    
+    return render(request, 'bike_tour_order.html', context)
+
+def bike_tour(request, tour_id):
+    # Генерируем случайные данные для тура
+    tour = {
+        'id': tour_id,
+        'name': f'Велотур {tour_id}',
+        'description': f'Захватывающий велотур с красивыми видами и интересными маршрутами. Тур номер {tour_id}.',
+        'direction': random.choice(['Горы', 'Побережье', 'Город', 'Сельская местность']),
+        'duration': random.randint(1, 10),
+        'date': (datetime.now() + timedelta(days=random.randint(1, 30))).strftime('%Y-%m-%d'),
+        'difficulty': random.choice(['Легкий', 'Средний', 'Сложный']),
+        'price': random.randint(50, 500),
+        'themes': random.sample(['Природа', 'История', 'Культура', 'Приключения', 'Гастрономия'], k=random.randint(1, 3)),
+        'route': [f'Точка {i}' for i in range(1, random.randint(3, 8))],
+        'included': ['Велосипед', 'Шлем', 'Питание', 'Проживание', 'Гид'],
+    }
+    
+    return render(request, 'bike_tour.html', {'tour': tour})
