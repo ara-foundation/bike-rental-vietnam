@@ -8,7 +8,213 @@
 <div class="row">
     <div class="col-12">
         <h2>Available Car Tours</h2>
-        <p>Discover our amazing car tours. Coming soon!</p>
+        <form method="get" class="mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="direction" class="form-label">Direction</label>
+                    <select name="direction" id="direction" class="form-select">
+                        <option value="">All Directions</option>
+                        {% for direction in directions %}
+                            <option value="{{ direction }}" {% if direction == selected_direction %}selected{% endif %}>{{ direction }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="duration" class="form-label">Duration</label>
+                    <select name="duration" id="duration" class="form-select">
+                        <option value="">All Durations</option>
+                        {% for duration in durations %}
+                            <option value="{{ duration }}" {% if duration == selected_duration %}selected{% endif %}>{{ duration }} days</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="tour_date" class="form-label">Tour Date</label>
+                    <input type="date" name="tour_date" id="tour_date" class="form-control" value="{{ selected_date }}">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label class="form-label">Tour Themes</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="city" id="city" {% if 'city' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="city">City</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="nature" id="nature" {% if 'nature' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="nature">Nature</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="adventure" id="adventure" {% if 'adventure' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="adventure">Adventure</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="luxury" id="luxury" {% if 'luxury' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="luxury">Luxury</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
+
+<div class="row mt-4">
+    {% for i in page_obj %}
+        {% if forloop.counter0|divisibleby:2 %}
+            <div class="row">
+        {% endif %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
+                    <img src="https://picsum.photos/seed/car{{ i }}/400/300" alt="Car Tour {{ i }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Car Tour {{ i }}</h5>
+                    <p class="card-text">This is a sample description for Car Tour {{ i }}. It's an exciting car tour with scenic routes and comfortable travel.</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Direction:</strong> Direction {{ i }}</li>
+                        <li><strong>Duration:</strong> {{ i }} days</li>
+                        <li><strong>Date:</strong> {% now "d M Y" %}</li>
+                        <li><strong>Price:</strong> ${{ i }}99</li>
+                    </ul>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-secondary me-1">Theme 1</span>
+                            <span class="badge bg-secondary me-1">Theme 2</span>
+                        </div>
+                        <button class="btn btn-primary view-details" data-tour-id="{{ i }}">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 or forloop.last %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Модальное окно для деталей тура -->
+<div class="modal fade" id="tourDetailsModal" tabindex="-1" aria-labelledby="tourDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tourDetailsModalLabel">Tour Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img id="tourImage" src="" alt="Tour Image" class="img-fluid mb-3">
+                        <h5 id="tourName"></h5>
+                        <p id="tourDescription"></p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Direction:</strong> <span id="tourDirection"></span></li>
+                            <li class="list-group-item"><strong>Duration:</strong> <span id="tourDuration"></span></li>
+                            <li class="list-group-item"><strong>Date:</strong> <span id="tourDate"></span></li>
+                            <li class="list-group-item"><strong>Price:</strong> <span id="tourPrice"></span></li>
+                        </ul>
+                        <div class="mt-3" id="tourThemes"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <form id="bookingForm">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Preferred Start Date</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="participants" class="form-label">Number of Participants</label>
+                                <input type="number" class="form-control" id="participants" name="participants" min="1" max="10" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comments" class="form-label">Additional Comments</label>
+                                <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Book Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Пагинация остается без изменений -->
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const viewDetailsButtons = document.querySelectorAll('.view-details');
+    const modal = new bootstrap.Modal(document.getElementById('tourDetailsModal'));
+
+    viewDetailsButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tourId = this.getAttribute('data-tour-id');
+            // В реальном приложении здесь был бы AJAX-запрос к серверу
+            // Для демонстрации используем случайные данные
+            const tourData = {
+                name: `Car Tour ${tourId}`,
+                description: `This is a sample description for Car Tour ${tourId}. It's an exciting car tour with scenic routes and comfortable travel.`,
+                direction: `Direction ${tourId}`,
+                duration: `${parseInt(tourId)} days`,
+                date: new Date().toISOString().split('T')[0],
+                price: `$${parseInt(tourId) + 99}`,
+                image: `https://picsum.photos/seed/car${tourId}/600/400`,
+                themes: ['Theme 1', 'Theme 2']
+            };
+
+            document.getElementById('tourImage').src = tourData.image;
+            document.getElementById('tourName').textContent = tourData.name;
+            document.getElementById('tourDescription').textContent = tourData.description;
+            document.getElementById('tourDirection').textContent = tourData.direction;
+            document.getElementById('tourDuration').textContent = tourData.duration;
+            document.getElementById('tourDate').textContent = tourData.date;
+            document.getElementById('tourPrice').textContent = tourData.price;
+
+            const themesContainer = document.getElementById('tourThemes');
+            themesContainer.innerHTML = '';
+            tourData.themes.forEach(theme => {
+                const badge = document.createElement('span');
+                badge.classList.add('badge', 'bg-secondary', 'me-1');
+                badge.textContent = theme;
+                themesContainer.appendChild(badge);
+            });
+
+            modal.show();
+        });
+    });
+
+    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        alert('Thank you for booking! We will contact you soon to confirm your reservation.');
+        modal.hide();
+    });
+});
+</script>
 {% endblock %}

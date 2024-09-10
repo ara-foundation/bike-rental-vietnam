@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Bike Tours{% endblock %}
+{% block title %}Boat Tours{% endblock %}
 
-{% block header %}Bike Tours{% endblock %}
+{% block header %}Boat Tours{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h2>Available Bike Tours</h2>
+        <h2>Available Boat Tours</h2>
         <form method="get" class="mb-4">
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -45,20 +45,20 @@
                 </div>
                 <div class="col-md-3 mb-2">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="themes" value="culture" id="culture" {% if 'culture' in selected_themes %}checked{% endif %}>
-                        <label class="form-check-label" for="culture">Culture</label>
+                        <input class="form-check-input" type="checkbox" name="themes" value="sightseeing" id="sightseeing" {% if 'sightseeing' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="sightseeing">Sightseeing</label>
                     </div>
                 </div>
                 <div class="col-md-3 mb-2">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="themes" value="history" id="history" {% if 'history' in selected_themes %}checked{% endif %}>
-                        <label class="form-check-label" for="history">History</label>
+                        <input class="form-check-input" type="checkbox" name="themes" value="party" id="party" {% if 'party' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="party">Party</label>
                     </div>
                 </div>
                 <div class="col-md-3 mb-2">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="themes" value="sport" id="sport" {% if 'sport' in selected_themes %}checked{% endif %}>
-                        <label class="form-check-label" for="sport">Sport</label>
+                        <input class="form-check-input" type="checkbox" name="themes" value="diving" id="diving" {% if 'diving' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="diving">Diving</label>
                     </div>
                 </div>
             </div>
@@ -79,24 +79,23 @@
         <div class="col-md-6 mb-4">
             <div class="card h-100">
                 <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
-                    <img src="https://picsum.photos/seed/bike{{ i }}/400/300" alt="Bike Tour {{ i }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                    <img src="https://picsum.photos/seed/boat{{ i }}/400/300" alt="Boat Tour {{ i }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Bike Tour {{ i }}</h5>
-                    <p class="card-text">This is a sample description for Bike Tour {{ i }}. It's an exciting bike tour with beautiful scenery and challenging routes.</p>
+                    <h5 class="card-title">Boat Tour {{ i }}</h5>
+                    <p class="card-text">This is a sample description for Boat Tour {{ i }}. It's an exciting boat tour with beautiful water views and marine adventures.</p>
                     <ul class="list-unstyled">
                         <li><strong>Direction:</strong> Direction {{ i }}</li>
-                        <li><strong>Duration:</strong> {{ i|add:1 }} days</li>
-                        <li><strong>Date:</strong> {% now "Y-m-d" %}</li>
-                        <li><strong>Price:</strong> ${{ i|add:100 }}</li>
+                        <li><strong>Duration:</strong> {{ i }} days</li>
+                        <li><strong>Date:</strong> {% now "d M Y" %}</li>
+                        <li><strong>Price:</strong> ${{ i }}99</li>
                     </ul>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            {% for theme in "ABC"|make_list %}
-                                <span class="badge bg-secondary me-1">Theme {{ theme }}</span>
-                            {% endfor %}
+                            <span class="badge bg-secondary me-1">Theme 1</span>
+                            <span class="badge bg-secondary me-1">Theme 2</span>
                         </div>
-                        <a href="{% url 'bike_tour_order' tour_id=i %}" class="btn btn-primary">View Details</a>
+                        <a href="#" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             </div>
@@ -131,10 +130,4 @@
     </nav>
     <p class="text-center mt-2">Showing {{ paginate_by }} tours per page</p>
 {% endif %}
-
-<div class="row">
-    <div class="col-12">
-        <p>Here you will find our exciting bike tours. Coming soon!</p>
-    </div>
-</div>
 {% endblock %}

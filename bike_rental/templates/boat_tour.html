@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}{{ tour.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ tour.name }}</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <img src="https://picsum.photos/seed/biketour{{ tour.id }}/800/400" class="img-fluid mb-3" alt="{{ tour.name }}">
+            <h2>Описание тура</h2>
+            <p>{{ tour.description }}</p>
+            <h3>Детали тура</h3>
+            <ul class="list-unstyled">
+                <li><strong>Направление:</strong> {{ tour.direction }}</li>
+                <li><strong>Продолжительность:</strong> {{ tour.duration }} дней</li>
+                <li><strong>Дата:</strong> {{ tour.date }}</li>
+                <li><strong>Сложность:</strong> {{ tour.difficulty }}</li>
+                <li><strong>Цена:</strong> ${{ tour.price }} с человека</li>
+            </ul>
+            <h3>Темы тура</h3>
+            <div class="mb-3">
+                {% for theme in tour.themes %}
+                    <span class="badge bg-secondary me-1">{{ theme }}</span>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                Забронировать сейчас
+            </button>
+        </div>
+        <div class="col-md-4">
+            <h3>Маршрут</h3>
+            <ul>
+                {% for point in tour.route %}
+                    <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Что включено</h3>
+            <ul>
+                {% for item in tour.included %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для бронирования -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingModalLabel">Забронировать тур</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Полное имя</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>

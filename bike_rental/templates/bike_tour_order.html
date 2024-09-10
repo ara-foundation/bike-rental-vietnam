@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Order Bike Tour{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Book Your Bike Tour</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="https://picsum.photos/seed/biketour{{ tour_id }}/600/400" class="img-fluid mb-3" alt="Bike Tour">
+            <h2>Tour Name: Scenic Mountain Ride {{ tour_id }}</h2>
+            <p>Experience breathtaking views and challenging trails on this exciting mountain bike tour.</p>
+            <ul class="list-unstyled">
+                <li><strong>Direction:</strong> Direction {{ tour_id }}</li>
+                <li><strong>Duration:</strong> {{ tour_id|add:1 }} days</li>
+                <li><strong>Date:</strong> {% now "Y-m-d" %}</li>
+                <li><strong>Difficulty:</strong> {{ difficulty }}</li>
+                <li><strong>Price:</strong> ${{ tour_id|add:100 }} per person</li>
+            </ul>
+            <div class="mb-3">
+                {% for theme in themes %}
+                    <span class="badge bg-secondary me-1">{{ theme }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Booking Form</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Preferred Start Date</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="participants" class="form-label">Number of Participants</label>
+                    <input type="number" class="form-control" id="participants" name="participants" min="1" max="10" required>
+                </div>
+                <div class="mb-3">
+                    <label for="comments" class="form-label">Additional Comments</label>
+                    <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Book Now</button>
+            </form>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{% url 'bike_tours' %}" class="btn btn-secondary">Back to Bike Tours</a>
+    </div>
+</div>
+{% endblock %}
