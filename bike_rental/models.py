@@ -21,10 +21,8 @@ class BikeModel(models.Model):
     transmission = models.CharField(max_length=255)
     gears = models.IntegerField(null=True, blank=True)
     displacement = models.FloatField()
-    fuel_system = models.CharField(
-        max_length=255, default="carburettor"
-    )  # Значение по умолчанию
-    tank = models.FloatField(default=0)  # Значение по умолчанию
+    fuel_system = models.CharField(max_length=255, default="carburettor")
+    tank = models.FloatField(default=0)
     clearance = models.IntegerField()
     description = models.TextField()
     bike_model_photo = models.ImageField(
@@ -41,7 +39,9 @@ class BikeModel(models.Model):
 
 
 class Bike(models.Model):
-    bike_model = models.ForeignKey(BikeModel, on_delete=models.PROTECT)
+    bike_model = models.ForeignKey(
+        BikeModel, on_delete=models.PROTECT, related_name="bikes"
+    )
     photo = models.ImageField(
         upload_to="bike_photos/", null=True, blank=True
     )  # Изменено с 'images/' на 'bike_photos/'

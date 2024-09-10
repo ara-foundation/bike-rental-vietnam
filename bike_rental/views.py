@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 
 from django.conf import settings
+from django.db.models import Count, Min
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
@@ -16,7 +17,17 @@ class BikeModelListView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        queryset = BikeModel.objects.all()
+        # Now each query set contains additional fields bikes_count, min_price
+        # and suppliers_count.
+        # These can be accessed in template like this: {{ bikemodel.bikes_count }}
+        # {{ bikemodel.min_price }} and {{ bikemodel.suppliers_count }}
+        queryset = BikeModel.objects.annotate(
+            bikes_count=Count("bikes"),  # Count of bikes associated with the BikeModel
+            min_price=Min("bikes__price_per_day"),  # Minimum price per day of
+            # associated bikes
+            suppliers_count=Count("bikes__owner", distinct=True),
+            # Count of distinct owners (suppliers)
+        )
         brand = self.request.GET.get("brand")
         transmission = self.request.GET.get("transmission")
 
