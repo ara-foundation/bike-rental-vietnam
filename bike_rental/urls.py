@@ -3,8 +3,8 @@ from .views import BikeModelListView, bikemodel_detail, bike_offer, bike_order, 
 
 urlpatterns = [
     # Существующие маршруты
-    path('', BikeModelListView.as_view(), name='bikemodel_list'),
-    path('bikemodels/', BikeModelListView.as_view(), name='bikemodel_list'),
+    path('', BikeModelListView.as_view(), name='rent_bike_main'),  # Обновите name, если необходимо
+    path('bikemodels/', BikeModelListView.as_view(), name='rent_bike_main'),
     path('bikemodel/<int:id>/', bikemodel_detail, name='bikemodel_detail'),
     path('bike/<int:id>/', bike_offer, name='bike_offer'),
     path('bike/<int:id>/order/', bike_order, name='bike_order'),

@@ -42,7 +42,7 @@
                 <div class="main-nav-content">
                     <nav class="services-nav">
                         <ul class="main-menu">
-                            <li><a href="{% url 'bikemodel_list' %}" class="{% if request.resolver_match.url_name == 'bikemodel_list' %}active{% endif %}">Bike Rental</a></li>
+                            <li><a href="{% url 'rent_bike_main' %}" class="{% if request.resolver_match.url_name == 'rent_bike_main' %}active{% endif %}">Bike Rental</a></li>
                             <li><a href="{% url 'bike_tours' %}" class="{% if request.resolver_match.url_name == 'bike_tours' %}active{% endif %}">Bike Tours</a></li>
                             <li><a href="{% url 'car_tours' %}" class="{% if request.resolver_match.url_name == 'car_tours' %}active{% endif %}">Car Tours</a></li>
                             <li><a href="{% url 'boat_tours' %}" class="{% if request.resolver_match.url_name == 'boat_tours' %}active{% endif %}">Boat Tours</a></li>
