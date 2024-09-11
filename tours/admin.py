@@ -21,11 +21,17 @@ class TourAdmin(admin.ModelAdmin):
         "start_date",
         "pick_up_time",
         "duration",
-        "cost",
+        "cost_per_person",
         "ship",
         "author",
     )
-    list_editable = ("start_date", "pick_up_time", "duration", "cost", "ship")
+    list_editable = (
+        "start_date",
+        "pick_up_time",
+        "duration",
+        "cost_per_person",
+        "ship",
+    )
     search_fields = ("name",)
     filter_horizontal = (
         "tour_photo_gallery",

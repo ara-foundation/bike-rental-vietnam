@@ -89,7 +89,7 @@ class Tour(models.Model):
     pick_up_time = models.TimeField()
     free_services = models.ManyToManyField("FreeOfChargeService", blank=True)
     additional_options = models.ManyToManyField("AdditionalOption", blank=True)
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    cost_per_person = models.DecimalField(max_digits=10, decimal_places=2)
     cost_options = models.TextField(blank=True, default="Default Cost Options")
     author = models.ForeignKey(User, on_delete=models.CASCADE)  # For roles segregation
 

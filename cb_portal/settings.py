@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-bgjgaq0+xbljigp_tkla@hnvc_a3^--869p(xbay^b_aq6urj-"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED_HOSTS = ['bike-rental-78eb34f96e21.herokuapp.com']
 ALLOWED_HOSTS = ["*"]
@@ -56,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 INTERNAL_IPS = [
@@ -141,6 +142,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "bike_rental/static",
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
