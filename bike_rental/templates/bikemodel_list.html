@@ -50,48 +50,58 @@
 {% endif %}
 
 <div class="mt-3 mb-4">
-    <h6>Available {{ bikemodels_count }} models.</h6>
+    <h6>Available {{ bikemodels_count }} 
+        {% if bikemodels_count == 1 %}model{% else %}models{% endif %}.
+    </h6>
 </div>
 
 <div class="row mt-4">
     {% for bikemodel in bikemodels %}
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <div class="card-img-top-wrapper">
+                <div class="card-img-top-wrapper position-relative">
                     {% if bikemodel.bike_model_photo %}
                         <img src="{{ bikemodel.bike_model_photo.url }}" alt="{{ bikemodel.model }}" class="card-img-top">
                     {% else %}
                         <span class="text-muted">No photo available</span>
                     {% endif %}
-                </div>
-                <div class="card-body">
-                    <div class="bike-header">
-                        <div class="brand-model">
-                            {% if bikemodel.brand.logo %}
-                                <img src="{{ bikemodel.brand.logo.url }}" alt="{{ bikemodel.brand.name }} logo" class="brand-logo">
-                            {% endif %}
-                            <h5 class="card-title">{{ bikemodel.model }}</h5>
-                        </div>
-                        <a href="{% url 'bikemodel_detail' bikemodel.id %}" class="btn btn-primary btn-sm">View Offers</a>
-                    </div>
-                    <div class="row mb-3">
-                        {% with specs=bikemodel.get_specs_with_icons %}
-                            {% for spec, data in specs.items %}
-                                {% if spec in 'transmission,displacement,fuel_system,max_speed,seat_height,fuel_consumption' %}
-                                    <div class="col-4 text-center mb-2">
-                                        <i class="bi {{ data.icon }}" title="{{ spec|title }}"></i> {{ data.value }}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        {% endwith %}
-                    </div>
                     {% with min_price=bikemodel.get_min_price_per_day %}
                         {% if min_price %}
-                            <p class="card-text price-per-day"><i class="bi bi-currency-dollar" title="Price per day"></i> from {{ min_price }} usd/day</p>
-                        {% else %}
-                            <p class="card-text price-per-day"><i class="bi bi-currency-dollar" title="Price per day"></i> N/A</p>
+                            <div class="price-overlay">
+                                <p class="mb-0"><i class="bi bi-currency-dollar" title="Price per day"></i> from: <br> {{ min_price }} usd/day</p>
+                            </div>
                         {% endif %}
                     {% endwith %}
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="brand-model-overlay">
+                        {% if bikemodel.brand.logo %}
+                            <img src="{{ bikemodel.brand.logo.url }}" alt="{{ bikemodel.brand.name }} logo" class="brand-logo">
+                        {% endif %}
+                        <h5 class="card-title">{{ bikemodel.model }}</h5>
+                    </div>
+        
+                    <div class="specs-container">
+                        <div class="row specs-row mb-2">
+                            {% with specs=bikemodel.get_specs_with_icons %}
+                                {% for spec, data in specs %}
+                                    <div class="col-4 text-center">
+                                        <i class="bi {{ data.icon }}" title="{{ spec|title }}"></i> {{ data.value }}
+                                    </div>
+                                    {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                                        </div><div class="row specs-row mb-2">
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <p class="mb-0"><i class="bi bi-bicycle"></i> 
+                            {{ bikemodel.bike_set.count }} 
+                            {% if bikemodel.bike_set.count == 1 %}offer{% else %}offers{% endif %}
+                        </p>
+                        <a href="{% url 'bikemodel_detail' bikemodel.id %}" class="btn btn-primary btn-sm">View Offer{% if bikemodel.bike_set.count != 1 %}s{% endif %}</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -2,35 +2,44 @@
     background-color: #325d88; /* Задает синий фон для всего заголовка сайта */
     padding: 0; /* Убирает внутренние отступы */
 }
+/* Отвечает за стиль основного заголовка сайта */
 
 .top-nav {
     background-color: #ffffff; /* Задает белый фон для верхней навигации */
     padding: 5px 0; /* Добавляет вертикальные отступы */
     margin: 6px 0 0 0;
 }
+/* Отвечает за стиль верхней навигационной панели */
 
 .top-nav .demo-button {
     padding: 2px 5px;
     font-size: 1.1rem;
 }
+/* Отвечает за стиль кнопки "Демо" в верхней навигации */
 
 .top-nav .login-button {
     padding: 2px 5px;
     font-size: 1.1rem;
 }
+/* Отвечает за стиль кнопки "Войти" в верхней навигации */
+
 .top-nav .language-selector-button {
     padding: 2px 5px;
     font-size: 0.9rem;
 }
+/* Отвечает за стиль кнопки выбора языка в верхней навигации */
+
 .top-nav .currency-selector {
     padding: 2px 5px;
     font-size: 0.75rem;
 }
+/* Отвечает за стиль селектора валюты в верхней навигации */
 
 .main-nav {
     background-color: #325d88; /* Задает синий фон для основной навигации */
     padding: 0; /* Убирает внутренние отступы */
 }
+/* Отвечает за стиль основной навигационной панели */
 
 .main-nav .container {
     display: flex; /* Использует flexbox для выравнивания элементов */
@@ -38,12 +47,14 @@
     align-items: stretch; /* Растягивает элементы по вертикали */
     height: 60px; /* Устанавливает фиксированную высоту */
 }
+/* Отвечает за стиль контейнера в основной навигации */
 
 .main-nav-content {
     flex-grow: 1; /* Позволяет элементу расти и занимать доступное пространство */
     display: flex; /* Использует flexbox */
     justify-content: center; /* Центрирует содержимое по горизонтали */
 }
+/* Отвечает за стиль содержимого основной навигации */
 
 .site-title {
     color: #ffffff; /* Задает белый цвет текста */
@@ -54,12 +65,14 @@
     align-items: center; /* Центрирует содержимое по вертикали */
     padding: 0 15px; /* Добавляет горизонтальные отступы */
 }
+/* Отвечает за стиль заголовка сайта */
 
 .services-nav {
     display: flex; /* Использует flexbox */
     justify-content: center; /* Центрирует содержимое по горизонтали */
     margin: 0px 110px 0 0;
 }
+/* Отвечает за стиль навигации по услугам */
 
 .main-menu {
     display: flex; /* Использует flexbox */
@@ -67,12 +80,14 @@
     margin: 0; /* Убирает внешние отступы */
     padding: 0; /* Убирает внутренние отступы */
 }
+/* Отвечает за стиль основного меню */
 
 .main-menu li {
     height: 100%;
     width: 100%; /* Каждый элемент списка занимает всю высоту */
     margin: 0; /* Добавляет горизонтальные отступы между элементами списка */
 }
+/* Отвечает за стиль элементов списка в основном меню */
 
 .main-menu a {
     color: #ffffff; /* Задает белый цвет текста */
@@ -86,17 +101,20 @@
     font-weight: bold; /* Делает текст жирным */
     white-space: nowrap; /* Предотвращает перенос текста */
 }
+/* Отвечает за стиль ссылок в основном меню */
 
 .utility-nav {
     display: flex; /* Использует flexbox */
     justify-content: space-between; /* Распределяет пространство между элементами */
     align-items: center; /* Центрирует содержимое по вертикали */
 }
+/* Отвечает за стиль вспомогательной навигации */
 
 .right-nav {
     display: flex; /* Использует flexbox */
     align-items: center; /* Центрирует содержимое по вертикали */
 }
+/* Отвечает за стиль правой части навигации */
 
 .skip-link {
     position: absolute; /* Позиционирует элемент абсолютно */
@@ -106,18 +124,21 @@
     height: 1px; /* Устанавливает минимальную высоту */
     overflow: hidden; /* Скрывает содержимое, выходящее за пределы */
 }
+/* Отвечает за стиль ссылки для пропуска навигации */
 
 .skip-link:focus {
     position: static; /* Возвращает элемент в нормальное позиционирование */
     width: auto; /* Возвращает нормальную ширину */
     height: auto; /* Возвращает нормальную высоту */
 }
+/* Отвечает за стиль ссылки для пропуска навигации при фокусе */
 
 .language-selector {
     position: relative; /* Позиционирует элемент относительно его нормального позиционирования */
     margin-left: 20px; /* Добавляет отступ слева */
     margin-right: 15px; /* Добавляет отступ справа */
 }
+/* Отвечает за стиль селектора языка */
 
 .language-selector-button {
     background: none; /* Убирает фоновую заливку */
@@ -125,16 +146,19 @@
     color: #325d88; /* Задает цвет текста */
     cursor: pointer; /* Изменяет курсор на указатель при наведении */
 }
+/* Отвечает за стиль кнопки селектора языка */
 
 .currency-selector {
     margin-right: 15px; /* Добавляет отступ справа */
 }
+/* Отвечает за стиль селектора валюты */
 
 .demo-button, .login-button {
     text-decoration: none; /* Убирает подчеркивание ссылок */
     color: #325d88; /* Задает цвет текста */
     font-weight: bold; /* Делает текст жирным */
 }
+/* Отвечает за стиль кнопок "Демо" и "Войти" */
 
 .language-dropdown {
     display: none; /* Скрывает элемент */
@@ -146,10 +170,12 @@
     padding: 10px; /* Добавляет внутренние отступы */
     list-style-type: none; /* Убирает маркеры списка */
 }
+/* Отвечает за стиль выпадающего списка языков */
 
 .language-dropdown.show {
     display: block; /* Показывает элемент */
 }
+/* Отвечает за отображение выпадающего списка языков */
 
 .site-title {
     color: #ffffff; /* Задает белый цвет текста */
@@ -157,21 +183,24 @@
     font-size: 1.5rem; /* Устанавливает размер шрифта */
     white-space: nowrap; /* Предотвращает перенос текста */
 }
-
+/* Отвечает за стиль заголовка сайта */
 
 .main-menu a.active,
 .main-menu a:hover {
     background-color: rgba(255, 255, 255, 0.2); /* Изменяет цвет фона при наведении или для активного элемента */
 }
+/* Отвечает за стиль активных и наведенных ссылок в основном меню */
 
 .card {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Добавляет плавный переход при трансформации и изменении тени */
 }
+/* Отвечает за стиль карточки */
 
 .card:hover {
     transform: scale(1.08); /* Увеличивает карточку при наведении */
     box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* Добавляет тень при наведении */
 }
+/* Отвечает за стиль карточки при наведении */
 
 .card-img-top-wrapper {
     height: 200px; /* Устанавливает фиксированную высоту */
@@ -180,18 +209,23 @@
     align-items: center; /* Центрирует содержимое по вертикали */
     justify-content: center; /* Центрирует содержимое по горизонтали */
     overflow: hidden; /* Скрывает содержимое, выходящее за пределы */
+    position: relative;
 }
+/* Отвечает за стиль обертки изображения в карточке */
 
 .card-img-top {
     max-width: 100%; /* Ограничивает максимальную ширину */
     max-height: 100%; /* Ограничивает максимальную высоту */
     object-fit: contain; /* Сохраняет пропорции изображения */
     transition: transform 0.3s ease-in-out; /* Добавляет плавный переход при трансформации */
+    border-radius: 4px;
 }
+/* Отвечает за стиль изображения в карточке */
 
 .card:hover .card-img-top {
     transform: scale(1.2); /* Увеличивает изображение при наведении на карточку */
 }
+/* Отвечает за стиль изображения в карточке при наведении */
 
 .brand-logo {
     filter: drop-shadow(3px 3px 20px rgba(0,0,0,25)); /* Добавляет тень к логотипу */
@@ -200,27 +234,48 @@
     margin-right: 10px; /* Добавляет отступ справа */
     object-fit: contain; /* Сохраняет пропорции изображения */
 }
+/* Отвечает за стиль логотипа бренда */
+
+.card-body {
+    padding-left: 16px;
+    padding-right: 16px;
+    display: flex;
+    flex-direction: column;
+}
+/* Отвечает за стиль тела карточки */
+.mt-auto {
+    margin-top: auto;
+}
 
 .card-body .row .col-4 {
-    font-size: 0.8rem; /* Устанавливает размер шрифта */
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    padding-left: 10px;
+    margin-left: 3px;
 }
+/* Отвечает за стиль колонок в теле карточки */
 
 .price-per-day {
     font-size: 1.2rem; /* Устанавливает размер шрифта */
     color: #ff8411e9; /* Задает оранжевый цвет текста */
-    text-align: center; /* Центрирует текст */
+    text-align: left; /* Центрирует текст */
     font-weight: bold; /* Делает текст жирным */
-    margin-top: 10px; /* Добавляет отступ сверху */
-    margin-bottom: 15px; /* Добавляет отступ снизу */
+    margin-top: 0px; /* Добавляет отступ сверху */
+    margin-bottom: 10px; /* Добавляет отступ снизу */
 }
+/* Отвечает за стиль цены за день */
 
 .bike-header {
     display: flex; /* Использует flexbox */
     justify-content: space-between; /* Распределяет пространство между элементами */
     align-items: center; /* Центрирует содержимое по вертикали */
-    margin-bottom: 15px; /* Добавляет отступ снизу */
-    padding: 0 10px; /* Добавляет внутренние отступы */
+    margin-bottom: 8px; /* Добавляет отступ снизу */
+    padding-left: 0px; /* Добавляет внутренние отступы */
 }
+/* Отвечает за стиль заголовка велосипеда */
 
 .brand-model {
     display: flex; /* Использует flexbox */
@@ -228,16 +283,18 @@
     flex: 1; /* Позволяет элементу расти и занимать доступное пространство */
     margin-right: 10px; /* Добавляет отступ справа */
 }
+/* Отвечает за стиль бренда и модели */
 
 .brand-logo {
     width: 35px; /* Устанавливает ширину */
     height: 35px; /* Устанавливает высоту */
     margin-right: 20px; /* Добавляет отступ справа */
 }
+/* Отвечает за стиль логотипа бренда */
 
 .card-title {
     font-family: 'Arial', sans-serif; /* Устанавливает шрифт */
-    font-size: 1.5rem; /* Устанавливает размер шрифта */
+    font-size: 1.55rem; /* Устанавливает размер шрифта */
     font-weight: bold; /* Делает текст жирным */
     color: #326388; /* Задает цвет текста */
     margin: 0; /* Убирает внешние отступы */
@@ -250,4 +307,122 @@
 .btn-sm {
     padding: 0.25rem 0.5rem; /* Добавляет внутренние отступы */
     font-size: 0.875rem; /* Устанавливает размер шрифта */
+    margin-right:  10px;
+}
+
+.specs-container {
+    background-color: #bbdee9e9;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+.specs-row {
+    margin-bottom: 0.5rem;
+    margin-left: 10px;
+}
+
+.specs-row:last-child {
+    margin-bottom: 0;
+}
+
+.card-body .specs-row .col-4 {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    text-align: left;
+    margin: 0;
+}
+
+.card-body .specs-row .col-4 i {
+    margin-right: 5px;
+}
+
+.card-img-top-wrapper {
+    height: 200px;
+    overflow: hidden;
+    margin-top: 25px;
+}
+
+.brand-model-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    /* background-color: rgba(255, 255, 255, 0.8); */
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    max-width: 80%;
+}
+
+
+.brand-model-overlay .brand-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 8px;
+}
+
+.brand-model-overlay .card-title {
+    font-size: 0.9rem;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 48px);
+    text-shadow: 3px 3px 70px rgba(0,0,0,25);
+    color: #325d88;
+    font-weight: bold;
+}
+.card-body .btn-sm {
+    margin-top: 10px;
+}
+
+.collapse {
+    transition: all 0.3s ease; 
+}
+
+.btn-link {
+    color: #326388;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.btn-link:hover {
+    color: #ff8411e9;
+}
+
+.card-body .collapse .card {
+    border: none;
+    background-color: #f8f9fa;
+    font-size: 0.8rem;
+}
+
+.card.touch-focus .description-container {
+    transform: translateY(0);
+}
+
+.card-img-top-wrapper {
+    position: relative;
+}
+
+.price-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(246, 255, 0, 0.8);
+    padding: 13px 13px;
+    border-radius: 50px;
+    font-weight: bold;
+    z-index: 1;
+    margin-right: 20px;
+    margin-top: -10px;
+    /* font-size: 1.2rem; */
+}
+
+.price-overlay p {
+    margin: 0;
+    color: #d82121;
+    font-size: 1.2rem;
 }

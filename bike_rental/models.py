@@ -15,15 +15,17 @@ class BikeModel(models.Model):
     transmission = models.CharField(max_length=255)
     gears = models.IntegerField(null=True, blank=True)
     displacement = models.FloatField()
-    fuel_system = models.CharField(max_length=255, default="carburettor")  # Значение по умолчанию
     tank = models.FloatField(default=0)  # Значение по умолчанию
-    clearance = models.IntegerField()
+    fuel_system = models.CharField(max_length=255, default="carburettor")  # Значение по умолчанию
+    max_speed = models.IntegerField(null=True, blank=True)
+    wheel_size = models.IntegerField()
     description = models.TextField()
     bike_model_photo = models.ImageField(upload_to='bike_model_photos/', null=True, blank=True)
     seat_height = models.IntegerField(null=True, blank=True)
     fuel_consumption = models.FloatField(null=True, blank=True)
     weight = models.IntegerField(null=True, blank=True)
-    max_speed = models.IntegerField(null=True, blank=True)
+    tank = models.FloatField(default=0)  # Значение по умолчанию
+    seat_height = models.IntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ['brand__name', 'model']
@@ -40,19 +42,21 @@ class BikeModel(models.Model):
         return None
 
     def get_specs_with_icons(self):
-        specs = {
-            'transmission': {'value': self.transmission, 'icon': 'bi-gear'},
-            'gears': {'value': self.gears, 'icon': 'bi-gear-fill'},
-            'displacement': {'value': f"{self.displacement} cc", 'icon': 'bi-speedometer2'},
-            'fuel_system': {'value': self.fuel_system, 'icon': 'bi-droplet'},
-            'tank': {'value': f"{self.tank} liters", 'icon': 'bi-droplet-fill'},
-            'clearance': {'value': f"{self.clearance} mm", 'icon': 'bi-arrows-expand'},
-            'seat_height': {'value': f"{self.seat_height} mm", 'icon': 'bi-person'},
-            'fuel_consumption': {'value': f"{self.fuel_consumption} l/100km", 'icon': 'bi-lightning'},
-            'weight': {'value': f"{self.weight} kg", 'icon': 'bi-box'},
-            'max_speed': {'value': f"{self.max_speed} km/h", 'icon': 'bi-speedometer'},
-        }
-        return {k: v for k, v in specs.items() if v['value'] is not None}
+        specs = [
+            ('transmission', {'value': self.transmission, 'icon': 'bi-gear'}),
+            ('displacement', {'value': f"{self.displacement} cc", 'icon': 'bi-speedometer2'}),
+            ('weight', {'value': f"{self.weight} kg", 'icon': 'bi-box'}), 
+            ('fuel_system', {'value': self.fuel_system, 'icon': 'bi-droplet'}),
+            ('max_speed', {'value': f"{self.max_speed} km/h", 'icon': 'bi-speedometer'}),
+            ('seat_height', {'value': f"{self.seat_height} mm", 'icon': 'bi-person'}),
+            ('fuel_consumption', {'value': f"{self.fuel_consumption} l/100km", 'icon': 'bi-lightning'}),
+            ('tank', {'value': f"{self.tank} liters", 'icon': 'bi-droplet-fill'}),
+            ('wheel_size', {'value': f"{self.wheel_size} mm", 'icon': 'bi-arrows-expand'}),
+             
+
+
+        ]
+        return [(k, v) for k, v in specs if v['value'] is not None][:9]
 
 
 class Bike(models.Model):
