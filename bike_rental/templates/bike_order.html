@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
-{% block title %}Заказ {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
+{% block title %}Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet"
@@ -13,21 +13,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 {% endblock %}
 
-{% block header %}Заказ {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
+{% block header %}Order {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Детали заказа</h5>
+                <h5 class="card-title">Order Details</h5>
                 <form method="post">
                     {% csrf_token %}
-                    <h6>Информация о клиенте</h6>
+                    <h6>Client Information</h6>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ client_form.name.id_for_label }}" class="form-label">
-                                    Имя
+                                    Name
                                 </label>
                                 {{ client_form.name|add_class:"form-control" }}
                             </div>
@@ -35,17 +35,17 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ client_form.contact.id_for_label }}" class="form-label">
-                                    Контакт
+                                    Contact
                                 </label>
                                 {{ client_form.contact|add_class:"form-control" }}
                             </div>
                         </div>
                     </div>
-                    <h6>Информация о заказе</h6>
+                    <h6>Order Information</h6>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="{{ order_form.start_date.id_for_label }}" class="form-label">Дата начала</label>
+                                <label for="{{ order_form.start_date.id_for_label }}" class="form-label">Start Date</label>
                                 <div class="input-group date">
                                     {{ order_form.start_date }}
                                     <span class="input-group-text" id="calendar-icon" role="button"><i
@@ -55,7 +55,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="{{ order_form.amount_bikes.id_for_label }}" class="form-label">Количество велосипедов</label>
+                                <label for="{{ order_form.amount_bikes.id_for_label }}" class="form-label">Number of Bikes</label>
                                 {{ order_form.amount_bikes|add_class:"form-control" }}
                             </div>
                         </div>
@@ -64,13 +64,13 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="{{ order_form.duration.id_for_label }}" class="form-label">
-                                    Продолжительность <span id="durationValue"></span> дней
+                                    Duration <span id="durationValue"></span> days
                                 </label>
                                 {{ order_form.duration|add_class:"form-control" }}
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3 w-100">Оформить заказ</button>
+                    <button type="submit" class="btn btn-primary mt-3 w-100">Submit Order</button>
                 </form>
             </div>
         </div>
@@ -83,22 +83,22 @@
                     style="object-fit: cover; height: 100%; width: 100%;">
                 {% else %}
                 <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
-                    <span class="text-muted">Фото недоступно</span>
+                    <span class="text-muted">No photo available</span>
                 </div>
                 {% endif %}
             </div>
             <div class="card-body">
-                <h5 class="card-title">Детали велосипеда</h5>
-                <p class="card-text">Модель: {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}</p>
-                <p class="card-text">Цена за день: ${{ bike.price_per_day }}</p>
-                <p class="card-text">Общая стоимость: $<span id="totalPrice">{{ bike.price_per_day }}</span></p>
+                <h5 class="card-title">Bike Details</h5>
+                <p class="card-text">Model: {{ bike.bike_model.brand.name }} {{ bike.bike_model.model }}</p>
+                <p class="card-text">Price per day: ${{ bike.price_per_day }}</p>
+                <p class="card-text">Total price: $<span id="totalPrice">{{ bike.price_per_day }}</span></p>
             </div>
         </div>
     </div>
 </div>
 
-<a href="{% url 'bike_offer' bike.id %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Назад к
-    предложению велосипеда</a>
+<a href="{% url 'bike_offer' bike.id %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to
+    bike offer</a>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -174,7 +174,7 @@
         if (dateValue.length === 5) {
             this.submit();
         } else {
-            alert('Пожалуйста, введите дату в формате ДД-ММ');
+            alert('Please enter the date in DD-MM format');
         }
     });
 
