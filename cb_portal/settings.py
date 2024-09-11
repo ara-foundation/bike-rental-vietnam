@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-bgjgaq0+xbljigp_tkla@hnvc_a3^--869p(xbay^b_aq6urj-"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = ['bike-rental-78eb34f96e21.herokuapp.com']
 ALLOWED_HOSTS = ["*"]
