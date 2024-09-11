@@ -341,7 +341,7 @@
 .card-img-top-wrapper {
     height: 200px;
     overflow: hidden;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 .brand-model-overlay {
@@ -354,6 +354,7 @@
     display: flex;
     align-items: center;
     max-width: 80%;
+    margin-left: 25px;
 }
 
 
@@ -425,4 +426,15 @@
     margin: 0;
     color: #d82121;
     font-size: 1.2rem;
+}
+
+#advancedFilterBtn {
+    margin-bottom: 1rem;
+}
+
+#advancedFilters {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
 }
