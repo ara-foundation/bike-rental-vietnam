@@ -18,7 +18,7 @@ class BikeModelAdmin(ImportExportModelAdmin):
     list_display = ['brand', 'model', 'transmission']
     list_filter = ['brand', 'transmission']
     search_fields = ['model', 'brand__name']
-    fields = ['brand', 'model', 'transmission', 'gears', 'displacement', 'fuel_system', 'tank', 'clearance', 'description', 'bike_model_photo']
+    fields = ['brand', 'model', 'transmission', 'gears', 'displacement', 'fuel_system', 'tank', 'wheel_size', 'description', 'bike_model_photo']
 
 class BikeAdmin(ImportExportModelAdmin):
     list_display = ['bike_model', 'amount', 'price_per_day', 'availability']

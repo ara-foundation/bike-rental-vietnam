@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'bike_rental',
     'import_export',
     'django_filters',
-    'widget_tweaks',  # Добавьте эту строку
+    'widget_tweaks',
+    'debug_toolbar'  # Добавьте эту строку
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'cb_portal.urls'
@@ -117,6 +119,7 @@ USE_I18N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -138,3 +141,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 THEME_COLOR = 'sandstone'
 CUSTOM_CSS = 'css/bikes.css'
+
+# Whitenoise settings for serving static files efficiently
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
