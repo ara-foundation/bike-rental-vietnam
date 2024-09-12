@@ -12,7 +12,7 @@ import random
 
 class BikeModelListView(ListView):
     model = BikeModel
-    template_name = 'bikemodel_list.html'
+    template_name = 'rent_bike_main.html'  # Измените это
     context_object_name = 'bikemodels'
     paginate_by = 9
 

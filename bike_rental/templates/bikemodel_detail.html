@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ bikemodel.brand.name }} {{ bikemodel.model }} - Details{% endblock %}
 
@@ -66,5 +67,5 @@
         {% endfor %}
     </div>
 
-    <a href="{% url 'bikemodel_list' %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to model list</a>
+    <a href="{% url 'rent_bike_main' %}" class="btn btn-secondary mt-4"><i class="bi bi-arrow-left me-2"></i>Back to model list</a>
 {% endblock %}
