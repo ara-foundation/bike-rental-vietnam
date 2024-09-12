@@ -8,6 +8,7 @@ from django.views.generic import ListView
 
 from .forms import ClientForm, OrderForm
 from .models import Bike, BikeBrand, BikeModel, BikeOrder
+from .utils import get_total_bikes_for_brand
 
 
 class BikeModelListView(ListView):
@@ -30,7 +31,6 @@ class BikeModelListView(ListView):
         )
         brand = self.request.GET.get("brand")
         transmission = self.request.GET.get("transmission")
-
         if brand:
             queryset = queryset.filter(brand_id=brand)
         if transmission:
@@ -40,17 +40,27 @@ class BikeModelListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["brands"] = BikeBrand.objects.all()
-        context["transmissions"] = BikeModel.objects.values_list(
-            "transmission", flat=True
+
+        # Filter brands that have at least one bike
+        context["brands"] = BikeBrand.objects.filter(
+            models__bikes__isnull=False
         ).distinct()
+
+        # Filter transmissions that have at least one associated bike
+        context["transmissions"] = (
+            Bike.objects.filter(bike_model__isnull=False)
+            .values_list("bike_model__transmission", flat=True)
+            .distinct()
+        )
 
         selected_brand_id = self.request.GET.get("brand")
         if selected_brand_id:
             context["selected_brand"] = int(selected_brand_id)
-            context["selected_brand_name"] = BikeBrand.objects.get(
-                id=selected_brand_id
-            ).name
+            bike_brand_name = BikeBrand.objects.get(id=selected_brand_id).name
+            context["selected_brand_name"] = bike_brand_name
+            context["total_bikes_for_brand"] = get_total_bikes_for_brand(
+                selected_brand_id
+            )
         else:
             context["selected_brand"] = None
 
@@ -59,6 +69,7 @@ class BikeModelListView(ListView):
             context["selected_brand_name"] = BikeBrand.objects.get(
                 id=context["selected_brand"]
             ).name
+
         context["bikemodels_count"] = self.get_queryset().count()
         return add_design_settings(context)
 
