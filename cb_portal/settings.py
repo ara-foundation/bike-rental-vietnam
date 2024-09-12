@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-bgjgaq0+xbljigp_tkla@hnvc_a3^--869p(xbay^b_aq6urj-"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED_HOSTS = ['bike-rental-78eb34f96e21.herokuapp.com']
 ALLOWED_HOSTS = ["*"]
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "widget_tweaks",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -149,8 +152,29 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "https://178faa462a6a2b94b161c642db785af6.r2.cloudflarestorage.com/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 THEME_COLOR = "sandstone"
 CUSTOM_CSS = "css/bikes.css"
+
+# Use django-storages to manage static and media files with R2
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+AWS_ACCESS_KEY_ID = config("R2_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("R2_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = config("R2_BUCKET_NAME")
+
+# Cloudflare R2 uses custom endpoints, so you need to specify it
+AWS_S3_ENDPOINT_URL = (
+    "https://178faa462a6a2b94b161c642db785af6.r2.cloudflarestorage.com"
+)
+
+# You can set these optional configurations to enhance the performance and security
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+
+AWS_LOCATION = "media/"  # If you want to separate media files from others
+AWS_DEFAULT_ACL = None  # To avoid issues with ACLs, set to None
+AWS_QUERYSTRING_AUTH = False  # Disable querystring authentication for public files
