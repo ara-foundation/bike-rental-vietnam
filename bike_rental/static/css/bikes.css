@@ -348,7 +348,6 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    /* background-color: rgba(255, 255, 255, 0.8); */
     padding: 8px;
     border-radius: 5px;
     display: flex;
@@ -419,7 +418,6 @@
     z-index: 1;
     margin-right: 20px;
     margin-top: -10px;
-    /* font-size: 1.2rem; */
 }
 
 .price-overlay p {
@@ -428,27 +426,116 @@
     font-size: 1.2rem;
 }
 
-#advancedFilterBtn {
-    margin-bottom: 1rem;
-    border-radius: 10px 10px 0px 0px;
-    border: 1px solid #000; /* Добавляем начальный цвет рамки */
-    background-color: #fff; /* Добавляем начальный цвет фона */
-    transition: all 0.3s ease; /* Добавляем плавный переход */
+
+.btn-primary {
+    background-color: #325d88;
+    border-color: #325d88;
 }
 
-#advancedFilterBtn:hover {
-    border-color: #ff0000; /* Меняем цвет рамки при наведении */
-    background-color: #f0f0f0; /* Меняем цвет фона при наведении */
-}
+.btn-primary:hover {
+    background-color: #2a4b6e;
+    border-color: #2a4b6e;
+}   
 
-#advancedFilters {
-    background-color: #c3d2e1;
+#mainFilters {
+    background-color: #e9ecef;
     padding: 1rem;
-    border-radius: 0px 5px 5px 5px;
-    border: 1px solid #325d88;
+    border-radius: 5px;
+    border: 1.5px solid #6c757d;
     margin-bottom: 20px;
 }
 
-.mb-4 {
+#advancedFilters {
+    background-color: #e9ecef;
+    padding: 1rem;
+    border-radius: 0px 0px 5px 5px;
+    border: 1.5px solid #6c757d;
+    border-top-color:#e9ecef;
+    margin-bottom: 20px;
+}
+/* Стили для расширенных фильтров */
+#advancedFilterBtn {
+    border-radius: 5px;
+    border: 1px solid #325d88;
+    background-color: #325d88;
+    transition: all 0.3s ease;
+    color: #f0f0f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#advancedFilterBtn:hover {
+    border-color: #325d88;
+    background-color: #e9ecef;
+    color: #2a4b6e;
+}
+.btn-primary {
+    background-color: #2a4b6e;
+    border-color: #325d88;
+}
+
+.btn-primary:hover {
+    color: #2a4b6e;
+    background-color: #e9ecef;
+    border-color: #2a4b6e;
+}   
+
+
+/* Корректировка отступов */
+.mb-3 {
     margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.mb-4 {
+    margin: 0 !important;
+}
+
+#mainFilters.advanced-open {
+    background-color: #e9ecef;
+    border: 1.5px solid #6c757d;
+    border-bottom-color:#e9ecef;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.slogan {
+    font-size: 1.5rem;
+    color: #325d88;
+    font-weight: bold;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+#advancedFilters.show {
+    display: block !important;
+}
+
+#advancedFilters .form-select-sm {
+    font-size: 0.875rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+#advancedFilters .form-label {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+#advancedFilters .btn-sm {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.advanced-filters-row {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.filter-item {
+    padding-right: 15px;
+    padding-left: 15px;
+    transition: width 0.3s ease;
 }
