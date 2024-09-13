@@ -52,7 +52,7 @@ lint.select = [
     "PERF", # Perflint
     "FURB", # refurb
 ]
-ignore = ["S105", "ERA001", "A002", "S308", "UP008"]
+ignore = ["S105", "ERA001", "A002", "S308", "UP008", "S311", "DTZ005"]
 lint.per-file-ignores.ignore = ["ANN101", "CPY001", "ERA001"] # annotations for self
 src = ["src", "tests"]
 preview = true

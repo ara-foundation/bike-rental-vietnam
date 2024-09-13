@@ -22,24 +22,23 @@ class BikeModel(models.Model):
     gears = models.IntegerField(null=True, blank=True)
     displacement = models.FloatField()
     tank = models.FloatField(default=0)  # Значение по умолчанию
-    fuel_system = models.CharField(max_length=255, default="carburettor")  # Значение по умолчанию
+    fuel_system = models.CharField(
+        max_length=255, default="carburettor"
+    )  # Значение по умолчанию
     max_speed = models.IntegerField(null=True, blank=True)
     wheel_size = models.IntegerField()
     description = models.TextField()
-    bike_model_photo = models.ImageField(upload_to='bike_model_photos/', null=True, blank=True)
+    bike_model_photo = models.ImageField(
+        upload_to="bike_model_photos/", null=True, blank=True
+    )
     seat_height = models.IntegerField(null=True, blank=True)
     fuel_consumption = models.FloatField(null=True, blank=True)
     weight = models.IntegerField(null=True, blank=True)
-    tank = models.FloatField(default=0)  # Значение по умолчанию
-    seat_height = models.IntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ["brand__name", "model"]
         verbose_name = "Bike Model"
         verbose_name_plural = "Bike Models"
-        ordering = ['brand__name', 'model']
-        verbose_name = 'Bike Model'
-        verbose_name_plural = 'Bike Models'
 
     def __str__(self):
         return f"{self.brand.name} {self.model}"
@@ -52,21 +51,30 @@ class BikeModel(models.Model):
 
     def get_specs_with_icons(self):
         specs = [
-            ('transmission', {'value': self.transmission, 'icon': 'bi-gear'}),
-            ('gears', {'value': f"{self.gears} gears", 'icon': 'bi-gear'}),
-            ('displacement', {'value': f"{self.displacement} cc", 'icon': 'bi-speedometer2'}),
-            ('weight', {'value': f"{self.weight} kg", 'icon': 'bi-box'}),
-            ('fuel_system', {'value': self.fuel_system, 'icon': 'bi-droplet'}),
-            ('max_speed', {'value': f"{self.max_speed} km/h", 'icon': 'bi-speedometer'}),
-            ('seat_height', {'value': f"{self.seat_height} mm", 'icon': 'bi-person'}),
-            ('fuel_consumption', {'value': f"{self.fuel_consumption} l/100km", 'icon': 'bi-lightning'}),
-            ('tank', {'value': f"{self.tank} liters", 'icon': 'bi-droplet-fill'}),
-            ('wheel_size', {'value': f"{self.wheel_size} mm", 'icon': 'bi-arrows-expand'}),
-
-
-
+            ("transmission", {"value": self.transmission, "icon": "bi-gear"}),
+            ("gears", {"value": f"{self.gears} gears", "icon": "bi-gear"}),
+            (
+                "displacement",
+                {"value": f"{self.displacement} cc", "icon": "bi-speedometer2"},
+            ),
+            ("weight", {"value": f"{self.weight} kg", "icon": "bi-box"}),
+            ("fuel_system", {"value": self.fuel_system, "icon": "bi-droplet"}),
+            (
+                "max_speed",
+                {"value": f"{self.max_speed} km/h", "icon": "bi-speedometer"},
+            ),
+            ("seat_height", {"value": f"{self.seat_height} mm", "icon": "bi-person"}),
+            (
+                "fuel_consumption",
+                {"value": f"{self.fuel_consumption} l/100km", "icon": "bi-lightning"},
+            ),
+            ("tank", {"value": f"{self.tank} liters", "icon": "bi-droplet-fill"}),
+            (
+                "wheel_size",
+                {"value": f"{self.wheel_size} mm", "icon": "bi-arrows-expand"},
+            ),
         ]
-        return [(k, v) for k, v in specs if v['value'] is not None][:9]
+        return [(k, v) for k, v in specs if v["value"] is not None][:9]
 
 
 class Bike(models.Model):
@@ -92,11 +100,15 @@ class Bike(models.Model):
         if duration >= 30:
             months = duration // 30
             remaining_days = duration % 30
-            price = (months * self.price_per_month) + (remaining_days * (self.price_per_day))
+            price = (months * self.price_per_month) + (
+                remaining_days * (self.price_per_day)
+            )
         elif duration >= 7:
             weeks = duration // 7
             remaining_days = duration % 7
-            price = (weeks * self.price_per_week) + (remaining_days * self.price_per_day)
+            price = (weeks * self.price_per_week) + (
+                remaining_days * self.price_per_day
+            )
         else:
             price = duration * self.price_per_day
         return price
