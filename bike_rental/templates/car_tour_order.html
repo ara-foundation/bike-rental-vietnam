@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Order Car Tour{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Book Your Car Tour</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <img src="https://picsum.photos/seed/cartour/600/400" class="card-img-top" alt="Car Tour">
+                <div class="card-body">
+                    <h5 class="card-title">Tour Name: Scenic Road Trip</h5>
+                    <p class="card-text">Experience breathtaking views and comfortable travel on this exciting car tour.</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Duration:</strong> 7 days</li>
+                        <li class="list-group-item"><strong>Price:</strong> $799 per person</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Preferred Start Date</label>
+                    <input type="date" class="form-control" id="date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="participants" class="form-label">Number of Participants</label>
+                    <input type="number" class="form-control" id="participants" min="1" max="10" required>
+                </div>
+                <div class="mb-3">
+                    <label for="comments" class="form-label">Additional Comments</label>
+                    <textarea class="form-control" id="comments" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Book Now</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Thank you for booking! We will contact you soon to confirm your reservation.');
+        });
+    });
+</script>
+{% endblock %}

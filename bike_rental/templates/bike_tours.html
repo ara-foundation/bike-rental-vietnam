@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Bike Tours{% endblock %}
+
+{% block header %}Bike Tours{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Available Bike Tours</h2>
+        <form method="get" class="mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="direction" class="form-label">Direction</label>
+                    <select name="direction" id="direction" class="form-select">
+                        <option value="">All Directions</option>
+                        {% for direction in directions %}
+                            <option value="{{ direction }}" {% if direction == selected_direction %}selected{% endif %}>{{ direction }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="duration" class="form-label">Duration</label>
+                    <select name="duration" id="duration" class="form-select">
+                        <option value="">All Durations</option>
+                        {% for duration in durations %}
+                            <option value="{{ duration }}" {% if duration == selected_duration %}selected{% endif %}>{{ duration }} days</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="tour_date" class="form-label">Tour Date</label>
+                    <input type="date" name="tour_date" id="tour_date" class="form-control" value="{{ selected_date }}">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label class="form-label">Tour Themes</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="fishing" id="fishing" {% if 'fishing' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="fishing">Fishing</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="culture" id="culture" {% if 'culture' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="culture">Culture</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="history" id="history" {% if 'history' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="history">History</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="themes" value="sport" id="sport" {% if 'sport' in selected_themes %}checked{% endif %}>
+                        <label class="form-check-label" for="sport">Sport</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-4">
+    {% for i in page_obj %}
+        {% if forloop.counter0|divisibleby:2 %}
+            <div class="row">
+        {% endif %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
+                    <img src="https://picsum.photos/seed/bike{{ i }}/400/300" alt="Bike Tour {{ i }}" class="card-img-top" style="object-fit: cover; height: 100%; width: 100%;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Bike Tour {{ i }}</h5>
+                    <p class="card-text">This is a sample description for Bike Tour {{ i }}. It's an exciting bike tour with beautiful scenery and challenging routes.</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Direction:</strong> Direction {{ i }}</li>
+                        <li><strong>Duration:</strong> {{ i|add:1 }} days</li>
+                        <li><strong>Date:</strong> {% now "Y-m-d" %}</li>
+                        <li><strong>Price:</strong> ${{ i|add:100 }}</li>
+                    </ul>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% for theme in "ABC"|make_list %}
+                                <span class="badge bg-secondary me-1">Theme {{ theme }}</span>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'bike_tour_order' tour_id=i %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 or forloop.last %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    <p class="text-center mt-2">Showing {{ paginate_by }} tours per page</p>
+{% endif %}
+
+<div class="row">
+    <div class="col-12">
+        <p>Here you will find our exciting bike tours. Coming soon!</p>
+    </div>
+</div>
+{% endblock %}

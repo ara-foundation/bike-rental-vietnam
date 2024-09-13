@@ -18,25 +18,21 @@ class OrderForm(forms.ModelForm):
     )
 
     amount_bikes = forms.ChoiceField(
-        choices=[
-            (i, str(i)) for i in range(1, 6)
-        ],  # Create a list of choices from 1 to 4
-        widget=forms.Select(attrs={"class": "form-control"}),
+        choices=[(i, str(i)) for i in range(1, 6)],  # Create a list of choices from 1 to 4
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     duration = forms.IntegerField(
-        widget=forms.NumberInput(
-            attrs={
-                "type": "range",
-                "class": "form-range",
-                "min": "1",
-                "max": "30",
-                "step": "1",
-                "id": "customRange3",
-                "value": "1",  # Adding default value
-                "oninput": 'this.style.setProperty("--value", this.value)',
-            }
-        )
+        widget=forms.NumberInput(attrs={
+            'type': 'range',
+            'class': 'form-range',
+            'min': '1',
+            'max': '30',
+            'step': '1',
+            'id': 'customRange3',
+            'value': '1',  # Adding default value
+            'oninput': 'this.style.setProperty("--value", this.value)'
+        })
     )
 
     class Meta:

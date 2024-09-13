@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Bike Tour Order Confirmation{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Bike Tour Order Confirmation</h1>
+    <div class="alert alert-success" role="alert">
+        Thank you for booking your bike tour! Your reservation has been received.
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Tour Details</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Tour Name:</strong> Scenic Mountain Ride {{ tour_id }}</li>
+                <li class="list-group-item"><strong>Direction:</strong> Direction {{ tour_id }}</li>
+                <li class="list-group-item"><strong>Duration:</strong> {{ tour_id|add:1 }} days</li>
+                <li class="list-group-item"><strong>Date:</strong> {{ booking_date }}</li>
+                <li class="list-group-item"><strong>Difficulty:</strong> {{ difficulty }}</li>
+                <li class="list-group-item"><strong>Price:</strong> ${{ tour_id|add:100 }} per person</li>
+                <li class="list-group-item"><strong>Number of Participants:</strong> {{ participants }}</li>
+            </ul>
+        </div>
+    </div>
+    <a href="{% url 'bike_tours' %}" class="btn btn-primary">Back to Bike Tours</a>
+</div>
+{% endblock %}

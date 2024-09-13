@@ -1,38 +1,27 @@
+from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 
 from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client
+from .models import Bike, BikeModel, BikeBrand, Client, Order
 
-
-class BikeBrandAdmin(admin.ModelAdmin):
-    list_display = ["name", "logo_preview"]
-    readonly_fields = ["logo_preview"]
+class BikeBrandAdmin(ImportExportModelAdmin):
+    list_display = ['name', 'logo_preview']
+    readonly_fields = ['logo_preview']
 
     def logo_preview(self, obj):
         if obj.logo:
             return mark_safe(f'<img src="{obj.logo.url}" width="100" height="100" />')
         return "No logo"
 
-    logo_preview.short_description = "Logo preview"
+    logo_preview.short_description = 'Logo preview'
 
-
-class BikeModelAdmin(admin.ModelAdmin):
-    list_display = ["brand", "model", "transmission"]
-    list_filter = ["brand", "transmission"]
-    search_fields = ["model", "brand__name"]
-    fields = [
-        "brand",
-        "model",
-        "transmission",
-        "gears",
-        "displacement",
-        "fuel_system",
-        "tank",
-        "clearance",
-        "description",
-        "bike_model_photo",
-    ]
+class BikeModelAdmin(ImportExportModelAdmin):
+    list_display = ['brand', 'model', 'transmission']
+    list_filter = ['brand', 'transmission']
+    search_fields = ['model', 'brand__name']
+    fields = ['brand', 'model', 'transmission', 'gears', 'displacement', 'fuel_system', 'tank', 'wheel_size', 'description', 'bike_model_photo']
 
 
 @admin.register(Bike)

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +13,46 @@
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <h1 class="custom-header">{% block header %}{% endblock %}</h1>
+        <div class="top-nav">
+            <div class="container">
+                <nav class="utility-nav">
+                    <a href="#" class="demo-button">Demo</a>
+                    <div class="right-nav">
+                        <div class="language-selector">
+                            <button class="language-selector-button" aria-expanded="false" aria-controls="language-dropdown">
+                                <i class="bi bi-globe"></i>
+                                <span>English</span>
+                            </button>
+                            <ul id="language-dropdown" class="language-dropdown">
+                                <li><a href="#" lang="en">English</a></li>
+                                <li><a href="#" lang="vi">Tiếng Việt</a></li>
+                            </ul>
+                        </div>
+                        <button class="currency-selector">
+                            <i class="bi bi-currency-exchange"></i>
+                        </button>
+                        <a href="#" class="login-button">Login</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="main-nav">
+            <div class="container">
+                <h1 class="site-title">{% block header %}{% endblock %}</h1>
+                <div class="main-nav-content">
+                    <nav class="services-nav">
+                        <ul class="main-menu">
+                            <li><a href="{% url 'bike_rental' %}" class="{% if request.resolver_match.url_name == 'bike_rental' %}active{% endif %}">Bike Rental</a></li>
+                            <li><a href="{% url 'bike_tours' %}" class="{% if request.resolver_match.url_name == 'bike_tours' %}active{% endif %}">Bike Tours</a></li>
+                            <li><a href="{% url 'car_tours' %}" class="{% if request.resolver_match.url_name == 'car_tours' %}active{% endif %}">Car Tours</a></li>
+                            <li><a href="{% url 'boat_tours' %}" class="{% if request.resolver_match.url_name == 'boat_tours' %}active{% endif %}">Boat Tours</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
     </header>
+                       
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
