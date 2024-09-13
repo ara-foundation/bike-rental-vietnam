@@ -430,11 +430,25 @@
 
 #advancedFilterBtn {
     margin-bottom: 1rem;
+    border-radius: 10px 10px 0px 0px;
+    border: 1px solid #000; /* Добавляем начальный цвет рамки */
+    background-color: #fff; /* Добавляем начальный цвет фона */
+    transition: all 0.3s ease; /* Добавляем плавный переход */
+}
+
+#advancedFilterBtn:hover {
+    border-color: #ff0000; /* Меняем цвет рамки при наведении */
+    background-color: #f0f0f0; /* Меняем цвет фона при наведении */
 }
 
 #advancedFilters {
-    background-color: #f8f9fa;
+    background-color: #c3d2e1;
     padding: 1rem;
-    border-radius: 0.25rem;
-    margin-bottom: 1rem;
+    border-radius: 0px 5px 5px 5px;
+    border: 1px solid #325d88;
+    margin-bottom: 20px;
+}
+
+.mb-4 {
+    margin-bottom: 0 !important;
 }
