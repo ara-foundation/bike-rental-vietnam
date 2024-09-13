@@ -11,6 +11,19 @@ from django.conf import settings
 import random
 from django.db.models import F
 
+def bike_rental_view(request):
+    # ... существующий код ...
+    context = {
+        # ... существующий контекст ...
+        'selected_transmission': request.GET.get('transmission', ''),
+        'selected_gears': request.GET.get('gears', ''),
+        'selected_fuel_system': request.GET.get('fuel_system', ''),
+        'selected_displacement': request.GET.get('displacement', ''),
+        'selected_wheel_size': request.GET.get('wheel_size', ''),
+        'selected_weight': request.GET.get('weight', ''),
+    }
+    return render(request, 'bike_rental.html', context)
+
 class BikeModelListView(ListView):
     model = BikeModel
     template_name = 'bike_rental.html'  # Измените это
