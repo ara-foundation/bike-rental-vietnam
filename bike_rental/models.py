@@ -43,11 +43,11 @@ class BikeModel(models.Model):
     def __str__(self):
         return f"{self.brand.name} {self.model}"
 
-    def get_min_price_per_day(self):
-        bikes = self.bike_set.all()
-        if bikes:
-            return min(bike.price_per_day for bike in bikes)
-        return None
+    # def get_min_price_per_day(self):
+    #     bikes = self.bike_set.all()
+    #     if bikes:
+    #         return min(bike.price_per_day for bike in bikes)
+    #     return None
 
     def get_specs_with_icons(self):
         specs = [
