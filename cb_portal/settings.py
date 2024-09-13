@@ -152,7 +152,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = "https://pub-c58103b78dd04bc282f900e9e53296a3.r2.dev/media/"
+MEDIA_URL = f"{config("AWS_S3_ENDPOINT_URL")}/media/"
 # MEDIA_ROOT = BASE_DIR / "media"
 
 THEME_COLOR = "sandstone"
@@ -166,7 +166,7 @@ AWS_SECRET_ACCESS_KEY = config("R2_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = config("R2_BUCKET_NAME")
 
 # Cloudflare R2 uses custom endpoints, so you need to specify it
-AWS_S3_ENDPOINT_URL = "https://pub-c58103b78dd04bc282f900e9e53296a3.r2.dev"
+AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL")
 
 # You can set these optional configurations to enhance the performance and security
 AWS_S3_OBJECT_PARAMETERS = {
