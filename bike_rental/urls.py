@@ -1,11 +1,11 @@
 from django.urls import path
-from .views import BikeModelListView, bikemodel_detail, bike_offer, bike_order, order_confirmation, bike_tours, car_tours, boat_tours, bike_tour_order,bike_tour
+from .views import BikeModelListView, bike_rental_offers, bike_order, bike_offer, order_confirmation, bike_tours, car_tours, boat_tours, bike_tour_order,bike_tour
 
 urlpatterns = [
     # Существующие маршруты
-    path('', BikeModelListView.as_view(), name='rent_bike_main'),  # Обновите name, если необходимо
-    path('bikemodels/', BikeModelListView.as_view(), name='rent_bike_main'),
-    path('bikemodel/<int:id>/', bikemodel_detail, name='bikemodel_detail'),
+    path('', BikeModelListView.as_view(), name='bike_rental'),  # Обновите name, если необходимо
+    path('bike_rental/', BikeModelListView.as_view(), name='bike_rental'),
+    path('bike_rental_offers/<str:brand>/<int:id>/', bike_rental_offers, name='bike_rental_offers'),
     path('bike/<int:id>/', bike_offer, name='bike_offer'),
     path('bike/<int:id>/order/', bike_order, name='bike_order'),
     path('order/<int:order_id>/confirmation/', order_confirmation, name='order_confirmation'),
@@ -19,4 +19,3 @@ urlpatterns = [
 # from django.conf.urls.static import static
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

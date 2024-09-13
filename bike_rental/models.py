@@ -44,6 +44,7 @@ class BikeModel(models.Model):
     def get_specs_with_icons(self):
         specs = [
             ('transmission', {'value': self.transmission, 'icon': 'bi-gear'}),
+            ('gears', {'value': f"{self.gears} gears", 'icon': 'bi-gear'}),
             ('displacement', {'value': f"{self.displacement} cc", 'icon': 'bi-speedometer2'}),
             ('weight', {'value': f"{self.weight} kg", 'icon': 'bi-box'}), 
             ('fuel_system', {'value': self.fuel_system, 'icon': 'bi-droplet'}),

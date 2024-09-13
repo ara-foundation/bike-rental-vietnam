@@ -9,11 +9,12 @@ from django.views.generic import ListView
 from datetime import datetime
 from django.conf import settings
 import random
+from django.db.models import F
 
 class BikeModelListView(ListView):
     model = BikeModel
-    template_name = 'rent_bike_main.html'  # Измените это
-    context_object_name = 'bikemodels'
+    template_name = 'bike_rental.html'  # Измените это
+    context_object_name = 'bike_rental'
     paginate_by = 9
 
     def get_queryset(self):
@@ -47,15 +48,40 @@ class BikeModelListView(ListView):
         context['selected_transmission'] = self.request.GET.get('transmission')
         if context['selected_brand']:
             context['selected_brand_name'] = BikeBrand.objects.get(id=context['selected_brand']).name
-        context['bikemodels_count'] = self.get_queryset().count()
+        context['bike_rental_count'] = self.get_queryset().count()
+        
+        gears = BikeModel.objects.filter(transmission__in=['semi-auto', 'manual']).values_list('gears', flat=True).distinct().order_by('gears')
+        fuel_systems = BikeModel.objects.values_list('fuel_system', flat=True).distinct().order_by('fuel_system')
+        displacements = BikeModel.objects.values_list('displacement', flat=True).distinct().order_by('displacement')
+        wheel_sizes = BikeModel.objects.values_list('wheel_size', flat=True).distinct().order_by('wheel_size')
+        weights = BikeModel.objects.values_list('weight', flat=True).distinct().order_by('weight')
+        
+        context['gears'] = gears
+        context['fuel_systems'] = fuel_systems
+        context['displacements'] = displacements
+        context['wheel_sizes'] = wheel_sizes
+        context['weights'] = weights
+        
+        selected_gears = self.request.GET.get('gears')
+        selected_fuel_system = self.request.GET.get('fuel_system')
+        selected_displacement = self.request.GET.get('displacement')
+        selected_wheel_size = self.request.GET.get('wheel_size')
+        selected_weight = self.request.GET.get('weight')
+        
+        context['selected_gears'] = selected_gears
+        context['selected_fuel_system'] = selected_fuel_system
+        context['selected_displacement'] = selected_displacement
+        context['selected_wheel_size'] = selected_wheel_size
+        context['selected_weight'] = selected_weight
+        
         return add_design_settings(context)
 
-def bikemodel_detail(request, id):
-    bikemodel = get_object_or_404(BikeModel, id=id)
+def bike_rental_offers(request, brand, id):
+    bikemodel = get_object_or_404(BikeModel, brand__name=brand, id=id)
     bikes = Bike.objects.filter(bike_model=bikemodel)
     context = {'bikemodel': bikemodel, 'bikes': bikes}
     context = add_design_settings(context)
-    return render(request, 'bikemodel_detail.html', context)
+    return render(request, 'bike_rental_offers.html', context)
 
 def bike_offer(request, id):
     bike = get_object_or_404(Bike, id=id)
