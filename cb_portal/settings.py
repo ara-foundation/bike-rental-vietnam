@@ -152,7 +152,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = f"{config("AWS_S3_ENDPOINT_URL")}/media/"
+MEDIA_URL = config("AWS_S3_ENDPOINT_URL") + "/media/"
 # MEDIA_ROOT = BASE_DIR / "media"
 
 THEME_COLOR = "sandstone"
