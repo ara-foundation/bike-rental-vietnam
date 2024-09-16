@@ -16,6 +16,10 @@ class BikeBrand(models.Model):
 class BikeType(models.Model):
     type = models.CharField(max_length=100, unique=True)
     image = models.ImageField(upload_to='bike_types/', null=True, blank=True)
+    order = models.IntegerField(default=0)  # Добавьте это поле
+
+    class Meta:
+        ordering = ['-order']  # Это обеспечит сортировку по умолчанию
 
     def __str__(self):
         return self.type

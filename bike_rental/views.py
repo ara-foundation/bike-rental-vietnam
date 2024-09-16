@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 
-# from django_filters.views import FilterView
+from django_filters.views import FilterView
 from django.core.paginator import Paginator
 from django.db.models import Count, Min, Q, Value
 from django.db.models.functions import Concat
@@ -77,6 +77,7 @@ class BikeModelListView(ListView):
             queryset = queryset.filter(ride_purposes__id=ride_purpose)
         
         return queryset
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -166,7 +167,7 @@ class BikeModelListView(ListView):
         if search_query:
             context['applied_filters']['search'] = search_query
 
-        context['bike_types'] = BikeType.objects.all()
+        context['bike_types'] = BikeType.objects.all().order_by('-id')
         context['ride_purposes'] = RidePurpose.objects.all()
 
         return add_design_settings(context)
@@ -338,21 +339,3 @@ def autocomplete(request):
     
     results = list(brands) + list(models) + list(brand_models)
     return JsonResponse(results, safe=False)
-
-
-from django.http import JsonResponse
-from .models import BikeBrand, BikeModel
-
-def autocomplete(request):
-    query = request.GET.get('term', '')
-    brands = BikeBrand.objects.filter(name__icontains=query).values_list('name', flat=True)
-    models = BikeModel.objects.filter(model__icontains=query).values_list('model', flat=True)
-    brand_models = BikeModel.objects.filter(
-        Q(brand__name__icontains=query) | Q(model__icontains=query)
-    ).annotate(
-        full_name=Concat('brand__name', Value(' '), 'model')
-    ).values_list('full_name', flat=True)
-    
-    results = list(brands) + list(models) + list(brand_models)
-    return JsonResponse(results, safe=False)
-

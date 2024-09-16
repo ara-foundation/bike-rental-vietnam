@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
+from import_export import resources
 
 from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType, RidePurpose
+from .resources import BikeModelResource
 
 
 class BikeBrandAdmin(ImportExportModelAdmin):
@@ -18,6 +20,7 @@ class BikeBrandAdmin(ImportExportModelAdmin):
 
 
 class BikeModelAdmin(ImportExportModelAdmin):
+    resource_class = BikeModelResource
     list_display = ["brand", "model", "transmission"]
     list_filter = ["brand", "transmission", "ride_purposes"]
     search_fields = ["model", "brand__name"]
@@ -90,5 +93,25 @@ admin.site.register(BikeModel, BikeModelAdmin)
 admin.site.register(BikeBrand, BikeBrandAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(BikeOrder, OrderAdmin)
-admin.site.register(BikeType)
-admin.site.register(RidePurpose)
+
+# Создаем ресурсы для импорта/экспорта
+class BikeTypeResource(resources.ModelResource):
+    class Meta:
+        model = BikeType
+
+class RidePurposeResource(resources.ModelResource):
+    class Meta:
+        model = RidePurpose
+
+# Изменяем админ-классы
+class BikeTypeAdmin(ImportExportModelAdmin):
+    resource_class = BikeTypeResource
+    list_display = ['type', 'order']
+    list_editable = ['order']
+
+class RidePurposeAdmin(ImportExportModelAdmin):
+    resource_class = RidePurposeResource
+
+# Регистрируем админ-классы
+admin.site.register(BikeType, BikeTypeAdmin)
+admin.site.register(RidePurpose, RidePurposeAdmin)
