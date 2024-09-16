@@ -554,3 +554,24 @@
 .type-filter-item img {
     border-radius: 5px;
 }
+
+.ride-purpose-filter-item {
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.ride-purpose-filter-item:hover {
+    transform: scale(1.05);
+}
+
+.ride-purpose-filter-item.selected {
+    border-color: #325d88;
+    background-color: rgba(50, 93, 136, 0.1);
+}
+
+.ride-purpose-filter-item img {
+    border-radius: 5px;
+}

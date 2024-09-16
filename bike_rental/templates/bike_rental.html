@@ -23,6 +23,20 @@
     </div>
 </div>
 
+<div id="ridePurposeFilters" class="mb-4">
+    <h5 class="mb-3">What type of ride are you planning?</h5>
+    <div class="row">
+        {% for ride_purpose in ride_purposes %}
+            <div class="col-md-4 mb-3">
+                <div class="ride-purpose-filter-item" data-purpose="{{ ride_purpose.id }}">
+                    <img src="{{ ride_purpose.image.url }}" alt="{{ ride_purpose.name }}" class="img-fluid">
+                    <p class="text-center mt-2">{{ ride_purpose.name }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
 <div id="mainFilters" class="mb-4">
     <form id="filterForm" method="get">
         <div class="row">
@@ -223,6 +237,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterForm = document.getElementById('filterForm');
+    const typeFilterItems = document.querySelectorAll('.type-filter-item');
+    const ridePurposeFilterItems = document.querySelectorAll('.ride-purpose-filter-item');
     
     // Функция для удаления фильтра
     function removeFilter(filter) {
@@ -231,6 +247,34 @@ document.addEventListener('DOMContentLoaded', function() {
             element.value = '';
         }
         filterForm.submit();
+    // Добавляем скрытые поля для типа мотоцикла и цели поездки в форму
+    const typeInput = document.createElement('input');
+    typeInput.type = 'hidden';
+    typeInput.name = 'bike_type';
+    typeInput.id = 'bike_type';
+    filterForm.appendChild(typeInput);
+
+    const purposeInput = document.createElement('input');
+    purposeInput.type = 'hidden';
+    purposeInput.name = 'ride_purpose';
+    purposeInput.id = 'ride_purpose';
+    filterForm.appendChild(purposeInput);
+    
+    function handleFilterClick(items, input) {
+        items.forEach(item => {
+            item.addEventListener('click', function() {
+                const value = this.dataset.type || this.dataset.purpose;
+                if (input.value === value) {
+                    input.value = '';
+                    this.classList.remove('selected');
+                } else {
+                    input.value = value;
+                    items.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                }
+                filterForm.submit();
+            });
+        });
     }
 
     // Добавляем обработчики событий для кнопок удаления фильтров
@@ -240,6 +284,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const filter = this.getAttribute('data-filter');
             removeFilter(filter);
         });
+
+    handleFilterClick(typeFilterItems, typeInput);
+    handleFilterClick(ridePurposeFilterItems, purposeInput);
+    
+    // Выделяем выбранные фильтры при загрузке страницы
+    [typeInput, purposeInput].forEach(input => {
+        const selectedValue = input.value;
+        if (selectedValue) {
+            const selector = input.name === 'bike_type' ? '.type-filter-item' : '.ride-purpose-filter-item';
+            const selectedItem = document.querySelector(`${selector}[data-${input.name.replace('_', '-')}="${selectedValue}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('selected');
+            }
+        }
     });
 });
 </script>
@@ -258,43 +316,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .appendTo(ul);
         };
     });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const filterForm = document.getElementById('filterForm');
-    const typeFilterItems = document.querySelectorAll('.type-filter-item');
-    
-    // Добавляем скрытое поле для типа мотоцикла в форму
-    const typeInput = document.createElement('input');
-    typeInput.type = 'hidden';
-    typeInput.name = 'bike_type';
-    typeInput.id = 'bike_type';
-    filterForm.appendChild(typeInput);
-    
-    typeFilterItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const type = this.dataset.type;
-            if (typeInput.value === type) {
-                typeInput.value = '';
-                this.classList.remove('selected');
-            } else {
-                typeInput.value = type;
-                typeFilterItems.forEach(i => i.classList.remove('selected'));
-                this.classList.add('selected');
-            }
-            filterForm.submit();
-        });
-    });
-    
-    // Выделяем выбранный тип при загрузке страницы
-    const selectedType = typeInput.value;
-    if (selectedType) {
-        const selectedItem = document.querySelector(`.type-filter-item[data-type="${selectedType}"]`);
-        if (selectedItem) {
-            selectedItem.classList.add('selected');
-        }
-    }
-});
 </script>
 {% endblock %}
 
