@@ -13,6 +13,14 @@ class BikeBrand(models.Model):
         return self.name
 
 
+class BikeType(models.Model):
+    type = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to='bike_types/', null=True, blank=True)
+
+    def __str__(self):
+        return self.type
+
+
 class BikeModel(models.Model):
     brand = models.ForeignKey(
         BikeBrand, on_delete=models.PROTECT, related_name="models"
@@ -34,6 +42,7 @@ class BikeModel(models.Model):
     seat_height = models.IntegerField(null=True, blank=True)
     fuel_consumption = models.FloatField(null=True, blank=True)
     weight = models.IntegerField(null=True, blank=True)
+    bike_type = models.ForeignKey(BikeType, on_delete=models.PROTECT, null=True, blank=True, related_name='bike_models')
 
     class Meta:
         ordering = ["brand__name", "model"]

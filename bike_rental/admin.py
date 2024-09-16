@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client
+from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType
 
 
 class BikeBrandAdmin(ImportExportModelAdmin):
@@ -32,6 +32,7 @@ class BikeModelAdmin(ImportExportModelAdmin):
         "wheel_size",
         "description",
         "bike_model_photo",
+        "bike_type",
     ]
 
 
@@ -87,3 +88,4 @@ admin.site.register(BikeModel, BikeModelAdmin)
 admin.site.register(BikeBrand, BikeBrandAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(BikeOrder, OrderAdmin)
+admin.site.register(BikeType)
