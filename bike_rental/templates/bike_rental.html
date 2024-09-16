@@ -9,6 +9,20 @@
     <h2 class="slogan">Get the Ride You Deserve <br> Thousands of Motorcycles / Unbeatable Prices / Official Rental Providers Only!</h2>
 </div>
 
+<div id="typeFilters" class="mb-4">
+    <h5 class="mb-3">Choose your stile:</h5>
+    <div class="row">
+        {% for bike_type in bike_types %}
+            <div class="col-md-3 mb-3">
+                <div class="type-filter-item" data-type="{{ bike_type.id }}">
+                    <img src="{{ bike_type.image.url }}" alt="{{ bike_type.type }}" class="img-fluid">
+                    <p class="text-center mt-2">{{ bike_type.type }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
 <div id="mainFilters" class="mb-4">
     <form id="filterForm" method="get">
         <div class="row">
@@ -244,6 +258,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 .appendTo(ul);
         };
     });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('filterForm');
+    const typeFilterItems = document.querySelectorAll('.type-filter-item');
+    
+    // Добавляем скрытое поле для типа мотоцикла в форму
+    const typeInput = document.createElement('input');
+    typeInput.type = 'hidden';
+    typeInput.name = 'bike_type';
+    typeInput.id = 'bike_type';
+    filterForm.appendChild(typeInput);
+    
+    typeFilterItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const type = this.dataset.type;
+            if (typeInput.value === type) {
+                typeInput.value = '';
+                this.classList.remove('selected');
+            } else {
+                typeInput.value = type;
+                typeFilterItems.forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            }
+            filterForm.submit();
+        });
+    });
+    
+    // Выделяем выбранный тип при загрузке страницы
+    const selectedType = typeInput.value;
+    if (selectedType) {
+        const selectedItem = document.querySelector(`.type-filter-item[data-type="${selectedType}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+        }
+    }
+});
 </script>
 {% endblock %}
 

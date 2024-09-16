@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.views.generic import ListView
 from django.http import JsonResponse
 from .forms import ClientForm, OrderForm
-from .models import Bike, BikeBrand, BikeModel, BikeOrder
+from .models import Bike, BikeBrand, BikeModel, BikeOrder, BikeType
 from .utils import get_total_bikes_for_brand
 
 
@@ -47,7 +47,7 @@ class BikeModelListView(ListView):
         
         for field in filter_fields:
             value = self.request.GET.get(field)
-            if value:
+            if value and value != 'None':
                 if field == 'brand':
                     filters['brand_id'] = value
                 else:
@@ -67,6 +67,10 @@ class BikeModelListView(ListView):
                 queryset = queryset.filter(
                     Q(brand__name__icontains=search_query) | Q(model__icontains=search_query)
                 )
+        
+        bike_type = self.request.GET.get('bike_type')
+        if bike_type:
+            queryset = queryset.filter(bike_type_id=bike_type)
         
         return queryset
 
@@ -157,6 +161,8 @@ class BikeModelListView(ListView):
         search_query = self.request.GET.get('search', '')
         if search_query:
             context['applied_filters']['search'] = search_query
+
+        context['bike_types'] = BikeType.objects.all()
 
         return add_design_settings(context)
 
