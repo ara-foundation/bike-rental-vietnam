@@ -21,6 +21,13 @@ class BikeType(models.Model):
         return self.type
 
 
+class RidePurpose(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to='ridepurpose/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
 class BikeModel(models.Model):
     brand = models.ForeignKey(
         BikeBrand, on_delete=models.PROTECT, related_name="models"
@@ -43,6 +50,7 @@ class BikeModel(models.Model):
     fuel_consumption = models.FloatField(null=True, blank=True)
     weight = models.IntegerField(null=True, blank=True)
     bike_type = models.ForeignKey(BikeType, on_delete=models.PROTECT, null=True, blank=True, related_name='bike_models')
+    ride_purposes = models.ManyToManyField(RidePurpose, related_name='bike_models', blank=True)
 
     class Meta:
         ordering = ["brand__name", "model"]
@@ -142,3 +150,5 @@ class BikeOrder(models.Model):
 
     def __str__(self):
         return f"Order {self.id} - {self.client.name}"
+
+

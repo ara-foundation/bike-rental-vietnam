@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType
+from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType, RidePurpose
 
 
 class BikeBrandAdmin(ImportExportModelAdmin):
@@ -19,8 +19,9 @@ class BikeBrandAdmin(ImportExportModelAdmin):
 
 class BikeModelAdmin(ImportExportModelAdmin):
     list_display = ["brand", "model", "transmission"]
-    list_filter = ["brand", "transmission"]
+    list_filter = ["brand", "transmission", "ride_purposes"]
     search_fields = ["model", "brand__name"]
+    filter_horizontal = ['ride_purposes']
     fields = [
         "brand",
         "model",
@@ -33,6 +34,7 @@ class BikeModelAdmin(ImportExportModelAdmin):
         "description",
         "bike_model_photo",
         "bike_type",
+        "ride_purposes",
     ]
 
 
@@ -89,3 +91,4 @@ admin.site.register(BikeBrand, BikeBrandAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(BikeOrder, OrderAdmin)
 admin.site.register(BikeType)
+admin.site.register(RidePurpose)
