@@ -103,13 +103,22 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="weight" class="form-label">Weight:</label>
-                    <select name="weight" id="weight" class="form-select">
-                        <option value="">All</option>
-                        {% for category in weight_categories %}
-                            <option value="{{ category }}" {% if category == selected_weight %}selected{% endif %}>{{ category }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="form-label">Weight Category</label>
+                    <div id="weight-filter" class="d-flex justify-content-between">
+                        <div class="weight-category-item" data-weight="Light">
+                            <i class="bi bi-cloud"></i>
+                            <span>Light</span>
+                        </div>
+                        <div class="weight-category-item" data-weight="Middle">
+                            <i class="bi bi-bicycle"></i>
+                            <span>Middle</span>
+                        </div>
+                        <div class="weight-category-item" data-weight="Heavy">
+                            <i class="bi bi-truck"></i>
+                            <span>Heavy</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="weight" id="weight" value="{{ selected_weight }}">
                 </div>
                 <div class="mb-3">
                     <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
@@ -233,6 +242,9 @@
             const brandFilter = document.getElementById('brand-filter');
             const brandInput = document.getElementById('brand');
             const brandLogos = brandFilter.querySelectorAll('.brand-logo-container');
+            const weightFilter = document.getElementById('weight-filter');
+            const weightInput = document.getElementById('weight');
+            const weightItems = weightFilter.querySelectorAll('.weight-category-item');
             
             // Функция для удаления фильтра
             function removeFilter(filter) {
@@ -319,6 +331,30 @@
                     }
                 }
             });
+
+            weightItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const weight = this.dataset.weight;
+                    if (weightInput.value === weight) {
+                        weightInput.value = '';
+                        this.classList.remove('selected');
+                    } else {
+                        weightInput.value = weight;
+                        weightItems.forEach(i => i.classList.remove('selected'));
+                        this.classList.add('selected');
+                    }
+                    document.getElementById('filterForm').submit();
+                });
+            });
+
+            // Выделяем выбранную категорию веса при загрузке страницы
+            const selectedWeight = weightInput.value;
+            if (selectedWeight) {
+                const selectedItem = weightFilter.querySelector(`[data-weight="${selectedWeight}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('selected');
+                }
+            }
         });
         </script>
         <script>
