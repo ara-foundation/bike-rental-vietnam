@@ -67,6 +67,7 @@
 }
 /* Отвечает за стиль заголовка сайта */
 
+
 .services-nav {
     display: flex; /* Использует flexbox */
     justify-content: center; /* Центрирует содержимое по горизонтали */
@@ -177,13 +178,6 @@
 }
 /* Отвечает за отображение выпадающего списка языков */
 
-.site-title {
-    color: #ffffff; /* Задает белый цвет текста */
-    margin: 0; /* Убирает внешние отступы */
-    font-size: 1.5rem; /* Устанавливает размер шрифта */
-    white-space: nowrap; /* Предотвращает перенос текста */
-}
-/* Отвечает за стиль заголовка сайта */
 
 .main-menu a.active,
 .main-menu a:hover {
@@ -445,14 +439,14 @@
     margin-bottom: 20px;
 }
 
-#advancedFilters {
+/* #advancedFilters {
     background-color: #e9ecef;
     padding: 1rem;
     border-radius: 0px 0px 5px 5px;
     border: 1.5px solid #6c757d;
     border-top-color:#e9ecef;
     margin-bottom: 20px;
-}
+} */
 /* Стили для расширенных фильтров */
 #advancedFilterBtn {
     border-radius: 5px;
@@ -492,12 +486,12 @@
     margin: 0 !important;
 }
 
-#mainFilters.advanced-open {
+/* #mainFilters.advanced-open {
     background-color: #e9ecef;
     border: 1.5px solid #6c757d;
     border-bottom-color:#e9ecef;
     border-radius: 5px 5px 0px 0px;
-}
+} */
 
 .slogan {
     font-size: 1.5rem;

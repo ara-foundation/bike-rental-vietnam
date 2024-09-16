@@ -5,11 +5,12 @@ from django.conf import settings
 
 # from django_filters.views import FilterView
 from django.core.paginator import Paginator
-from django.db.models import Count, Min
+from django.db.models import Count, Min, Q, Value
+from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
-
+from django.http import JsonResponse
 from .forms import ClientForm, OrderForm
 from .models import Bike, BikeBrand, BikeModel, BikeOrder
 from .utils import get_total_bikes_for_brand
@@ -35,28 +36,43 @@ class BikeModelListView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        # Now each query set contains additional fields bikes_count, min_price
-        # and suppliers_count.
-        # These can be accessed in template like this: {{ bikemodel.bikes_count }}
-        # {{ bikemodel.min_price }} and {{ bikemodel.suppliers_count }}
         queryset = BikeModel.objects.annotate(
-            bikes_count=Count("bikes"),  # Count of bikes associated with the BikeModel
-            min_price=Min("bikes__price_per_day"),  # Minimum price per day of
-            # associated bikes
+            bikes_count=Count("bikes"),
+            min_price=Min("bikes__price_per_day"),
             suppliers_count=Count("bikes__owner", distinct=True),
-            # Count of distinct owners (suppliers)
         )
-        brand = self.request.GET.get("brand")
-        transmission = self.request.GET.get("transmission")
-        if brand:
-            queryset = queryset.filter(brand_id=brand)
-        if transmission:
-            queryset = queryset.filter(transmission=transmission)
-
+        
+        filters = {}
+        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'wheel_size', 'weight']
+        
+        for field in filter_fields:
+            value = self.request.GET.get(field)
+            if value:
+                if field == 'brand':
+                    filters['brand_id'] = value
+                else:
+                    filters[field] = value
+        
+        if filters:
+            queryset = queryset.filter(**filters)
+        
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            brand_model = search_query.split(' ', 1)
+            if len(brand_model) > 1:
+                queryset = queryset.filter(
+                    Q(brand__name__icontains=brand_model[0]) & Q(model__icontains=brand_model[1])
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(brand__name__icontains=search_query) | Q(model__icontains=search_query)
+                )
+        
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'wheel_size', 'weight']
 
         # Filter brands that have at least one bike
         context["brands"] = BikeBrand.objects.filter(
@@ -75,9 +91,7 @@ class BikeModelListView(ListView):
             context["selected_brand"] = int(selected_brand_id)
             bike_brand_name = BikeBrand.objects.get(id=selected_brand_id).name
             context["selected_brand_name"] = bike_brand_name
-            context["total_bikes_for_brand"] = get_total_bikes_for_brand(
-                selected_brand_id
-            )
+            context["total_bikes_for_brand"] = get_total_bikes_for_brand(selected_brand_id)
         else:
             context["selected_brand"] = None
 
@@ -121,17 +135,28 @@ class BikeModelListView(ListView):
         context["wheel_sizes"] = wheel_sizes
         context["weights"] = weights
 
-        selected_gears = self.request.GET.get("gears")
-        selected_fuel_system = self.request.GET.get("fuel_system")
-        selected_displacement = self.request.GET.get("displacement")
-        selected_wheel_size = self.request.GET.get("wheel_size")
-        selected_weight = self.request.GET.get("weight")
+        context['selected_gears'] = self.request.GET.get('gears')
+        context['selected_fuel_system'] = self.request.GET.get('fuel_system')
+        context['selected_displacement'] = self.request.GET.get('displacement')
+        context['selected_wheel_size'] = self.request.GET.get('wheel_size')
+        context['selected_weight'] = self.request.GET.get('weight')
 
-        context["selected_gears"] = selected_gears
-        context["selected_fuel_system"] = selected_fuel_system
-        context["selected_displacement"] = selected_displacement
-        context["selected_wheel_size"] = selected_wheel_size
-        context["selected_weight"] = selected_weight
+        # Добавим словарь для хранения примененных фильтров
+        applied_filters = {}
+        for field in filter_fields:
+            value = self.request.GET.get(field)
+            if value:
+                # Получаем человекочитаемое значение для отображения
+                if field == 'brand':
+                    applied_filters[field] = BikeBrand.objects.get(id=value).name
+                else:
+                    applied_filters[field] = value
+        
+        context['applied_filters'] = applied_filters
+        
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            context['applied_filters']['search'] = search_query
 
         return add_design_settings(context)
 
@@ -273,20 +298,50 @@ def bike_tour(request, tour_id):
             "Горы",
             "Побережье",
             "Город",
-            "Сельская местность",
+            "Сельская местность"
         ]),
         "duration": random.randint(1, 10),
         "date": (datetime.now() + timedelta(days=random.randint(1, 30))).strftime(
-            "%Y-%m-%d"
-        ),
+            "%Y-%m-%d"),
         "difficulty": random.choice(["Легкий", "Средний", "Сложный"]),
         "price": random.randint(50, 500),
         "themes": random.sample(
             ["Природа", "История", "Культура", "Приключения", "Гастрономия"],
-            k=random.randint(1, 3),
-        ),
+            k=random.randint(1, 3)),
         "route": [f"Точка {i}" for i in range(1, random.randint(3, 8))],
         "included": ["Велосипед", "Шлем", "Питание", "Проживание", "Гид"],
     }
 
     return render(request, "bike_tour.html", {"tour": tour})
+
+
+def autocomplete(request):
+    query = request.GET.get('term', '')
+    brands = BikeBrand.objects.filter(name__icontains=query).values_list('name', flat=True)
+    models = BikeModel.objects.filter(model__icontains=query).values_list('model', flat=True)
+    brand_models = BikeModel.objects.filter(
+        Q(brand__name__icontains=query) | Q(model__icontains=query)
+    ).annotate(
+        full_name=Concat('brand__name', Value(' '), 'model')
+    ).values_list('full_name', flat=True)
+    
+    results = list(brands) + list(models) + list(brand_models)
+    return JsonResponse(results, safe=False)
+
+
+from django.http import JsonResponse
+from .models import BikeBrand, BikeModel
+
+def autocomplete(request):
+    query = request.GET.get('term', '')
+    brands = BikeBrand.objects.filter(name__icontains=query).values_list('name', flat=True)
+    models = BikeModel.objects.filter(model__icontains=query).values_list('model', flat=True)
+    brand_models = BikeModel.objects.filter(
+        Q(brand__name__icontains=query) | Q(model__icontains=query)
+    ).annotate(
+        full_name=Concat('brand__name', Value(' '), 'model')
+    ).values_list('full_name', flat=True)
+    
+    results = list(brands) + list(models) + list(brand_models)
+    return JsonResponse(results, safe=False)
+
