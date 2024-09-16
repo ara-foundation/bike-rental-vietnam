@@ -17,10 +17,15 @@ from .utils import get_total_bikes_for_brand
 
 
 def bike_rental_view(request):
-    # ... существующий код ...
     context = {
-        # ... существующий контекст ...
+        'brands': BikeBrand.objects.all(),
+        'transmissions': Bike.objects.values_list('bike_model__transmission', flat=True).distinct(),
+        'bike_types': BikeType.objects.all(),
+        'ride_purposes': RidePurpose.objects.all(),
+        'selected_brand': request.GET.get('brand', ''),
         'selected_transmission': request.GET.get('transmission', ''),
+        'selected_bike_type': request.GET.get('bike_type', ''),
+        'selected_ride_purpose': request.GET.get('ride_purpose', ''),
         'selected_gears': request.GET.get('gears', ''),
         'selected_fuel_system': request.GET.get('fuel_system', ''),
         'selected_displacement': request.GET.get('displacement', ''),
@@ -76,6 +81,15 @@ class BikeModelListView(ListView):
         if ride_purpose:
             queryset = queryset.filter(ride_purposes__id=ride_purpose)
         
+        weight_category = self.request.GET.get('weight')
+        if weight_category:
+            if weight_category == 'Light':
+                queryset = queryset.filter(weight__lte=120)
+            elif weight_category == 'Middle':
+                queryset = queryset.filter(weight__gt=120, weight__lte=180)
+            elif weight_category == 'Heavy':
+                queryset = queryset.filter(weight__gt=180)
+        
         return queryset
 
 
@@ -84,9 +98,7 @@ class BikeModelListView(ListView):
         filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'wheel_size', 'weight']
 
         # Filter brands that have at least one bike
-        context["brands"] = BikeBrand.objects.filter(
-            models__bikes__isnull=False
-        ).distinct()
+        context["brands"] = BikeBrand.objects.filter().distinct()
 
         # Filter transmissions that have at least one associated bike
         context["transmissions"] = (
@@ -169,6 +181,7 @@ class BikeModelListView(ListView):
 
         context['bike_types'] = BikeType.objects.all().order_by('-id')
         context['ride_purposes'] = RidePurpose.objects.all()
+        context['weight_categories'] = ['Light', 'Middle', 'Heavy']
 
         return add_design_settings(context)
 

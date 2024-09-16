@@ -64,11 +64,21 @@ class BikeModel(models.Model):
     def __str__(self):
         return f"{self.brand.name} {self.model}"
 
-    # def get_min_price_per_day(self):
+        # def get_min_price_per_day(self):
     #     bikes = self.bike_set.all()
     #     if bikes:
     #         return min(bike.price_per_day for bike in bikes)
     #     return None
+
+    def get_weight_category(self):
+        if self.weight is None:
+            return "Unknown"
+        elif self.weight <= 120:
+            return "Light"
+        elif 120 < self.weight <= 180:
+            return "Middle"
+        else:
+            return "Heavy"
 
     def get_specs_with_icons(self):
         specs = [

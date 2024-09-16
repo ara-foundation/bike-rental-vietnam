@@ -221,14 +221,51 @@
 }
 /* Отвечает за стиль изображения в карточке при наведении */
 
-.brand-logo {
-    filter: drop-shadow(3px 3px 20px rgba(0,0,0,25)); /* Добавляет тень к логотипу */
-    width: 35px; /* Устанавливает ширину */
-    height: 35px; /* Устанавливает высоту */
-    margin-right: 10px; /* Добавляет отступ справа */
-    object-fit: contain; /* Сохраняет пропорции изображения */
+#brand-filter {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0;
+    background-color: #efefef;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
 }
-/* Отвечает за стиль логотипа бренда */
+
+.brand-logo-container {
+    flex: 0 0 auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 5px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 59.5px;
+    height: 59.5px;
+    background-color: #ffffff;
+}
+
+.brand-logo-container:last-child {
+    margin-right: 0;
+}
+
+.brand-logo-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.brand-logo-container.selected {
+    border-color: #325d88;
+    box-shadow: 0 0 10px rgba(50,93,136,0.3);
+}
+
+.brand-logo {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
 
 .card-body {
     padding-left: 16px;
@@ -278,13 +315,6 @@
     margin-right: 10px; /* Добавляет отступ справа */
 }
 /* Отвечает за стиль бренда и модели */
-
-.brand-logo {
-    width: 35px; /* Устанавливает ширину */
-    height: 35px; /* Устанавливает высоту */
-    margin-right: 20px; /* Добавляет отступ справа */
-}
-/* Отвечает за стиль логотипа бренда */
 
 .card-title {
     font-family: 'Arial', sans-serif; /* Устанавливает шрифт */
@@ -574,4 +604,9 @@
 
 .ride-purpose-filter-item img {
     border-radius: 5px;
+}
+
+#weight.form-select option:checked {
+    background-color: #325d88;
+    color: white;
 }
