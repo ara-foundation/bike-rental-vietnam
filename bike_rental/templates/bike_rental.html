@@ -178,8 +178,12 @@
                     </div>
                 </div>
 
+                <div class="mb-3 text-center">
+                    <button id="resetFiltersBtn" class="btn btn-secondary w-100" onclick="resetFilters()">Сбросить фильтры</button>
+                </div>
+
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    <button id="applyFiltersBtn" class="btn btn-primary w-100">Apply Filters</button>
                 </div>
             </form>
         </div>
@@ -293,75 +297,24 @@
 
         {% block extra_js %}
         <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterForm = document.getElementById('filterForm');
-            const typeFilterItems = document.querySelectorAll('.type-filter-item');
-            const ridePurposeFilterItems = document.querySelectorAll('.ride-purpose-filter-item');
             const brandFilter = document.getElementById('brand-filter');
             const brandInput = document.getElementById('brand');
-            const brandLogos = brandFilter.querySelectorAll('.brand-logo-container');
-            const weightFilter = document.getElementById('weight-filter');
-            const weightInput = document.getElementById('weight');
-            const weightItems = weightFilter.querySelectorAll('.weight-category-item');
-            const seatHeightFilter = document.getElementById('seat-height-filter');
-            const seatHeightInput = document.getElementById('seat_height');
-            const seatHeightItems = seatHeightFilter.querySelectorAll('.seat-height-category-item');
-            const priceCategoryFilter = document.getElementById('price-category-filter');
-            const priceCategoryInput = document.getElementById('price_category');
-            const priceCategoryItems = priceCategoryFilter.querySelectorAll('.price-category-item');
-            
-            // Функция для удаления фильтра
-            function removeFilter(filter) {
-                const element = filterForm.elements[filter];
-                if (element) {
-                    element.value = '';
+
+            brandFilter.addEventListener('click', function(event) {
+                const selectedBrand = event.target.closest('.brand-logo-container');
+                if (selectedBrand) {
+                    selectedBrand.classList.toggle('selected');
+                    console.log('Brand logo clicked:', selectedBrand.dataset.brandId); // Отладочный вывод
+                    updateBrandInput(); // Обновляем значение, но не отправляем форму
                 }
-                filterForm.submit();
-            }
-            
-            // Добавляем скрытые поля для типа мотоцикла и цели поездки в форму
-            const typeInput = document.createElement('input');
-            typeInput.type = 'hidden';
-            typeInput.name = 'bike_type';
-            typeInput.id = 'bike_type';
-            filterForm.appendChild(typeInput);
-
-            const purposeInput = document.createElement('input');
-            purposeInput.type = 'hidden';
-            purposeInput.name = 'ride_purpose';
-            purposeInput.id = 'ride_purpose';
-            filterForm.appendChild(purposeInput);
-            
-            function handleFilterClick(items, input) {
-                items.forEach(item => {
-                    item.addEventListener('click', function() {
-                        const value = this.dataset.type || this.dataset.purpose;
-                        if (input.value === value) {
-                            input.value = '';
-                            this.classList.remove('selected');
-                        } else {
-                            input.value = value;
-                            items.forEach(i => i.classList.remove('selected'));
-                            this.classList.add('selected');
-                        }
-                        filterForm.submit();
-                    });
-                });
-            }
-
-            brandLogos.forEach(logo => {
-                logo.addEventListener('click', function() {
-                    this.classList.toggle('selected');
-                    updateBrandInput();
-                });
             });
 
             function updateBrandInput() {
                 const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected'))
                     .map(el => el.dataset.brandId);
-                brandInput.value = selectedBrands.join(',');
-                // Автоматически отправляем форму при изменении выбора
-                document.getElementById('filterForm').submit();
+                console.log('Selected brandsbefoe join:', brandInput.value); // Отладочный вывод
+                brandInput.value = selectedBrands.join(','); // Сохраняем ID выбранных брендов
+                console.log('Selected brands after join:', brandInput.value); // Отладочный вывод
             }
 
             // Выделяем выбранные бренды при загрузке страницы
@@ -372,138 +325,8 @@
                     logo.classList.add('selected');
                 }
             });
-
-            // Добавляем обработчики событий для кнопок удаления фильтров
-            document.querySelectorAll('.remove-filter').forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const filter = this.getAttribute('data-filter');
-                    removeFilter(filter);
-                });
-
-            handleFilterClick(typeFilterItems, typeInput);
-            handleFilterClick(ridePurposeFilterItems, purposeInput);
-            
-            // Выделяем выбранные фильтры при загрузке страницы
-            [typeInput, purposeInput].forEach(input => {
-                const selectedValue = input.value;
-                if (selectedValue) {
-                    const selector = input.name === 'bike_type' ? '.type-filter-item' : '.ride-purpose-filter-item';
-                    const selectedItem = document.querySelector(`${selector}[data-${input.name.replace('_', '-')}="${selectedValue}"]`);
-                    if (selectedItem) {
-                        selectedItem.classList.add('selected');
-                    }
-                }
-            });
-
-            weightItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const weight = this.dataset.weight;
-                    if (weightInput.value === weight) {
-                        weightInput.value = '';
-                        this.classList.remove('selected');
-                    } else {
-                        weightInput.value = weight;
-                        weightItems.forEach(i => i.classList.remove('selected'));
-                        this.classList.add('selected');
-                    }
-                    document.getElementById('filterForm').submit();
-                });
-            });
-
-            // Выделяем выбранную категорию веса при загрузке страницы
-            const selectedWeight = weightInput.value;
-            if (selectedWeight) {
-                const selectedItem = weightFilter.querySelector(`[data-weight="${selectedWeight}"]`);
-                if (selectedItem) {
-                    selectedItem.classList.add('selected');
-                }
-            }
-
-            seatHeightItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const seatHeight = this.dataset.seatHeight;
-                    if (seatHeightInput.value === seatHeight) {
-                        seatHeightInput.value = '';
-                        this.classList.remove('selected');
-                    } else {
-                        seatHeightInput.value = seatHeight;
-                        seatHeightItems.forEach(i => i.classList.remove('selected'));
-                        this.classList.add('selected');
-                    }
-                    document.getElementById('filterForm').submit();
-                });
-            });
-
-            // Выделяем выбранную категорию высоты посадки при загрузке страницы
-            const selectedSeatHeight = seatHeightInput.value;
-            if (selectedSeatHeight) {
-                const selectedItem = seatHeightFilter.querySelector(`[data-seat-height="${selectedSeatHeight}"]`);
-                if (selectedItem) {
-                    selectedItem.classList.add('selected');
-                }
-            }
-
-            priceCategoryItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const priceCategory = this.dataset.priceCategory;
-                    if (priceCategoryInput.value === priceCategory) {
-                        priceCategoryInput.value = '';
-                        this.classList.remove('selected');
-                    } else {
-                        priceCategoryInput.value = priceCategory;
-                        priceCategoryItems.forEach(i => i.classList.remove('selected'));
-                        this.classList.add('selected');
-                    }
-                    document.getElementById('filterForm').submit();
-                });
-            });
-
-            // Выделяем выбранную ценовую категорию при загрузке страницы
-            const selectedPriceCategory = priceCategoryInput.value;
-            if (selectedPriceCategory) {
-                const selectedItem = priceCategoryFilter.querySelector(`[data-price-category="${selectedPriceCategory}"]`);
-                if (selectedItem) {
-                    selectedItem.classList.add('selected');
-                }
-            }
-
-            const expertFiltersBtn = document.getElementById('expertFiltersBtn');
-            const expertFilters = document.getElementById('expertFilters');
-            const expertFiltersIcon = document.getElementById('expertFiltersIcon');
-
-            expertFiltersBtn.addEventListener('click', function() {
-                if (expertFilters.style.display === 'none') {
-                    expertFilters.style.display = 'block';
-                    expertFiltersBtn.textContent = 'Hide Expert Filters ';
-                    expertFiltersIcon.classList.remove('bi-chevron-down');
-                    expertFiltersIcon.classList.add('bi-chevron-up');
-                } else {
-                    expertFilters.style.display = 'none';
-                    expertFiltersBtn.textContent = 'Expert Filters ';
-                    expertFiltersIcon.classList.remove('bi-chevron-up');
-                    expertFiltersIcon.classList.add('bi-chevron-down');
-                }
-                expertFiltersBtn.appendChild(expertFiltersIcon);
-            });
-        });
-        </script>
-        <script>
-            $(function() {
-                $("#search").autocomplete({
-                    source: "{% url 'autocomplete' %}",
-                    minLength: 2,
-                    select: function(event, ui) {
-                        $("#search").val(ui.item.value);
-                        $("#filterForm").submit();
-                    }
-                }).autocomplete("instance")._renderItem = function(ul, item) {
-                    return $("<li>")
-                        .append("<div>" + item.value + "</div>")
-                        .appendTo(ul);
-                };
-            });
         </script>
         {% endblock %}
 
         {% endblock %}
+        

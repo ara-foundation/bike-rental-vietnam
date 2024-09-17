@@ -464,7 +464,7 @@
 
 #mainFilters {
     background-color: #e9ecef;
-    padding: 1rem;
+    padding: 5px;
     border-radius: 5px;
     border: 1.5px solid #6c757d;
     margin-bottom: 20px;
@@ -773,4 +773,9 @@
 
 .form-control {
     margin-top: 15px;
+}
+
+.selected-brands .btn {
+    margin: 5px;
+    display: inline-block;
 }

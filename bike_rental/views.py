@@ -47,67 +47,15 @@ class BikeModelListView(ListView):
         )
         
         filters = {}
-        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'clearance', 'weight']
+        selected_brands = self.request.GET.get('brand')
+        if selected_brands:
+            brand_ids = selected_brands.split(',')
+            filters['brand_id__in'] = brand_ids  # Используем фильтрацию по множеству
 
-        for field in filter_fields:
-            value = self.request.GET.get(field)
-            if value and value != 'None':
-                if field == 'brand':
-                    filters['brand_id'] = value
-                elif field in ['gears', 'displacement', 'clearance', 'weight']:
-                    filters[field] = int(value)
-                else:
-                    filters[field] = value
+        filters = {k: v for k, v in filters.items() if v is not None}
 
         if filters:
             queryset = queryset.filter(**filters)
-
-        search_query = self.request.GET.get('search', '')
-        if search_query:
-            brand_model = search_query.split(' ', 1)
-            if len(brand_model) > 1:
-                queryset = queryset.filter(
-                    Q(brand__name__icontains=brand_model[0]) & Q(model__icontains=brand_model[1])
-                )
-            else:
-                queryset = queryset.filter(
-                    Q(brand__name__icontains=search_query) | Q(model__icontains=search_query)
-                )
-
-        bike_type = self.request.GET.get('bike_type')
-        if bike_type:
-            queryset = queryset.filter(bike_type_id=bike_type)
-
-        ride_purpose = self.request.GET.get('ride_purpose')
-        if ride_purpose:
-            queryset = queryset.filter(ride_purposes__id=ride_purpose)
-
-        weight_category = self.request.GET.get('weight')
-        if weight_category:
-            if weight_category == 'Light':
-                queryset = queryset.filter(weight__lte=120)
-            elif weight_category == 'Middle':
-                queryset = queryset.filter(weight__gt=120, weight__lte=180)
-            elif weight_category == 'Heavy':
-                queryset = queryset.filter(weight__gt=180)
-
-        seat_height_category = self.request.GET.get('seat_height')
-        if seat_height_category:
-            if seat_height_category == 'Low':
-                queryset = queryset.filter(seat_height__lt=75)
-            elif seat_height_category == 'Middle':
-                queryset = queryset.filter(seat_height__gte=75, seat_height__lte=80)
-            elif seat_height_category == 'High':
-                queryset = queryset.filter(seat_height__gt=80)
-
-        price_category = self.request.GET.get('price_category')
-        if price_category:
-            if price_category == 'Budget':
-                queryset = queryset.filter(price__lte=50)
-            elif price_category == 'Standard':
-                queryset = queryset.filter(price__gt=50, price__lte=100)
-            elif price_category == 'Premium':
-                queryset = queryset.filter(price__gt=100)
 
         return queryset
 
@@ -116,30 +64,30 @@ class BikeModelListView(ListView):
         context = super().get_context_data(**kwargs)
         filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'clearance', 'weight']
 
-        # Добавляем выбранные значения в контекст
         for field in filter_fields:
             value = self.request.GET.get(field)
             if value and value != 'None':
                 context[f'selected_{field}'] = value
+            else:
+                context[f'selected_{field}'] = None
 
-        # Фильтруем бренды, у которых есть хотя бы один велосипед
         context["brands"] = BikeBrand.objects.filter().distinct()
 
-        # Фильтруем трансмиссии, у которых есть хотя бы один связанный велосипед
         context["transmissions"] = (
             Bike.objects.filter(bike_model__isnull=False)
             .values_list("bike_model__transmission", flat=True)
             .distinct()
         )
-
         selected_brand_id = self.request.GET.get("brand")
-        if selected_brand_id and selected_brand_id != 'None':
+        if selected_brand_id and selected_brand_id != 'None' and selected_brand_id != 'all':
             context["selected_brand"] = int(selected_brand_id)
             bike_brand_name = BikeBrand.objects.get(id=selected_brand_id).name
             context["selected_brand_name"] = bike_brand_name
             context["total_bikes_for_brand"] = get_total_bikes_for_brand(selected_brand_id)
         else:
-            context["selected_brand"] = None
+            context["selected_brand"] = 'all'
+            context["selected_brand_name"] = None
+            context["total_bikes_for_brand"] = None
 
         context["bike_rental_count"] = self.get_queryset().count()
 
@@ -184,23 +132,14 @@ class BikeModelListView(ListView):
         context['selected_seat_height'] = self.request.GET.get('seat_height')
         context['selected_price_category'] = self.request.GET.get('price_category')
 
-        # Добавим словарь для хранения примененных фильтров
         applied_filters = {}
-        for field in filter_fields:
-            value = self.request.GET.get(field)
-            if value:
-                # Получаем человекочитаемое значение для отображения
-                if field == 'brand':
-                    applied_filters[field] = BikeBrand.objects.get(id=value).name
-                else:
-                    applied_filters[field] = value
-        
-        context['applied_filters'] = applied_filters
-        
+
         search_query = self.request.GET.get('search', '')
         if search_query:
-            context['applied_filters']['search'] = search_query
+            applied_filters['search'] = search_query
 
+        context['applied_filters'] = applied_filters
+        
         context['bike_types'] = BikeType.objects.all().order_by('-id')
         context['ride_purposes'] = RidePurpose.objects.all()
         context['weight_categories'] = ['Light', 'Middle', 'Heavy']
@@ -239,7 +178,6 @@ def bike_order(request, id):
             client = client_form.save()
             order = order_form.save(commit=False)
 
-            # Добавляем текущий год к дате
             start_date = order_form.cleaned_data["start_date"]
             current_year = datetime.now().year
             order.start_date = start_date.replace(year=current_year)
@@ -263,7 +201,6 @@ def bike_order(request, id):
 
 
 def calculate_total_price(bike, duration, amount_bikes):
-    # Implement your pricing logic here
     return bike.price_per_day * duration * amount_bikes
 
 
@@ -281,8 +218,8 @@ def add_design_settings(context):
 
 
 def bike_tours(request):
-    tours = range(1, 16)  # 15 тестовых туров
-    paginator = Paginator(tours, 10)  # 10 туров на страницу
+    tours = range(1, 16)
+    paginator = Paginator(tours, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {
@@ -294,8 +231,8 @@ def bike_tours(request):
 
 
 def car_tours(request):
-    tours = range(1, 16)  # 15 тестовых туров
-    paginator = Paginator(tours, 5)  # 5 туров на страницу
+    tours = range(1, 16)
+    paginator = Paginator(tours, 5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {
@@ -307,8 +244,8 @@ def car_tours(request):
 
 
 def boat_tours(request):
-    tours = range(1, 16)  # 15 тестовых туров
-    paginator = Paginator(tours, 8)  # 8 туров на страницу
+    tours = range(1, 16)
+    paginator = Paginator(tours, 8)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {
@@ -320,7 +257,6 @@ def boat_tours(request):
 
 
 def bike_tour_order(request, tour_id):
-    # Генерируем случайные данные для тура
     difficulty_levels = ["Easy", "Intermediate", "Hard"]
     themes = ["Mountain", "City", "Countryside", "Coastal"]
 
@@ -331,7 +267,6 @@ def bike_tour_order(request, tour_id):
     }
 
     if request.method == "POST":
-        # Обработка отправленной формы
         context.update({
             "booking_date": request.POST.get("date"),
             "participants": request.POST.get("participants"),
@@ -342,7 +277,6 @@ def bike_tour_order(request, tour_id):
 
 
 def bike_tour(request, tour_id):
-    # Генерируем случайные данные для тура
     tour = {
         "id": tour_id,
         "name": f"Велотур {tour_id}",
