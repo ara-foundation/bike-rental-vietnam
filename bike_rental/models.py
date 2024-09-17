@@ -45,7 +45,7 @@ class BikeModel(models.Model):
         max_length=255, default="carburettor"
     )  # Значение по умолчанию
     max_speed = models.IntegerField(null=True, blank=True)
-    wheel_size = models.IntegerField()
+    clearance = models.IntegerField()  # Изменено с clearance на clearance
     description = models.TextField()
     bike_model_photo = models.ImageField(
         upload_to="bike_model_photos/", null=True, blank=True
@@ -101,11 +101,21 @@ class BikeModel(models.Model):
             ),
             ("tank", {"value": f"{self.tank} liters", "icon": "bi-droplet-fill"}),
             (
-                "wheel_size",
-                {"value": f"{self.wheel_size} mm", "icon": "bi-arrows-expand"},
+                "clearance",
+                {"value": f"{self.clearance} mm", "icon": "bi-arrows-expand"},
             ),
         ]
         return [(k, v) for k, v in specs if v["value"] is not None][:9]
+
+    def get_price_category(self):
+        if self.price is None:
+            return "Unknown"
+        elif self.price <= 50:
+            return "Budget"
+        elif 50 < self.price <= 100:
+            return "Standard"
+        else:
+            return "Premium"
 
 
 class Bike(models.Model):

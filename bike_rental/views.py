@@ -29,7 +29,7 @@ def bike_rental_view(request):
         'selected_gears': request.GET.get('gears', ''),
         'selected_fuel_system': request.GET.get('fuel_system', ''),
         'selected_displacement': request.GET.get('displacement', ''),
-        'selected_wheel_size': request.GET.get('wheel_size', ''),
+        'selected_clearance': request.GET.get('clearance', ''),
         'selected_weight': request.GET.get('weight', ''),
     }
     return render(request, 'bike_rental.html', context)
@@ -39,28 +39,29 @@ class BikeModelListView(ListView):
     template_name = "bike_rental.html"  # Измените это
     context_object_name = "bike_rental"
     paginate_by = 9
-
     def get_queryset(self):
-        queryset = BikeModel.objects.annotate(
+        queryset = super().get_queryset().annotate(
             bikes_count=Count("bikes"),
             min_price=Min("bikes__price_per_day"),
             suppliers_count=Count("bikes__owner", distinct=True),
         )
         
         filters = {}
-        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'wheel_size', 'weight']
-        
+        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'clearance', 'weight']
+
         for field in filter_fields:
             value = self.request.GET.get(field)
             if value and value != 'None':
                 if field == 'brand':
                     filters['brand_id'] = value
+                elif field in ['gears', 'displacement', 'clearance', 'weight']:
+                    filters[field] = int(value)
                 else:
                     filters[field] = value
-        
+
         if filters:
             queryset = queryset.filter(**filters)
-        
+
         search_query = self.request.GET.get('search', '')
         if search_query:
             brand_model = search_query.split(' ', 1)
@@ -72,15 +73,15 @@ class BikeModelListView(ListView):
                 queryset = queryset.filter(
                     Q(brand__name__icontains=search_query) | Q(model__icontains=search_query)
                 )
-        
+
         bike_type = self.request.GET.get('bike_type')
         if bike_type:
             queryset = queryset.filter(bike_type_id=bike_type)
-        
+
         ride_purpose = self.request.GET.get('ride_purpose')
         if ride_purpose:
             queryset = queryset.filter(ride_purposes__id=ride_purpose)
-        
+
         weight_category = self.request.GET.get('weight')
         if weight_category:
             if weight_category == 'Light':
@@ -89,18 +90,42 @@ class BikeModelListView(ListView):
                 queryset = queryset.filter(weight__gt=120, weight__lte=180)
             elif weight_category == 'Heavy':
                 queryset = queryset.filter(weight__gt=180)
-        
+
+        seat_height_category = self.request.GET.get('seat_height')
+        if seat_height_category:
+            if seat_height_category == 'Low':
+                queryset = queryset.filter(seat_height__lt=75)
+            elif seat_height_category == 'Middle':
+                queryset = queryset.filter(seat_height__gte=75, seat_height__lte=80)
+            elif seat_height_category == 'High':
+                queryset = queryset.filter(seat_height__gt=80)
+
+        price_category = self.request.GET.get('price_category')
+        if price_category:
+            if price_category == 'Budget':
+                queryset = queryset.filter(price__lte=50)
+            elif price_category == 'Standard':
+                queryset = queryset.filter(price__gt=50, price__lte=100)
+            elif price_category == 'Premium':
+                queryset = queryset.filter(price__gt=100)
+
         return queryset
 
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'wheel_size', 'weight']
+        filter_fields = ['brand', 'transmission', 'gears', 'fuel_system', 'displacement', 'clearance', 'weight']
 
-        # Filter brands that have at least one bike
+        # Добавляем выбранные значения в контекст
+        for field in filter_fields:
+            value = self.request.GET.get(field)
+            if value and value != 'None':
+                context[f'selected_{field}'] = value
+
+        # Фильтруем бренды, у которых есть хотя бы один велосипед
         context["brands"] = BikeBrand.objects.filter().distinct()
 
-        # Filter transmissions that have at least one associated bike
+        # Фильтруем трансмиссии, у которых есть хотя бы один связанный велосипед
         context["transmissions"] = (
             Bike.objects.filter(bike_model__isnull=False)
             .values_list("bike_model__transmission", flat=True)
@@ -108,7 +133,7 @@ class BikeModelListView(ListView):
         )
 
         selected_brand_id = self.request.GET.get("brand")
-        if selected_brand_id:
+        if selected_brand_id and selected_brand_id != 'None':
             context["selected_brand"] = int(selected_brand_id)
             bike_brand_name = BikeBrand.objects.get(id=selected_brand_id).name
             context["selected_brand_name"] = bike_brand_name
@@ -116,11 +141,6 @@ class BikeModelListView(ListView):
         else:
             context["selected_brand"] = None
 
-        context["selected_transmission"] = self.request.GET.get("transmission")
-        if context["selected_brand"]:
-            context["selected_brand_name"] = BikeBrand.objects.get(
-                id=context["selected_brand"]
-            ).name
         context["bike_rental_count"] = self.get_queryset().count()
 
         gears = (
@@ -139,10 +159,10 @@ class BikeModelListView(ListView):
             .distinct()
             .order_by("displacement")
         )
-        wheel_sizes = (
-            BikeModel.objects.values_list("wheel_size", flat=True)
+        clearance = (
+            BikeModel.objects.values_list("clearance", flat=True)
             .distinct()
-            .order_by("wheel_size")
+            .order_by("clearance")
         )
         weights = (
             BikeModel.objects.values_list("weight", flat=True)
@@ -153,14 +173,16 @@ class BikeModelListView(ListView):
         context["gears"] = gears
         context["fuel_systems"] = fuel_systems
         context["displacements"] = displacements
-        context["wheel_sizes"] = wheel_sizes
+        context["clearance"] = clearance
         context["weights"] = weights
 
         context['selected_gears'] = self.request.GET.get('gears')
         context['selected_fuel_system'] = self.request.GET.get('fuel_system')
         context['selected_displacement'] = self.request.GET.get('displacement')
-        context['selected_wheel_size'] = self.request.GET.get('wheel_size')
+        context['selected_clearance'] = self.request.GET.get('clearance')
         context['selected_weight'] = self.request.GET.get('weight')
+        context['selected_seat_height'] = self.request.GET.get('seat_height')
+        context['selected_price_category'] = self.request.GET.get('price_category')
 
         # Добавим словарь для хранения примененных фильтров
         applied_filters = {}
@@ -182,6 +204,13 @@ class BikeModelListView(ListView):
         context['bike_types'] = BikeType.objects.all().order_by('-id')
         context['ride_purposes'] = RidePurpose.objects.all()
         context['weight_categories'] = ['Light', 'Middle', 'Heavy']
+
+        context["clearances"] = (
+            BikeModel.objects.values_list("clearance", flat=True)
+            .distinct()
+            .order_by("clearance")
+        )
+        context['selected_clearance'] = self.request.GET.get('clearance')
 
         return add_design_settings(context)
 
