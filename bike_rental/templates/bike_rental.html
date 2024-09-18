@@ -294,36 +294,78 @@
                 </ul>
             </nav>
         {% endif %}
-
         {% block extra_js %}
+        <div id="appliedFilters">
+            <h5>Примененные фильтры:</h5>
+            <div id="selectedBrands"></div>
+        </div>
+
         <script>
+            // Функция для восстановления выбранных брендов из localStorage
+            function restoreSelectedBrands() {
+                const brandFilter = document.getElementById('brand-filter');
+                const selectedBrandsDiv = document.getElementById('selectedBrands');
+                const savedBrands = localStorage.getItem('selectedBrands');
+                
+                if (savedBrands) {
+                    const brandIds = savedBrands.split(',');
+                    brandIds.forEach(brandId => {
+                        const logo = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
+                        if (logo) {
+                            logo.classList.add('selected');
+                        }
+                    });
+                    updateSelectedBrandsDisplay(brandIds);
+                }
+            }
+
+            // Функция для обновления отображения выбранных брендов
+            function updateSelectedBrandsDisplay(selectedBrands) {
+                const selectedBrandsDiv = document.getElementById('selectedBrands');
+                selectedBrandsDiv.innerHTML = ''; // Очищаем текущее отображение
+                if (selectedBrands.length > 0) {
+                    selectedBrands.forEach(brandId => {
+                        const brandName = document.getElementById('brand-filter').querySelector(`[data-brand-id="${brandId}"]`).textContent; // Получаем имя бренда
+                        const brandElement = document.createElement('div');
+                        brandElement.textContent = brandName; // Добавляем имя бренда
+                        selectedBrandsDiv.appendChild(brandElement);
+                    });
+                } else {
+                    selectedBrandsDiv.textContent = 'Нет выбранных брендов';
+                }
+            }
+
+            // Основной код
             const brandFilter = document.getElementById('brand-filter');
             const brandInput = document.getElementById('brand');
+            const applyFiltersBtn = document.getElementById('applyFiltersBtn');
 
+            // Восстановление выбранных брендов при загрузке страницы
+            restoreSelectedBrands();
+
+            // Обработчик клика на логотипы брендов
             brandFilter.addEventListener('click', function(event) {
                 const selectedBrand = event.target.closest('.brand-logo-container');
                 if (selectedBrand) {
                     selectedBrand.classList.toggle('selected');
-                    console.log('Brand logo clicked:', selectedBrand.dataset.brandId); // Отладочный вывод
-                    updateBrandInput(); // Обновляем значение, но не отправляем форму
+                    updateBrandInput();
                 }
             });
 
+            // Функция для обновления значения input
             function updateBrandInput() {
                 const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected'))
                     .map(el => el.dataset.brandId);
-                console.log('Selected brandsbefoe join:', brandInput.value); // Отладочный вывод
-                brandInput.value = selectedBrands.join(','); // Сохраняем ID выбранных брендов
-                console.log('Selected brands after join:', brandInput.value); // Отладочный вывод
+                brandInput.value = selectedBrands.join(',');
+                updateSelectedBrandsDisplay(selectedBrands); // Обновляем отображение выбранных брендов
             }
 
-            // Выделяем выбранные бренды при загрузке страницы
-            const selectedBrands = brandInput.value.split(',');
-            selectedBrands.forEach(brandId => {
-                const logo = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
-                if (logo) {
-                    logo.classList.add('selected');
-                }
+            // Сохранение выбранных брендов в localStorage при нажатии кнопки "Применить фильтр"
+            applyFiltersBtn.addEventListener('click', function() {
+                const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected'))
+                    .map(el => el.dataset.brandId);
+                localStorage.setItem('selectedBrands', selectedBrands.join(','));
+                updateSelectedBrandsDisplay(selectedBrands); // Обновляем отображение выбранных брендов
             });
         </script>
         {% endblock %}

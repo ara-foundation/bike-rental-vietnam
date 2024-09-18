@@ -78,12 +78,12 @@ class BikeModelListView(ListView):
             .values_list("bike_model__transmission", flat=True)
             .distinct()
         )
-        selected_brand_id = self.request.GET.get("brand")
-        if selected_brand_id and selected_brand_id != 'None' and selected_brand_id != 'all':
-            context["selected_brand"] = int(selected_brand_id)
-            bike_brand_name = BikeBrand.objects.get(id=selected_brand_id).name
-            context["selected_brand_name"] = bike_brand_name
-            context["total_bikes_for_brand"] = get_total_bikes_for_brand(selected_brand_id)
+        
+        selected_brand_ids = self.request.GET.getlist("brand")  # Изменено на getlist для поддержки множественного выбора
+        if selected_brand_ids and all(id.isdigit() for id in selected_brand_ids):
+            context["selected_brand"] = [int(id) for id in selected_brand_ids]  # Преобразуем в список целых чисел
+            context["selected_brand_name"] = [BikeBrand.objects.get(id=id).name for id in context["selected_brand"]]
+            context["total_bikes_for_brand"] = sum(get_total_bikes_for_brand(id) for id in context["selected_brand"])
         else:
             context["selected_brand"] = 'all'
             context["selected_brand_name"] = None
