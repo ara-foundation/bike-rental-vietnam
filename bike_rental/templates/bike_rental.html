@@ -10,7 +10,7 @@
 </div>
 
 <div id="typeFilters" class="mb-4">
-    <h5 class="mb-3">Choose your stile:</h5>
+    <h5 class="mb-3">Choose your style:</h5>
     <div class="row">
         {% for bike_type in bike_types %}
             <div class="col-md-3 mb-3">
@@ -54,7 +54,7 @@
                     <input type="hidden" name="brand" id="brand" value="{{ selected_brand }}">
                 </div>
                 <div class="mb-3">
-                    <input type="text" name="search" id="search" class="form-control" placeholder="Search by model">
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search by model" value="{{ request.GET.search }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Price</label>
@@ -178,10 +178,6 @@
                     </div>
                 </div>
 
-                <div class="mb-3 text-center">
-                    <button id="resetFiltersBtn" class="btn btn-secondary w-100" onclick="resetFilters()">Сбросить фильтры</button>
-                </div>
-
                 <div class="mb-3">
                     <button id="applyFiltersBtn" class="btn btn-primary w-100">Apply Filters</button>
                 </div>
@@ -190,28 +186,16 @@
     </div>
     <div class="col-md-9">
         <!-- Здесь будет выдача поиска -->
-        {% if applied_filters %}
-        <div class="mt-3 mb-4">
-            <h6>Applied Filters:</h6>
-            <ul class="list-inline">
-                {% for filter_name, filter_value in applied_filters.items %}
-                    <li class="list-inline-item">
-                        <span class="badge bg-secondary">
-                            {{ filter_name|title }}: {{ filter_value }}
-                            <a href="#" class="remove-filter text-white" data-filter="{{ filter_name }}" title="Удалить фильтр">
-                                <i class="bi bi-x-circle"></i>
-                            </a>
-                        </span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
 
         <div class="mt-3 mb-4">
             <h6>{{ bike_rental_count }} 
                 {% if bike_rental_count == 1 %}model{% else %}models{% endif %} available.
             </h6>
+        </div>
+
+        <div class="mt-3 mb-4">
+            <h6>Примененные фильтры:</h6>
+            <ul id="appliedFiltersList" class="list-inline"></ul> <!-- Список для отображения примененных фильтров -->
         </div>
 
         <div class="row mt-4">
@@ -294,81 +278,140 @@
                 </ul>
             </nav>
         {% endif %}
-        {% block extra_js %}
-        <div id="appliedFilters">
-            <h5>Примененные фильтры:</h5>
-            <div id="selectedBrands"></div>
-        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    let brandFilter = document.getElementById('brand-filter'); // Инициализируем переменную сразу
 
-        <script>
-            // Функция для восстановления выбранных брендов из localStorage
-            function restoreSelectedBrands() {
-                const brandFilter = document.getElementById('brand-filter');
-                const selectedBrandsDiv = document.getElementById('selectedBrands');
-                const savedBrands = localStorage.getItem('selectedBrands');
-                
-                if (savedBrands) {
-                    const brandIds = savedBrands.split(',');
-                    brandIds.forEach(brandId => {
-                        const logo = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
-                        if (logo) {
-                            logo.classList.add('selected');
-                        }
-                    });
-                    updateSelectedBrandsDisplay(brandIds);
-                }
-            }
+    function updateBrandInput() {
+        const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected')).map(el => el.dataset.brandId);
+        document.getElementById('brand').value = selectedBrands.join(',');
+        console.log("Selected Brands:", selectedBrands);
 
-            // Функция для обновления отображения выбранных брендов
-            function updateSelectedBrandsDisplay(selectedBrands) {
-                const selectedBrandsDiv = document.getElementById('selectedBrands');
-                selectedBrandsDiv.innerHTML = ''; // Очищаем текущее отображение
-                if (selectedBrands.length > 0) {
-                    selectedBrands.forEach(brandId => {
-                        const brandName = document.getElementById('brand-filter').querySelector(`[data-brand-id="${brandId}"]`).textContent; // Получаем имя бренда
-                        const brandElement = document.createElement('div');
-                        brandElement.textContent = brandName; // Добавляем имя бренда
-                        selectedBrandsDiv.appendChild(brandElement);
-                    });
-                } else {
-                    selectedBrandsDiv.textContent = 'Нет выбранных брендов';
-                }
-            }
+    }
 
-            // Основной код
-            const brandFilter = document.getElementById('brand-filter');
-            const brandInput = document.getElementById('brand');
-            const applyFiltersBtn = document.getElementById('applyFiltersBtn');
-
-            // Восстановление выбранных брендов при загрузке страницы
-            restoreSelectedBrands();
-
-            // Обработчик клика на логотипы брендов
-            brandFilter.addEventListener('click', function(event) {
-                const selectedBrand = event.target.closest('.brand-logo-container');
-                if (selectedBrand) {
-                    selectedBrand.classList.toggle('selected');
-                    updateBrandInput();
-                }
+    function updateSelectedBrandsDisplay(appliedFilters) {
+        const selectedBrandsDiv = document.getElementById('appliedFiltersList');
+        selectedBrandsDiv.innerHTML = ''; // Очищаем предыдущие элементы
+        if (appliedFilters.length > 0) {
+            appliedFilters.forEach(filter => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('list-inline-item');
+                listItem.innerHTML = `
+                    <span class="badge bg-secondary">
+                        ${filter.name}
+                        <a href="#" class="remove-filter text-white" data-brand-id="${filter.id}" title="Удалить фильтр" onclick="removeFilter('${filter.id}')">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    </span>
+                `;
+                selectedBrandsDiv.appendChild(listItem);
             });
+        } else {
+            selectedBrandsDiv.textContent = 'Нет выбранных брендов';
+        }
+    }
 
-            // Функция для обновления значения input
-            function updateBrandInput() {
-                const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected'))
-                    .map(el => el.dataset.brandId);
-                brandInput.value = selectedBrands.join(',');
-                updateSelectedBrandsDisplay(selectedBrands); // Обновляем отображение выбранных брендов
-            }
+    function displayAppliedFilters(selectedBrands) {
+        const appliedFiltersList = document.getElementById('appliedFiltersList');
+        appliedFiltersList.innerHTML = '';
+        if (selectedBrands.length > 0) {
+            selectedBrands.forEach(brandId => {
+                const brandElement = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
+                if (brandElement) {
+                    const brandName = brandElement.querySelector('img').alt;
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-inline-item');
+                    listItem.innerHTML = `
+                        <span class="badge bg-secondary">
+                            ${brandName}
+                            <button type="button" class="remove-filter text-white" data-brand-id="${brandId}" title="Удалить фильтр" onclick="removeFilter('${brandId}')">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </span>
+                    `;
+                    appliedFiltersList.appendChild(listItem);
+                }
 
-            // Сохранение выбранных брендов в localStorage при нажатии кнопки "Применить фильтр"
-            applyFiltersBtn.addEventListener('click', function() {
-                const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected'))
-                    .map(el => el.dataset.brandId);
-                localStorage.setItem('selectedBrands', selectedBrands.join(','));
-                updateSelectedBrandsDisplay(selectedBrands); // Обновляем отображение выбранных брендов
             });
-        </script>
-        {% endblock %}
+        } else {
+            appliedFiltersList.textContent = 'Нет примененных фильтров';
+        }
+    }
+    
+    function addFilter(brandId, brandName) {
+    let appliedFilters = JSON.parse(localStorage.getItem('appliedFilters')) || [];
+    if (!appliedFilters.some(filter => filter.id === brandId)) {
+        appliedFilters.push({ id: brandId, name: brandName });
+        localStorage.setItem('appliedFilters', JSON.stringify(appliedFilters));
+    }
+}
 
-        {% endblock %}
+function removeFilter(brandId) {
+    const brandElement = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
+    if (brandElement) {
+        brandElement.classList.remove('selected'); // Удаляем класс 'selected'
+    }
+    let appliedFilters = JSON.parse(localStorage.getItem('appliedFilters')) || [];
+    appliedFilters = appliedFilters.filter(filter => filter.id !== brandId); // Удаляем фильтр
+    localStorage.setItem('appliedFilters', JSON.stringify(appliedFilters));
+    updateBrandInput(); // Обновляем состояние фильтров
+    updateSelectedBrandsDisplay(appliedFilters); // Обновляем отображение выбранных брендов
+}
+
+    // Обработчик клика по фильтрам
+    brandFilter.addEventListener('click', function(event) {
+        const selectedBrand = event.target.closest('.brand-logo-container');
+        if (selectedBrand) {
+            const brandId = selectedBrand.dataset.brandId;
+            const brandName = selectedBrand.querySelector('img').alt; // Получаем имя бренда
+            selectedBrand.classList.toggle('selected');
+            updateBrandInput();
+
+            // Добавляем или удаляем фильтр
+            if (selectedBrand.classList.contains('selected')) {
+                addFilter(brandId, brandName); // Добавляем фильтр
+            } else {
+                removeFilter(brandId); // Удаляем фильтр
+            }
+        }
+    });
+
+    // Обработчик клика по кнопкам удаления фильтров
+    document.getElementById('appliedFiltersList').addEventListener('click', function(event) {
+        const button = event.target.closest('.remove-filter');
+        if (button) {
+            const brandId = button.dataset.brandId; // Получаем ID бренда для удаления
+            const url = new URL(window.location.href);
+            // Удаляем конкретный brandId
+            let brands = url.searchParams.getAll('brand');
+            brands = brands.filter(id => id !== brandId); // Удаляем конкретный ID
+            // Обновляем параметры URL
+            url.searchParams.delete('brand'); // Удаляем параметр brand
+            brands.forEach(id => url.searchParams.append('brand', id)); // Добавляем оставшиеся ID обратно
+            url.searchParams.append('remove_brand', brandId); // Добавляем параметр для удаления
+            window.location.href = url; // Перезагружаем страницу с обновленным URL
+        }
+    });
+
+    // Инициализация отображения примененных фильтров
+    const appliedFilters = JSON.parse(localStorage.getItem('appliedFilters')) || [];
+    updateSelectedBrandsDisplay(appliedFilters);
+    console.log(JSON.parse(localStorage.getItem('')));
+    console.log(JSON.parse(localStorage.getItem('appliedFilters')));
+    appliedFilters.forEach(filter => {
+        const brandElement = brandFilter.querySelector(`[data-brand-id="${filter.id}"]`);
+        if (brandElement) {
+            brandElement.classList.add('selected');
+        }
+    });
+
+    console.log("Applied Filters:", appliedFilters);
+    console.log("Current URL:", window.location.href);
+</script>
+{% endblock %}
+
+
         

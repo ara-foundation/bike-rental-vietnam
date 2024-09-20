@@ -16,29 +16,12 @@ from .models import Bike, BikeBrand, BikeModel, BikeOrder, BikeType, RidePurpose
 from .utils import get_total_bikes_for_brand
 
 
-def bike_rental_view(request):
-    context = {
-        'brands': BikeBrand.objects.all(),
-        'transmissions': Bike.objects.values_list('bike_model__transmission', flat=True).distinct(),
-        'bike_types': BikeType.objects.all(),
-        'ride_purposes': RidePurpose.objects.all(),
-        'selected_brand': request.GET.get('brand', ''),
-        'selected_transmission': request.GET.get('transmission', ''),
-        'selected_bike_type': request.GET.get('bike_type', ''),
-        'selected_ride_purpose': request.GET.get('ride_purpose', ''),
-        'selected_gears': request.GET.get('gears', ''),
-        'selected_fuel_system': request.GET.get('fuel_system', ''),
-        'selected_displacement': request.GET.get('displacement', ''),
-        'selected_clearance': request.GET.get('clearance', ''),
-        'selected_weight': request.GET.get('weight', ''),
-    }
-    return render(request, 'bike_rental.html', context)
-
 class BikeModelListView(ListView):
     model = BikeModel
-    template_name = "bike_rental.html"  # Измените это
+    template_name = "bike_rental.html"
     context_object_name = "bike_rental"
     paginate_by = 9
+
     def get_queryset(self):
         queryset = super().get_queryset().annotate(
             bikes_count=Count("bikes"),
@@ -47,18 +30,54 @@ class BikeModelListView(ListView):
         )
         
         filters = {}
-        selected_brands = self.request.GET.get('brand')
-        if selected_brands:
-            brand_ids = selected_brands.split(',')
-            filters['brand_id__in'] = brand_ids  # Используем фильтрацию по множеству
+        selected_brands = self.request.GET.getlist('brand')  # Получаем список выбранных брендов
+        print("Selected Brands:", selected_brands)
 
+        # Обработка отмены фильтра
+        removed_brand = self.request.GET.get('remove_brand')
+        if removed_brand:
+            print(f"Removing brand: {removed_brand}")  # Лог для отладки
+            selected_brands = [brand for brand in selected_brands if brand != removed_brand]
+            print("Updated Selected Brands after removal:", selected_brands)  # Лог для отладки
+        
+        # Применение оставшихся фильтров
+        if selected_brands:
+            if 'all' in selected_brands:
+                print("All brands selected, returning full queryset.")  # Лог для отладки
+                return queryset  # Возвращаем все модели
+            else:
+                # Преобразуем в целые числа и фильтруем
+                brand_ids = [int(brand) for brand in ','.join(selected_brands).split(',') if brand.isdigit()]
+                if brand_ids:  # Проверяем, что список не пуст
+                    filters['brand_id__in'] = brand_ids
+                    print("Filters:", filters)  # Лог для отладки
+                else:
+                    print("No valid brand IDs found. Skipping brand filter.")  # Лог для отладки
+
+        # Применение других фильтров (если есть)
+        selected_transmission = self.request.GET.get('transmission')
+        if selected_transmission:
+            filters['transmission'] = selected_transmission
+
+        selected_bike_type = self.request.GET.get('bike_type')
+        if selected_bike_type:
+            filters['bike_type__id'] = selected_bike_type
+
+        selected_ride_purpose = self.request.GET.get('ride_purpose')
+        if selected_ride_purpose:
+            filters['ride_purposes__id'] = selected_ride_purpose
+
+        # Удаляем пустые фильтры
         filters = {k: v for k, v in filters.items() if v is not None}
 
         if filters:
             queryset = queryset.filter(**filters)
+            print("Filtered Queryset Count:", queryset.count())  # Лог для отладки
+        else:
+            print("No filters applied. Returning full queryset.")  # Лог для отладки
 
+        print("Current GET parameters:", self.request.GET)
         return queryset
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -66,10 +85,7 @@ class BikeModelListView(ListView):
 
         for field in filter_fields:
             value = self.request.GET.get(field)
-            if value and value != 'None':
-                context[f'selected_{field}'] = value
-            else:
-                context[f'selected_{field}'] = None
+            context[f'selected_{field}'] = value if value and value != 'None' else None
 
         context["brands"] = BikeBrand.objects.filter().distinct()
 
@@ -79,9 +95,9 @@ class BikeModelListView(ListView):
             .distinct()
         )
         
-        selected_brand_ids = self.request.GET.getlist("brand")  # Изменено на getlist для поддержки множественного выбора
+        selected_brand_ids = self.request.GET.getlist("brand")
         if selected_brand_ids and all(id.isdigit() for id in selected_brand_ids):
-            context["selected_brand"] = [int(id) for id in selected_brand_ids]  # Преобразуем в список целых чисел
+            context["selected_brand"] = [int(id) for id in selected_brand_ids]
             context["selected_brand_name"] = [BikeBrand.objects.get(id=id).name for id in context["selected_brand"]]
             context["total_bikes_for_brand"] = sum(get_total_bikes_for_brand(id) for id in context["selected_brand"])
         else:
@@ -91,38 +107,32 @@ class BikeModelListView(ListView):
 
         context["bike_rental_count"] = self.get_queryset().count()
 
-        gears = (
+        context["gears"] = (
             BikeModel.objects.filter(transmission__in=["semi-auto", "manual"])
             .values_list("gears", flat=True)
             .distinct()
             .order_by("gears")
         )
-        fuel_systems = (
+        context["fuel_systems"] = (
             BikeModel.objects.values_list("fuel_system", flat=True)
             .distinct()
             .order_by("fuel_system")
         )
-        displacements = (
+        context["displacements"] = (
             BikeModel.objects.values_list("displacement", flat=True)
             .distinct()
             .order_by("displacement")
         )
-        clearance = (
+        context["clearance"] = (
             BikeModel.objects.values_list("clearance", flat=True)
             .distinct()
             .order_by("clearance")
         )
-        weights = (
+        context["weights"] = (
             BikeModel.objects.values_list("weight", flat=True)
             .distinct()
             .order_by("weight")
         )
-
-        context["gears"] = gears
-        context["fuel_systems"] = fuel_systems
-        context["displacements"] = displacements
-        context["clearance"] = clearance
-        context["weights"] = weights
 
         context['selected_gears'] = self.request.GET.get('gears')
         context['selected_fuel_system'] = self.request.GET.get('fuel_system')
@@ -133,7 +143,6 @@ class BikeModelListView(ListView):
         context['selected_price_category'] = self.request.GET.get('price_category')
 
         applied_filters = {}
-
         search_query = self.request.GET.get('search', '')
         if search_query:
             applied_filters['search'] = search_query
