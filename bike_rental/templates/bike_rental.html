@@ -14,7 +14,7 @@
     <div class="row">
         {% for bike_type in bike_types %}
             <div class="col-md-3 mb-3">
-                <div class="type-filter-item" data-type="{{ bike_type.id }}">
+                <div class="type-filter-item {% if bike_type.id|stringformat:"i" in selected_bike_types %}selected{% endif %}" data-type="{{ bike_type.id }}">
                     <img src="{{ bike_type.image.url }}" alt="{{ bike_type.type }}" class="img-fluid">
                     <p class="text-center mt-2">{{ bike_type.type }}</p>
                 </div>
@@ -28,174 +28,185 @@
     <div class="row">
         {% for ride_purpose in ride_purposes %}
             <div class="col-md-4 mb-3">
-                <div class="ride-purpose-filter-item" data-purpose="{{ ride_purpose.id }}">
+                <div class="ride-purpose-filter-item {% if ride_purpose.id in selected_ride_purposes %}selected{% endif %}" data-purpose="{{ ride_purpose.id }}">
                     <img src="{{ ride_purpose.image.url }}" alt="{{ ride_purpose.name }}" class="img-fluid">
                     <p class="text-center mt-2">{{ ride_purpose.name }}</p>
                 </div>
-            </div>
+                </div>
         {% endfor %}
     </div>
 </div>
 
+
 <div class="row">
     <div class="col-md-3">
-        <!-- Здесь будут фильтры -->
-        <div id="mainFilters" class="mb-4">
-            <form id="filterForm" method="get">
+        <form id="filterForm" method="get">
+            <div class="mb-3">
+                <label class="form-label">Brand</label>
+                <div id="brand-filter" class="d-flex flex-wrap justify-content-start align-items-center">
+                    {% for brand in brands %}
+                        <div class="brand-logo-container m-1 {% if brand.id in selected_brands %}selected{% endif %}" data-brand-id="{{ brand.id }}">
+                            <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo" title="{{ brand.name }}">
+                        </div>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="brand" id="brand" value="{{ selected_brands|join:',' }}">
+            </div>
+            
+            <div class="mb-3">
+                <input type="text" name="search" id="search" class="form-control" placeholder="Search by model" value="{{ request.GET.search }}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Price</label>
+                <div id="price-category-filter" class="d-flex justify-content-between">
+                    <div class="price-category-item {% if 'Budget' in selected_price_categories %}selected{% endif %}" data-price-category="Budget">
+                        <span>Budget</span>
+                        <i class="bi bi-piggy-bank"></i>
+                        <small>≤$50</small>
+                    </div>
+                    <div class="price-category-item {% if 'Standard' in selected_price_categories %}selected{% endif %}" data-price-category="Standard">
+                        <span>Standard</span>
+                        <i class="bi bi-cash-coin"></i>
+                        <small>$51-$100</small>
+                    </div>
+                    <div class="price-category-item {% if 'Premium' in selected_price_categories %}selected{% endif %}" data-price-category="Premium">
+                        <span>Premium</span>
+                        <i class="bi bi-gem"></i>
+                        <small>>$100</small>
+                    </div>
+                </div>
+                <input type="hidden" name="price_category" id="price_category" value="{{ selected_price_categories|join:',' }}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Pick your height:</label>
+                <div id="seat-height-filter" class="d-flex justify-content-between">
+                    <div class="seat-height-category-item {% if 'Low' in selected_seat_heights %}selected{% endif %}" data-seat-height="Low">
+                        <span>Low</span>
+                        <i class="bi bi-arrow-down-circle"></i>
+                        <small><170 cm</small>
+                    </div>
+                    <div class="seat-height-category-item {% if 'Middle' in selected_seat_heights %}selected{% endif %}" data-seat-height="Middle">
+                        <span>Middle</span>
+                        <i class="bi bi-arrow-left-right"></i>
+                        <small>170-180 cm</small>
+                    </div>
+                    <div class="seat-height-category-item {% if 'High' in selected_seat_heights %}selected{% endif %}" data-seat-height="High">
+                        <span>High</span>
+                        <i class="bi bi-arrow-up-circle"></i>
+                        <small>>180 cm</small>
+                    </div>
+                </div>
+                <input type="hidden" name="seat_height" id="seat_height" value="{{ selected_seat_heights|join:',' }}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Bike weight:</label>
+                <div id="weight-filter" class="d-flex justify-content-between">
+                    <div class="weight-category-item {% if 'Light' in selected_weights %}selected{% endif %}" data-weight="Light">
+                        <span>Light</span>
+                        <i class="bi bi-cloud"></i>
+                        <small>≤120 kg</small>
+                    </div>
+                    <div class="weight-category-item {% if 'Middle' in selected_weights %}selected{% endif %}" data-weight="Middle">
+                        <span>Middle</span>
+                        <i class="bi bi-bicycle"></i>
+                        <small>121-180 kg</small>
+                    </div>
+                    <div class="weight-category-item {% if 'Heavy' in selected_weights %}selected{% endif %}" data-weight="Heavy">
+                        <span>Heavy</span>
+                        <i class="bi bi-truck"></i>
+                        <small>>180 kg</small>
+                    </div>
+                </div>
+                <input type="hidden" name="weight" id="weight" value="{{ selected_weights|join:',' }}">
+            </div>
+            
+            <div class="mb-3 text-center">
+                <button id="expertFiltersBtn" type="button" class="btn btn-secondary w-100">
+                    Expert Filters <i class="bi bi-chevron-down" id="expertFiltersIcon"></i>
+                </button>
+            </div>
+            
+            <div id="expertFilters" style="display: none;">
                 <div class="mb-3">
-                    <label class="form-label">Brand</label>
-                    <div id="brand-filter" class="d-flex flex-wrap justify-content-start align-items-center">
-                        {% for brand in brands %}
-                            <div class="brand-logo-container m-1" data-brand-id="{{ brand.id }}">
-                                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo" title="{{ brand.name }}">
-                            </div>
+                    <label for="transmission" class="form-label">Transmission</label>
+                    <select name="transmission" id="transmission" class="form-select">
+                        <option value="">All Transmissions</option>
+                        {% for transmission in transmissions %}
+                            <option value="{{ transmission }}" {% if transmission == selected_transmission %}selected{% endif %}>{{ transmission }}</option>
                         {% endfor %}
-                    </div>
-                    <input type="hidden" name="brand" id="brand" value="{{ selected_brand }}">
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <input type="text" name="search" id="search" class="form-control" placeholder="Search by model" value="{{ request.GET.search }}">
+                    <label for="gears" class="form-label">Number of Gears</label>
+                    <select name="gears" id="gears" class="form-select">
+                        <option value="">All</option>
+                        {% for gear in gears %}
+                            <option value="{{ gear }}" {% if gear == selected_gears %}selected{% endif %}>{{ gear }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Price</label>
-                    <div id="price-category-filter" class="d-flex justify-content-between">
-                        <div class="price-category-item" data-price-category="Budget">
-                            <span>Budget</span>
-                            <i class="bi bi-piggy-bank"></i>
-                            <small>≤$50</small>
-                        </div>
-                        <div class="price-category-item" data-price-category="Standard">
-                            <span>Standard</span>
-                            <i class="bi bi-cash-coin"></i>
-                            <small>$51-$100</small>
-                        </div>
-                        <div class="price-category-item" data-price-category="Premium">
-                            <span>Premium</span>
-                            <i class="bi bi-gem"></i>
-                            <small>>$100</small>
-                        </div>
-                    </div>
-                    <input type="hidden" name="price_category" id="price_category" value="{{ selected_price_category }}">
+                    <label for="fuel_system" class="form-label">Fuel System</label>
+                    <select name="fuel_system" id="fuel_system" class="form-select">
+                        <option value="">All</option>
+                        {% for fs in fuel_systems %}
+                            <option value="{{ fs }}" {% if fs == selected_fuel_system %}selected{% endif %}>{{ fs }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Pick your height:</label>
-                    <div id="seat-height-filter" class="d-flex justify-content-between">
-                        <div class="seat-height-category-item" data-seat-height="Low">
-                            <span>Low</span>
-                            <i class="bi bi-arrow-down-circle"></i>
-                            
-                            <small><170 cm</small>
-                        </div>
-                        <div class="seat-height-category-item" data-seat-height="Middle">
-                            <span>Middle</span>
-
-                            <i class="bi bi-arrow-left-right"></i>
-                            <small>170-180 cm</small>
-                        </div>
-                        <div class="seat-height-category-item" data-seat-height="High">
-                            <span>High</span>
-                            <i class="bi bi-arrow-up-circle"></i>
-                            <small>>180 cm</small>
-                        </div>
-                    </div>
-                    <input type="hidden" name="seat_height" id="seat_height" value="{{ selected_seat_height }}">
+                    <label for="displacement" class="form-label">Engine (cc)</label>
+                    <select name="displacement" id="displacement" class="form-select">
+                        <option value="">All</option>
+                        {% for disp in displacements %}
+                            <option value="{{ disp }}" {% if disp == selected_displacement %}selected{% endif %}>{{ disp }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Bike weight:</label>
-                    <div id="weight-filter" class="d-flex justify-content-between">
-                        <div class="weight-category-item" data-weight="Light">
-                            <span>Light</span>
-                            <i class="bi bi-cloud"></i>                            
-
-                            <small>≤120 kg</small>
-                        </div>
-                        <div class="weight-category-item" data-weight="Middle">
-                            
-                            <span>Middle</span>
-                            <i class="bi bi-bicycle"></i>
-
-                            <small>121-180 kg</small>
-                        </div>
-                        <div class="weight-category-item" data-weight="Heavy">
-                            <span>Heavy</span>
-                            <i class="bi bi-truck"></i>
-                            <small>>180 kg</small>
-                        </div>
-                    </div>
-                    <input type="hidden" name="weight" id="weight" value="{{ selected_weight }}">
+                    <label for="clearance" class="form-label">Clearance (mm)</label>
+                    <select name="clearance" id="clearance" class="form-select">
+                        <option value="">All</option>
+                        {% for size in clearances %}
+                            <option value="{{ size }}" {% if size == selected_clearance %}selected{% endif %}>{{ size }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="mb-3 text-center">
-                    <button id="expertFiltersBtn" class="btn btn-secondary w-100">
-                        Expert Filters <i class="bi bi-chevron-down" id="expertFiltersIcon"></i>
-                    </button>
-                </div>
-
-                <div id="expertFilters" style="display: none;">
-                    <div class="mb-3">
-                        <label for="transmission" class="form-label">Transmission</label>
-                        <select name="transmission" id="transmission" class="form-select">
-                            <option value="">All Transmissions</option>
-                            {% for transmission in transmissions %}
-                                <option value="{{ transmission }}" {% if transmission == selected_transmission %}selected{% endif %}>{{ transmission }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="gears" class="form-label">Number of Gears</label>
-                        <select name="gears" id="gears" class="form-select">
-                            <option value="">All</option>
-                            {% for gear in gears %}
-                                <option value="{{ gear }}" {% if gear == selected_gears %}selected{% endif %}>{{ gear }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fuel_system" class="form-label">Fuel System</label>
-                        <select name="fuel_system" id="fuel_system" class="form-select">
-                            <option value="">All</option>
-                            {% for fs in fuel_systems %}
-                                <option value="{{ fs }}" {% if fs == selected_fuel_system %}selected{% endif %}>{{ fs }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="displacement" class="form-label">Engine (cc)</label>
-                        <select name="displacement" id="displacement" class="form-select">
-                            <option value="">All</option>
-                            {% for disp in displacements %}
-                                <option value="{{ disp }}" {% if disp == selected_displacement %}selected{% endif %}>{{ disp }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="clearance" class="form-label">Clearance (mm)</label>
-                        <select name="clearance" id="clearance" class="form-select">
-                            <option value="">All</option>
-                            {% for size in clearances %}
-                                <option value="{{ size }}" {% if size == selected_clearance %}selected{% endif %}>{{ size }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <button id="applyFiltersBtn" class="btn btn-primary w-100">Apply Filters</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+            </div>
+            <input type="hidden" name="bike_type" value="{{ selected_bike_types|join:',' }}">
+        </form>
     </div>
+    
     <div class="col-md-9">
-        <!-- Здесь будет выдача поиска -->
+        <div class="mt-3 mb-4">
+            <h6>Applied Filters:</h6>
+            <ul id="appliedFiltersList" class="list-inline">
+                {% for filter_name, filter_value in applied_filters.items %}
+                    <li class="list-inline-item">
+                        <span class="badge bg-secondary">
+                            {{ filter_name }}: {{ filter_value }}
+                            <a href="?{% for key, value in request.GET.items %}{% if key != filter_name %}{{ key }}={{ value }}&{% endif %}{% endfor %}" class="text-white" title="Remove filter">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li>No filters applied</li>
+                {% endfor %}
+            </ul>
+        </div>
 
         <div class="mt-3 mb-4">
             <h6>{{ bike_rental_count }} 
                 {% if bike_rental_count == 1 %}model{% else %}models{% endif %} available.
             </h6>
-        </div>
-
-        <div class="mt-3 mb-4">
-            <h6>Примененные фильтры:</h6>
-            <ul id="appliedFiltersList" class="list-inline"></ul> <!-- Список для отображения примененных фильтров -->
         </div>
 
         <div class="row mt-4">
@@ -281,137 +292,110 @@
     </div>
 </div>
 {% endblock %}
+
 {% block extra_js %}
 <script>
-    let brandFilter = document.getElementById('brand-filter'); // Инициализируем переменную сразу
+    document.addEventListener('DOMContentLoaded', function() {
+        const expertFiltersBtn = document.getElementById('expertFiltersBtn');
+        const expertFilters = document.getElementById('expertFilters');
+        const expertFiltersIcon = document.getElementById('expertFiltersIcon');
 
-    function updateBrandInput() {
-        const selectedBrands = Array.from(brandFilter.querySelectorAll('.selected')).map(el => el.dataset.brandId);
-        document.getElementById('brand').value = selectedBrands.join(',');
-        console.log("Selected Brands:", selectedBrands);
-
-    }
-
-    function updateSelectedBrandsDisplay(appliedFilters) {
-        const selectedBrandsDiv = document.getElementById('appliedFiltersList');
-        selectedBrandsDiv.innerHTML = ''; // Очищаем предыдущие элементы
-        if (appliedFilters.length > 0) {
-            appliedFilters.forEach(filter => {
-                const listItem = document.createElement('li');
-                listItem.classList.add('list-inline-item');
-                listItem.innerHTML = `
-                    <span class="badge bg-secondary">
-                        ${filter.name}
-                        <a href="#" class="remove-filter text-white" data-brand-id="${filter.id}" title="Удалить фильтр" onclick="removeFilter('${filter.id}')">
-                            <i class="bi bi-x-circle"></i>
-                        </a>
-                    </span>
-                `;
-                selectedBrandsDiv.appendChild(listItem);
-            });
-        } else {
-            selectedBrandsDiv.textContent = 'Нет выбранных брендов';
-        }
-    }
-
-    function displayAppliedFilters(selectedBrands) {
-        const appliedFiltersList = document.getElementById('appliedFiltersList');
-        appliedFiltersList.innerHTML = '';
-        if (selectedBrands.length > 0) {
-            selectedBrands.forEach(brandId => {
-                const brandElement = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
-                if (brandElement) {
-                    const brandName = brandElement.querySelector('img').alt;
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('list-inline-item');
-                    listItem.innerHTML = `
-                        <span class="badge bg-secondary">
-                            ${brandName}
-                            <button type="button" class="remove-filter text-white" data-brand-id="${brandId}" title="Удалить фильтр" onclick="removeFilter('${brandId}')">
-                                <i class="bi bi-x-circle"></i>
-                            </button>
-                        </span>
-                    `;
-                    appliedFiltersList.appendChild(listItem);
-                }
-
-            });
-        } else {
-            appliedFiltersList.textContent = 'Нет примененных фильтров';
-        }
-    }
-    
-    function addFilter(brandId, brandName) {
-    let appliedFilters = JSON.parse(localStorage.getItem('appliedFilters')) || [];
-    if (!appliedFilters.some(filter => filter.id === brandId)) {
-        appliedFilters.push({ id: brandId, name: brandName });
-        localStorage.setItem('appliedFilters', JSON.stringify(appliedFilters));
-    }
-}
-
-function removeFilter(brandId) {
-    const brandElement = brandFilter.querySelector(`[data-brand-id="${brandId}"]`);
-    if (brandElement) {
-        brandElement.classList.remove('selected'); // Удаляем класс 'selected'
-    }
-    let appliedFilters = JSON.parse(localStorage.getItem('appliedFilters')) || [];
-    appliedFilters = appliedFilters.filter(filter => filter.id !== brandId); // Удаляем фильтр
-    localStorage.setItem('appliedFilters', JSON.stringify(appliedFilters));
-    updateBrandInput(); // Обновляем состояние фильтров
-    updateSelectedBrandsDisplay(appliedFilters); // Обновляем отображение выбранных брендов
-}
-
-    // Обработчик клика по фильтрам
-    brandFilter.addEventListener('click', function(event) {
-        const selectedBrand = event.target.closest('.brand-logo-container');
-        if (selectedBrand) {
-            const brandId = selectedBrand.dataset.brandId;
-            const brandName = selectedBrand.querySelector('img').alt; // Получаем имя бренда
-            selectedBrand.classList.toggle('selected');
-            updateBrandInput();
-
-            // Добавляем или удаляем фильтр
-            if (selectedBrand.classList.contains('selected')) {
-                addFilter(brandId, brandName); // Добавляем фильтр
+        expertFiltersBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Предотвращаем отправку формы
+            if (expertFilters.style.display === 'none' || expertFilters.style.display === '') {
+                expertFilters.style.display = 'block';
+                expertFiltersIcon.classList.remove('bi-chevron-down');
+                expertFiltersIcon.classList.add('bi-chevron-up');
             } else {
-                removeFilter(brandId); // Удаляем фильтр
+                expertFilters.style.display = 'none';
+                expertFiltersIcon.classList.remove('bi-chevron-up');
+                expertFiltersIcon.classList.add('bi-chevron-down');
             }
+        });
+
+        function toggleSelection(element, inputId) {
+            element.classList.toggle('selected');
+            const input = document.getElementById(inputId);
+            const selectedValues = Array.from(element.parentElement.querySelectorAll('.selected'))
+                .map(el => el.dataset[inputId])
+                .join(',');
+            input.value = selectedValues;
+        }
+
+        // Brand filter
+        document.querySelectorAll('#brand-filter .brand-logo-container').forEach(item => {
+            item.addEventListener('click', function() {
+                toggleSelection(this, 'brand');
+            });
+        });
+
+        // Price category filter
+        document.querySelectorAll('#price-category-filter .price-category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                toggleSelection(this, 'price_category');
+            });
+        });
+
+        // Seat height filter
+        document.querySelectorAll('#seat-height-filter .seat-height-category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                toggleSelection(this, 'seat_height');
+            });
+        });
+
+        // Weight filter
+        document.querySelectorAll('#weight-filter .weight-category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                toggleSelection(this, 'weight');
+            });
+        });
+
+        // Bike Type filter
+        document.querySelectorAll('#typeFilters .type-filter-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateBikeTypeFilter();
+            });
+        });
+
+        function updateBikeTypeFilter() {
+            const selectedTypes = Array.from(document.querySelectorAll('#typeFilters .type-filter-item.selected'))
+                .map(item => item.dataset.type);
+            
+            let input = document.querySelector('input[name="bike_type"]');
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'bike_type';
+                document.getElementById('filterForm').appendChild(input);
+            }
+            input.value = selectedTypes.join(',');
+            
+            document.getElementById('filterForm').submit();
         }
     });
-
-    // Обработчик клика по кнопкам удаления фильтров
-    document.getElementById('appliedFiltersList').addEventListener('click', function(event) {
-        const button = event.target.closest('.remove-filter');
-        if (button) {
-            const brandId = button.dataset.brandId; // Получаем ID бренда для удаления
-            const url = new URL(window.location.href);
-            // Удаляем конкретный brandId
-            let brands = url.searchParams.getAll('brand');
-            brands = brands.filter(id => id !== brandId); // Удаляем конкретный ID
-            // Обновляем параметры URL
-            url.searchParams.delete('brand'); // Удаляем параметр brand
-            brands.forEach(id => url.searchParams.append('brand', id)); // Добавляем оставшиеся ID обратно
-            url.searchParams.append('remove_brand', brandId); // Добавляем параметр для удаления
-            window.location.href = url; // Перезагружаем страницу с обновленным URL
-        }
+    // Ride Purpose filter
+document.querySelectorAll('#ridePurposeFilters .ride-purpose-filter-item').forEach(item => {
+    item.addEventListener('click', function() {
+        this.classList.toggle('selected');
+        updateRidePurposeFilter();
     });
+});
 
-    // Инициализация отображения примененных фильтров
-    const appliedFilters = JSON.parse(localStorage.getItem('appliedFilters')) || [];
-    updateSelectedBrandsDisplay(appliedFilters);
-    console.log(JSON.parse(localStorage.getItem('')));
-    console.log(JSON.parse(localStorage.getItem('appliedFilters')));
-    appliedFilters.forEach(filter => {
-        const brandElement = brandFilter.querySelector(`[data-brand-id="${filter.id}"]`);
-        if (brandElement) {
-            brandElement.classList.add('selected');
-        }
-    });
-
-    console.log("Applied Filters:", appliedFilters);
-    console.log("Current URL:", window.location.href);
+function updateRidePurposeFilter() {
+    const selectedPurposes = Array.from(document.querySelectorAll('#ridePurposeFilters .ride-purpose-filter-item.selected'))
+        .map(item => item.dataset.purpose);
+    
+    let input = document.querySelector('input[name="ride_purpose"]');
+    if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'ride_purpose';
+        document.getElementById('filterForm').appendChild(input);
+    }
+    input.value = selectedPurposes.join(',');
+    
+    document.getElementById('filterForm').submit();
+}
 </script>
 {% endblock %}
-
-
-        
