@@ -161,8 +161,8 @@ COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'co
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = f"{config("AWS_S3_ENDPOINT_URL")}/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 THEME_COLOR = "sandstone"
 CUSTOM_CSS = "css/bikes.css"
