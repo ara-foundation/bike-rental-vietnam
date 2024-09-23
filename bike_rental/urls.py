@@ -14,6 +14,7 @@ from .views import (
     car_tours,
     order_confirmation,
     autocomplete,
+    remove_filter,
 )
 
 urlpatterns = [
@@ -40,6 +41,7 @@ urlpatterns = [
     path("bike-tour-order/<int:tour_id>/", bike_tour_order, name="bike_tour_order"),
     path("bike-tour/<int:tour_id>/", bike_tour, name="bike_tour"),
     path('autocomplete/', autocomplete, name='autocomplete'),
+    path('remove-filter/', remove_filter, name='remove_filter'),
 ]
 # from django.conf import settings
 # from django.conf.urls.static import static

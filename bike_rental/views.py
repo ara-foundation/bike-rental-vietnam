@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from .forms import ClientForm, OrderForm
 from .models import Bike, BikeBrand, BikeModel, BikeOrder, BikeType, RidePurpose, BikeProvider, ProviderService
 from .utils import get_total_bikes_for_brand
+from django.utils.http import urlencode
 
 
 
@@ -27,27 +28,32 @@ class BikeModelListView(ListView):
         queryset = super().get_queryset()
         filters = {}
 
-        # Bike Type filter
-        bike_types = self.request.GET.getlist('bike_type')
+        # Обработка фильтров по типу велосипеда
+        bike_types = self.request.GET.get('bike_type', '').split(',')
+        bike_types = [bt for bt in bike_types if bt.strip().isdigit()]
         if bike_types:
             filters['bike_type__id__in'] = bike_types
 
-        # Ride Purpose filter
+        # Обработка фильтров по цели поездки
         ride_purposes = [rp for rp in self.request.GET.getlist('ride_purpose') if rp.isdigit()]
         if ride_purposes:
             filters['ride_purposes__id__in'] = ride_purposes
 
-        # Brand filter
-        brands = [b for b in self.request.GET.getlist('brand') if b.isdigit()]
+        # Обработка фильтров по бренду
+        brands = self.request.GET.get('brand', '').split(',')
+        brands = list(set([b.strip() for b in brands if b.strip().isdigit()]))
         if brands:
             filters['brand__id__in'] = brands
 
-        # Search filter
+        
+        # Фильтр поиска
+
         search_query = self.request.GET.get('search')
+
         if search_query:
             filters['Q'] = Q(brand__name__icontains=search_query) | Q(model__icontains=search_query)
 
-        # Price Category filter
+        # Обработка фильтров по цене
         price_categories = self.request.GET.getlist('price_category')
         if price_categories:
             price_filters = Q()
@@ -60,7 +66,7 @@ class BikeModelListView(ListView):
                     price_filters |= Q(bike__price_per_day__gt=100)
             filters['Q'] = filters.get('Q', Q()) & price_filters
 
-        # Seat Height filter
+        # Обработка фильтров по высоте сиденья
         seat_heights = self.request.GET.getlist('seat_height')
         if seat_heights:
             height_filters = Q()
@@ -73,7 +79,7 @@ class BikeModelListView(ListView):
                     height_filters |= Q(seat_height__gt=180)
             filters['Q'] = filters.get('Q', Q()) & height_filters
 
-        # Weight filter
+        # Обработка фильтров по весу
         weights = self.request.GET.getlist('weight')
         if weights:
             weight_filters = Q()
@@ -93,6 +99,8 @@ class BikeModelListView(ListView):
             if value and value != 'None':
                 filters[f'{filter_name}__iexact'] = value
 
+        print("Filters being applied:", filters)
+
         if 'Q' in filters:
             queryset = queryset.filter(filters.pop('Q'))
         return queryset.filter(**filters).distinct()
@@ -111,27 +119,42 @@ class BikeModelListView(ListView):
 
         # Applied filters
         applied_filters = {}
-        for key, value in self.request.GET.items():
-            if value and key not in ['page', 'csrfmiddlewaretoken']:
-                applied_filters[key] = value
+        for key, values in self.request.GET.lists():
+            if values and key not in ['page', 'csrfmiddlewaretoken']:
+                # Удаляем пустые значения
+                filtered_values = list(filter(None, values))
+                if filtered_values:
+                    applied_filters[key] = list(dict.fromkeys(filtered_values))
+        
+        # Логируем очищенные фильтры
+        print("Applied Filters:", applied_filters)
+
+        # Очистка старых фильтров перед сохранением
+        self.request.session['applied_filters'] = {}
+
+        # Сохранение новых фильтров в сессии
+        self.request.session['applied_filters'] = applied_filters
+
         context['applied_filters'] = applied_filters
 
         # Selected filters
-        context['selected_bike_types'] = [int(bt) for bt in self.request.GET.getlist('bike_type') if bt.isdigit()]
-        context['selected_ride_purposes'] = [int(rp) for rp in self.request.GET.getlist('ride_purpose') if rp.isdigit()]
-        context['selected_brands'] = [int(b) for b in self.request.GET.getlist('brand') if b.isdigit()]
-        context['selected_price_categories'] = self.request.GET.getlist('price_category')
-        context['selected_seat_heights'] = self.request.GET.getlist('seat_height')
-        context['selected_weights'] = self.request.GET.getlist('weight')
-        context['selected_transmission'] = self.request.GET.get('transmission')
-        context['selected_gears'] = self.request.GET.get('gears')
-        context['selected_fuel_system'] = self.request.GET.get('fuel_system')
-        context['selected_displacement'] = self.request.GET.get('displacement')
-        context['selected_clearance'] = self.request.GET.get('clearance')
+        for filter_name in ['bike_type', 'ride_purpose', 'brand', 'price_category', 'seat_height', 'weight']:
+            context[f'selected_{filter_name}s'] = self.request.GET.getlist(filter_name)
+
+        for filter_name in ['transmission', 'gears', 'fuel_system', 'displacement', 'clearance']:
+            context[f'selected_{filter_name}'] = self.request.GET.get(filter_name)
 
         context['bike_rental_count'] = self.get_queryset().count()
 
         return context
+
+    def get(self, request, *args, **kwargs):
+        # Восстановление фильтров из сессии, если GET-параметры пусты
+        if not request.GET:
+            saved_filters = request.session.get('applied_filters', {})
+            if saved_filters:
+                return redirect(f"{request.path}?{urlencode(saved_filters, doseq=True)}")
+        return super().get(request, *args, **kwargs)
 
 
 def bike_rental_offers(request, brand, id):
@@ -295,3 +318,25 @@ def autocomplete(request):
     
     results = list(brands) + list(models) + list(brand_models)
     return JsonResponse(results, safe=False)
+
+
+def remove_filter(request):
+    print("Current GET parameters:", request.GET)  # Отладка
+    current_filters = request.GET.copy()
+    filter_to_remove = request.GET.get('filter_to_remove')
+    value_to_remove = request.GET.get('value_to_remove')
+
+    print(f"Removing filter: {filter_to_remove}, value: {value_to_remove}")  # Отладка
+
+    if filter_to_remove and value_to_remove:
+        values = current_filters.getlist(filter_to_remove)
+        print(f"Current values for {filter_to_remove}: {values}")  # Отладка
+        if value_to_remove in values:
+            values.remove(value_to_remove)
+            if values:
+                current_filters.setlist(filter_to_remove, values)
+            else:
+                del current_filters[filter_to_remove]
+
+    current_filters.pop('page', None)  # Удаляем параметр страницы, если он есть
+    return redirect(f"{request.path}?{current_filters.urlencode()}")

@@ -14,7 +14,7 @@
     <div class="row">
         {% for bike_type in bike_types %}
             <div class="col-md-3 mb-3">
-                <div class="type-filter-item {% if bike_type.id|stringformat:"i" in selected_bike_types %}selected{% endif %}" data-type="{{ bike_type.id }}">
+                <div class="type-filter-item {% if bike_type.id|stringformat:"i" in selected_bike_types %}selected{% endif %}" data-bike-type="{{ bike_type.id }}">
                     <img src="{{ bike_type.image.url }}" alt="{{ bike_type.type }}" class="img-fluid">
                     <p class="text-center mt-2">{{ bike_type.type }}</p>
                 </div>
@@ -28,7 +28,7 @@
     <div class="row">
         {% for ride_purpose in ride_purposes %}
             <div class="col-md-4 mb-3">
-                <div class="ride-purpose-filter-item {% if ride_purpose.id in selected_ride_purposes %}selected{% endif %}" data-purpose="{{ ride_purpose.id }}">
+                <div class="ride-purpose-filter-item {% if ride_purpose.id|stringformat:"i" in selected_ride_purposes %}selected{% endif %}" data-ride-purpose="{{ ride_purpose.id }}">
                     <img src="{{ ride_purpose.image.url }}" alt="{{ ride_purpose.name }}" class="img-fluid">
                     <p class="text-center mt-2">{{ ride_purpose.name }}</p>
                 </div>
@@ -40,12 +40,12 @@
 
 <div class="row">
     <div class="col-md-3">
-        <form id="filterForm" method="get">
+        <form id="filterForm" method="get" action="{% url 'bike_rental' %}">
             <div class="mb-3">
                 <label class="form-label">Brand</label>
                 <div id="brand-filter" class="d-flex flex-wrap justify-content-start align-items-center">
                     {% for brand in brands %}
-                        <div class="brand-logo-container m-1 {% if brand.id in selected_brands %}selected{% endif %}" data-brand-id="{{ brand.id }}">
+                        <div class="brand-logo-container m-1 {% if brand.id|stringformat:"i" in selected_brands %}selected{% endif %}" data-brand="{{ brand.id }}">
                             <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo" title="{{ brand.name }}">
                         </div>
                     {% endfor %}
@@ -102,8 +102,9 @@
             </div>
             
             <div class="mb-3">
-                <label class="form-label">Bike weight:</label>
+                
                 <div id="weight-filter" class="d-flex justify-content-between">
+                    <label class="form-label">Bike weight:</label>
                     <div class="weight-category-item {% if 'Light' in selected_weights %}selected{% endif %}" data-weight="Light">
                         <span>Light</span>
                         <i class="bi bi-cloud"></i>
@@ -132,46 +133,46 @@
             <div id="expertFilters" style="display: none;">
                 <div class="mb-3">
                     <label for="transmission" class="form-label">Transmission</label>
-                    <select name="transmission" id="transmission" class="form-select">
+                    <select name="transmission" id="transmission" class="form-select" multiple>
                         <option value="">All Transmissions</option>
                         {% for transmission in transmissions %}
-                            <option value="{{ transmission }}" {% if transmission == selected_transmission %}selected{% endif %}>{{ transmission }}</option>
+                            <option value="{{ transmission }}" {% if transmission in selected_transmissions %}selected{% endif %}>{{ transmission }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="gears" class="form-label">Number of Gears</label>
-                    <select name="gears" id="gears" class="form-select">
+                    <select name="gears" id="gears" class="form-select" multiple>
                         <option value="">All</option>
                         {% for gear in gears %}
-                            <option value="{{ gear }}" {% if gear == selected_gears %}selected{% endif %}>{{ gear }}</option>
+                            <option value="{{ gear }}" {% if gear in selected_gears %}selected{% endif %}>{{ gear }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="fuel_system" class="form-label">Fuel System</label>
-                    <select name="fuel_system" id="fuel_system" class="form-select">
+                    <select name="fuel_system" id="fuel_system" class="form-select" multiple>
                         <option value="">All</option>
                         {% for fs in fuel_systems %}
-                            <option value="{{ fs }}" {% if fs == selected_fuel_system %}selected{% endif %}>{{ fs }}</option>
+                            <option value="{{ fs }}" {% if fs in selected_fuel_systems %}selected{% endif %}>{{ fs }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="displacement" class="form-label">Engine (cc)</label>
-                    <select name="displacement" id="displacement" class="form-select">
+                    <select name="displacement" id="displacement" class="form-select" multiple>
                         <option value="">All</option>
                         {% for disp in displacements %}
-                            <option value="{{ disp }}" {% if disp == selected_displacement %}selected{% endif %}>{{ disp }}</option>
+                            <option value="{{ disp }}" {% if disp in selected_displacements %}selected{% endif %}>{{ disp }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="clearance" class="form-label">Clearance (mm)</label>
-                    <select name="clearance" id="clearance" class="form-select">
+                    <select name="clearance" id="clearance" class="form-select" multiple>
                         <option value="">All</option>
                         {% for size in clearances %}
-                            <option value="{{ size }}" {% if size == selected_clearance %}selected{% endif %}>{{ size }}</option>
+                            <option value="{{ size }}" {% if size in selected_clearances %}selected{% endif %}>{{ size }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -180,27 +181,51 @@
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
             </div>
-            <input type="hidden" name="bike_type" value="{{ selected_bike_types|join:',' }}">
+            <input type="hidden" name="bike_type" id="bike_type" value="{{ selected_bike_types|join:',' }}">
+            <input type="hidden" name="ride_purpose" id="ride_purpose" value="{{ selected_ride_purposes|join:',' }}">
+            <input type="hidden" name="brand" id="brand" value="{{ selected_brands|join:',' }}">
+            <input type="hidden" name="price_category" id="price_category" value="{{ selected_price_categories|join:',' }}">
+            <input type="hidden" name="seat_height" id="seat_height" value="{{ selected_seat_heights|join:',' }}">
+            <input type="hidden" name="weight" id="weight" value="{{ selected_weights|join:',' }}">
         </form>
     </div>
     
     <div class="col-md-9">
         <div class="mt-3 mb-4">
             <h6>Applied Filters:</h6>
-            <ul id="appliedFiltersList" class="list-inline">
-                {% for filter_name, filter_value in applied_filters.items %}
-                    <li class="list-inline-item">
-                        <span class="badge bg-secondary">
-                            {{ filter_name }}: {{ filter_value }}
-                            <a href="?{% for key, value in request.GET.items %}{% if key != filter_name %}{{ key }}={{ value }}&{% endif %}{% endfor %}" class="text-white" title="Remove filter">
-                                <i class="bi bi-x-circle"></i>
-                            </a>
-                        </span>
-                    </li>
+            <div id="appliedFiltersList">
+                {% for key, values in applied_filters.items %}
+                    <div class="applied-filter">
+                        <span class="filter-name">{{ key }}:</span>
+                        {% for value in values %}
+                            <form method="get" action="{% url 'remove_filter' %}" class="d-inline">
+                                {% for k, v in request.GET.items %}
+                                    {% if k != key or v != value %}
+                                        <input type="hidden" name="{{ k }}" value="{{ v }}">
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="hidden" name="filter_to_remove" value="{{ key }}">
+                                <input type="hidden" name="value_to_remove" value="{{ value }}">
+                                <button type="submit" class="btn btn-secondary btn-sm me-2 mb-2" data-filter="{{ key }}">
+                                    {{ value }} <span aria-hidden="true">&times;</span>
+                                </button>
+                            </form>
+                        {% endfor %}
+                    </div>
                 {% empty %}
-                    <li>No filters applied</li>
+                    <span>No filters applied</span>
                 {% endfor %}
-            </ul>
+            </div>
+        </div>
+    
+        <!-- Отладочный вывод -->
+        <div class="mt-3 mb-4">
+            <h6>Debug: Applied Filters Content</h6>
+            <pre>
+                {% for key, values in applied_filters.items %}
+                    {{ key }}: {{ values }}
+                {% endfor %}
+            </pre>
         </div>
 
         <div class="mt-3 mb-4">
@@ -295,107 +320,97 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const expertFiltersBtn = document.getElementById('expertFiltersBtn');
-        const expertFilters = document.getElementById('expertFilters');
-        const expertFiltersIcon = document.getElementById('expertFiltersIcon');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded');
+    const expertFiltersBtn = document.getElementById('expertFiltersBtn');
+    const expertFilters = document.getElementById('expertFilters');
+    const expertFiltersIcon = document.querySelector('#expertFiltersBtn i');
+    const filterForm = document.getElementById('filterForm');
 
-        expertFiltersBtn.addEventListener('click', function(event) {
-            event.preventDefault(); // Предотвращаем отправку формы
-            if (expertFilters.style.display === 'none' || expertFilters.style.display === '') {
-                expertFilters.style.display = 'block';
-                expertFiltersIcon.classList.remove('bi-chevron-down');
-                expertFiltersIcon.classList.add('bi-chevron-up');
-            } else {
-                expertFilters.style.display = 'none';
-                expertFiltersIcon.classList.remove('bi-chevron-up');
-                expertFiltersIcon.classList.add('bi-chevron-down');
-            }
-        });
-
-        function toggleSelection(element, inputId) {
-            element.classList.toggle('selected');
-            const input = document.getElementById(inputId);
-            const selectedValues = Array.from(element.parentElement.querySelectorAll('.selected'))
-                .map(el => el.dataset[inputId])
-                .join(',');
-            input.value = selectedValues;
-        }
-
-        // Brand filter
-        document.querySelectorAll('#brand-filter .brand-logo-container').forEach(item => {
-            item.addEventListener('click', function() {
-                toggleSelection(this, 'brand');
-            });
-        });
-
-        // Price category filter
-        document.querySelectorAll('#price-category-filter .price-category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                toggleSelection(this, 'price_category');
-            });
-        });
-
-        // Seat height filter
-        document.querySelectorAll('#seat-height-filter .seat-height-category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                toggleSelection(this, 'seat_height');
-            });
-        });
-
-        // Weight filter
-        document.querySelectorAll('#weight-filter .weight-category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                toggleSelection(this, 'weight');
-            });
-        });
-
-        // Bike Type filter
-        document.querySelectorAll('#typeFilters .type-filter-item').forEach(item => {
-            item.addEventListener('click', function() {
-                this.classList.toggle('selected');
-                updateBikeTypeFilter();
-            });
-        });
-
-        function updateBikeTypeFilter() {
-            const selectedTypes = Array.from(document.querySelectorAll('#typeFilters .type-filter-item.selected'))
-                .map(item => item.dataset.type);
-            
-            let input = document.querySelector('input[name="bike_type"]');
-            if (!input) {
-                input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'bike_type';
-                document.getElementById('filterForm').appendChild(input);
-            }
-            input.value = selectedTypes.join(',');
-            
-            document.getElementById('filterForm').submit();
-        }
+    expertFiltersBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        expertFilters.style.display = expertFilters.style.display === 'none' ? 'block' : 'none';
+        expertFiltersIcon.classList.toggle('bi-chevron-down');
+        expertFiltersIcon.classList.toggle('bi-chevron-up');
     });
-    // Ride Purpose filter
-document.querySelectorAll('#ridePurposeFilters .ride-purpose-filter-item').forEach(item => {
-    item.addEventListener('click', function() {
-        this.classList.toggle('selected');
-        updateRidePurposeFilter();
+
+    function toggleSelection(element, inputId) {
+        console.log('Toggling selection for:', inputId, element);
+        element.classList.toggle('selected');
+        updateHiddenInput(inputId);
+    }
+
+    function updateHiddenInput(inputId) {
+        console.log('Updating hidden input for:', inputId);
+        const dataAttribute = inputId.replace(/_/g, '-');
+        console.log('Data attribute:', dataAttribute);
+        const selectedElements = document.querySelectorAll(`[data-${dataAttribute}].selected`);
+        console.log('Selected elements:', selectedElements);
+        const selectedValues = Array.from(selectedElements).map(el => {
+            console.log('Element:', el);
+            const value = el.getAttribute(`data-${dataAttribute}`);
+            console.log('Selected value:', value);
+            return value;
+        });
+        console.log('Selected values:', selectedValues);
+        // Очищаем старые значения и устанавливаем только новые
+        document.getElementById(inputId).value = selectedValues.join(',');
+        console.log('Updated hidden input value:', document.getElementById(inputId).value);
+    }
+
+    function clearAllHiddenInputs() {
+        filterGroups.forEach(group => {
+            document.getElementById(group.inputId).value = '';
+            document.querySelectorAll(`${group.selector}.selected`).forEach(el => {
+                el.classList.remove('selected');
+            });
+        });
+    }
+
+    const filterGroups = [
+        { selector: '#typeFilters .type-filter-item', inputId: 'bike_type' },
+        { selector: '#ridePurposeFilters .ride-purpose-filter-item', inputId: 'ride_purpose' },
+        { selector: '#brand-filter .brand-logo-container', inputId: 'brand' },
+        { selector: '#price-category-filter .price-category-item', inputId: 'price_category' },
+        { selector: '#seat-height-filter .seat-height-category-item', inputId: 'seat_height' },
+        { selector: '#weight-filter .weight-category-item', inputId: 'weight' }
+    ];
+
+    filterGroups.forEach(group => {
+        console.log('Setting up event listeners for:', group.selector);
+        document.querySelectorAll(group.selector).forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Filter item clicked:', this);
+                toggleSelection(this, group.inputId);
+            });
+        });
+    });
+
+    filterForm.addEventListener('submit', function(event) {
+        console.log('Form submission started');
+        event.preventDefault();
+        clearAllHiddenInputs();
+        filterGroups.forEach(group => {
+            console.log('Updating hidden input before submission:', group.inputId);
+            updateHiddenInput(group.inputId);
+        });
+        console.log('Form being submitted');
+        this.submit();
+    });
+
+    // Восстановление выбранных фильтров при загрузке страницы
+    filterGroups.forEach(group => {
+        console.log('Restoring selected filters for:', group.inputId);
+        const selectedValues = document.getElementById(group.inputId).value.split(',').filter(Boolean);
+        console.log('Selected values from hidden input:', selectedValues);
+        document.querySelectorAll(group.selector).forEach(item => {
+            const itemValue = item.getAttribute(`data-${group.inputId.replace(/_/g, '-')}`);
+            if (selectedValues.includes(itemValue)) {
+                console.log('Restoring selection for item:', item);
+                item.classList.add('selected');
+            }
+        });
     });
 });
-
-function updateRidePurposeFilter() {
-    const selectedPurposes = Array.from(document.querySelectorAll('#ridePurposeFilters .ride-purpose-filter-item.selected'))
-        .map(item => item.dataset.purpose);
-    
-    let input = document.querySelector('input[name="ride_purpose"]');
-    if (!input) {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'ride_purpose';
-        document.getElementById('filterForm').appendChild(input);
-    }
-    input.value = selectedPurposes.join(',');
-    
-    document.getElementById('filterForm').submit();
-}
 </script>
 {% endblock %}
