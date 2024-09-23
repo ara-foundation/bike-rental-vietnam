@@ -14,7 +14,7 @@ from .views import (
     car_tours,
     order_confirmation,
     autocomplete,
-    remove_filter,
+    remove_filter
 )
 
 urlpatterns = [
