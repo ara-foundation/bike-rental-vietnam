@@ -32,15 +32,14 @@
                     <img src="{{ ride_purpose.image.url }}" alt="{{ ride_purpose.name }}" class="img-fluid">
                     <p class="text-center mt-2">{{ ride_purpose.name }}</p>
                 </div>
-                </div>
+            </div>
         {% endfor %}
     </div>
 </div>
 
-
 <div class="row">
     <div class="col-md-3">
-        <form id="filterForm" method="get" action="{% url 'bike_rental' %}">
+        <form id="filterForm" method="GET" action="{% url 'filter_view' %}">
             <div class="mb-3">
                 <label class="form-label">Brand</label>
                 <div id="brand-filter" class="d-flex flex-wrap justify-content-start align-items-center">
@@ -50,7 +49,6 @@
                         </div>
                     {% endfor %}
                 </div>
-                <input type="hidden" name="brand" id="brand" value="{% if selected_brands %}{{ selected_brands|join:',' }}{% endif %}">
             </div>
             
             <div class="mb-3">
@@ -76,7 +74,6 @@
                         <small>>$100</small>
                     </div>
                 </div>
-                <input type="hidden" name="price_category" id="price_category" value="{% if selected_price_categories %}{{ selected_price_categories|join:',' }}{% endif %}">
             </div>
             
             <div class="mb-3">
@@ -98,11 +95,9 @@
                         <small>>180 cm</small>
                     </div>
                 </div>
-                <input type="hidden" name="seat_height" id="seat_height" value="{% if selected_seat_heights %}{{ selected_seat_heights|join:',' }}{% endif %}">
             </div>
             
             <div class="mb-3">
-                
                 <div id="weight-filter" class="d-flex justify-content-between">
                     <label class="form-label">Bike weight:</label>
                     <div class="weight-category-item {% if 'Light' in selected_weights %}selected{% endif %}" data-weight="Light">
@@ -121,7 +116,6 @@
                         <small>>180 kg</small>
                     </div>
                 </div>
-                <input type="hidden" name="weight" id="weight" value="{% if selected_weights %}{{ selected_weights|join:',' }}{% endif %}">
             </div>
             
             <div class="mb-3 text-center">
@@ -181,42 +175,38 @@
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
             </div>
-            <input type="hidden" name="bike_type" id="bike_type" value="{{ selected_bike_types|join:',' }}">
-            <input type="hidden" name="ride_purpose" id="ride_purpose" value="{{ selected_ride_purposes|join:',' }}">
-            <input type="hidden" name="brand" id="brand" value="{% if selected_brands %}{{ selected_brands|join:',' }}{% endif %}">
-            <input type="hidden" name="price_category" id="price_category" value="{% if selected_price_categories %}{{ selected_price_categories|join:',' }}{% endif %}">
-            <input type="hidden" name="seat_height" id="seat_height" value="{% if selected_seat_heights %}{{ selected_seat_heights|join:',' }}{% endif %}">
-            <input type="hidden" name="weight" id="weight" value="{% if selected_weights %}{{ selected_weights|join:',' }}{% endif %}">
+            <input type="hidden" name="bike_type" id="bike_type" value="{% if selected_bike_types and selected_bike_types|join:',' %}{% endif %}">
+            <input type="hidden" name="ride_purpose" id="ride_purpose" value="{% if selected_ride_purposes and selected_ride_purposes|join:',' %}{{ selected_ride_purposes|join:',' }}{% endif %}">
+            <input type="hidden" name="brand" id="brand" value="{% if selected_brands and selected_brands|join:',' %}{{ selected_brands|join:',' }}{% endif %}">
+            <input type="hidden" name="price_category" id="price_category" value="{% if selected_price_categories and selected_price_categories|join:',' %}{{ selected_price_categories|join:',' }}{% endif %}">
+            <input type="hidden" name="seat_height" id="seat_height" value="{% if selected_seat_heights and selected_seat_heights|join:',' %}{{ selected_seat_heights|join:',' }}{% endif %}">
+            <input type="hidden" name="weight" id="weight" value="{% if selected_weights and selected_weights|join:',' %}{{ selected_weights|join:',' }}{% endif %}">
         </form>
     </div>
     
     <div class="col-md-9">
-        <div class="mt-3 mb-4">
-            <h6>Applied Filters:</h6>
-            <div id="appliedFiltersList">
-                {% for key, values in applied_filters.items %}
-                    <div class="applied-filter">
-                        <span class="filter-name">{{ key }}:</span>
+        {% if applied_filters %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4>Applied Filters:</h4>
+                <ul class="list-inline">
+                    {% for filter, values in applied_filters.items %}
                         {% for value in values %}
-                            <form method="get" action="{% url 'remove_filter' %}" class="d-inline">
-                                {% for k, v in request.GET.items %}
-                                    {% if k != key or v != value %}
-                                        <input type="hidden" name="{{ k }}" value="{{ v }}">
-                                    {% endif %}
-                                {% endfor %}
-                                <input type="hidden" name="filter_to_remove" value="{{ key }}">
-                                <input type="hidden" name="value_to_remove" value="{{ value }}">
-                                <button type="submit" class="btn btn-secondary btn-sm me-2 mb-2" data-filter="{{ key }}">
-                                    {{ value }} <span aria-hidden="true">&times;</span>
-                                </button>
-                            </form>
+                            <li class="list-inline-item">
+                                <form method="get" action="{% url 'remove_filter' %}" class="d-inline">
+                                    <input type="hidden" name="filter_to_remove" value="{{ filter }}">
+                                    <input type="hidden" name="value_to_remove" value="{{ value }}">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                        {{ value }} <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </form>
+                            </li>
                         {% endfor %}
-                    </div>
-                {% empty %}
-                    <span>No filters applied</span>
-                {% endfor %}
+                    {% endfor %}
+                </ul>
             </div>
         </div>
+        {% endif %}
         
         <div class="mt-3 mb-4">
             <h6>{{ bike_rental_count }} 
@@ -318,6 +308,8 @@
         {% endif %}
     </div>
 </div>
+{{ applied_filters|json_script:"applied-filters-data" }}
+
 {% endblock %}
 
 {% block extra_js %}
@@ -346,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Updating hidden input for:', inputId);
         const dataAttribute = inputId.replace(/_/g, '-');
         const selectedElements = document.querySelectorAll(`[data-${dataAttribute}].selected`);
-        const selectedValues = Array.from(selectedElements).map(el => el.getAttribute(`data-${dataAttribute}`));
+        const selectedValues = Array.from(selectedElements).map(el => el.getAttribute(`data-${dataAttribute}`)).filter(Boolean); // Удаляем пустые значения
         console.log('Selected values:', selectedValues);
         document.getElementById(inputId).value = selectedValues.join(',');
         console.log('Updated hidden input value:', document.getElementById(inputId).value);
@@ -371,26 +363,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    filterForm.addEventListener('submit', function(event) {
+    document.getElementById('filterForm').addEventListener('submit', function(event) {
         console.log('Form submission started');
-        event.preventDefault();
+        event.preventDefault();  // Предотвращаем стандартную отправку формы
+
         filterGroups.forEach(group => {
             console.log('Updating hidden input before submission:', group.inputId);
-            updateHiddenInput(group.inputId);
+            updateHiddenInput(group.inputId);  // Обновляем скрытые поля перед отправкой
         });
+
         console.log('Hidden inputs before submission:', Array.from(filterGroups).map(group => document.getElementById(group.inputId).value));
         console.log('Form being submitted');
-        this.submit();
+        this.submit();  // Программно отправляем форму после обновления полей
     });
 
     // Восстановление выбранных фильтров при загрузке страницы
+    const appliedFilters = JSON.parse(document.getElementById('applied-filters-data').textContent);
     filterGroups.forEach(group => {
         console.log('Restoring selected filters for:', group.inputId);
-        const selectedValues = document.getElementById(group.inputId).value.split(',').filter(Boolean);
-        console.log('Selected values from hidden input:', selectedValues);
+        const selectedValues = appliedFilters[group.inputId] || [];
+        console.log('Selected values from applied filters:', selectedValues);
         document.querySelectorAll(group.selector).forEach(item => {
             const itemValue = item.getAttribute(`data-${group.inputId.replace(/_/g, '-')}`);
-            if (selectedValues.includes(itemValue)) {
+            if (itemValue && selectedValues.includes(itemValue)) {
                 console.log('Restoring selection for item:', item);
                 item.classList.add('selected');
             }

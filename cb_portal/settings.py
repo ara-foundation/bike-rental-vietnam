@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from storages.backends.s3boto3 import S3Boto3Storage
+
 
 from pathlib import Path
 
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "storages",
     'compressor',
+    'whitenoise',
 ]
 
 MIDDLEWARE = [
@@ -146,14 +149,23 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "bike_rental/static",
 ]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+}
+# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 ]
 
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
 
 # Default primary key field type
@@ -161,14 +173,14 @@ COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'co
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = f"{config("AWS_S3_ENDPOINT_URL")}/media/"
+MEDIA_URL = f"https://{config('AWS_S3_PUBLIC_URL')}/media/"
 # MEDIA_ROOT = BASE_DIR / "media"
 
 THEME_COLOR = "sandstone"
 CUSTOM_CSS = "css/bikes.css"
 
 # Use django-storages to manage static and media files with R2
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 AWS_ACCESS_KEY_ID = config("R2_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = config("R2_SECRET_ACCESS_KEY")
@@ -177,11 +189,12 @@ AWS_STORAGE_BUCKET_NAME = config("R2_BUCKET_NAME")
 # Cloudflare R2 uses custom endpoints, so you need to specify it
 AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL")
 
+AWS_S3_CUSTOM_DOMAIN = config("AWS_S3_PUBLIC_URL")
 # You can set these optional configurations to enhance the performance and security
 AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=86400",
 }
 
 AWS_LOCATION = "media/"  # If you want to separate media files from others
-AWS_DEFAULT_ACL = None  # To avoid issues with ACLs, set to None
+# AWS_DEFAULT_ACL = None  # To avoid issues with ACLs, set to None
 AWS_QUERYSTRING_AUTH = False  # Disable querystring authentication for public files
