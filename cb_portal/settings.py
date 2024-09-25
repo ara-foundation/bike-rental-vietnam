@@ -9,12 +9,15 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from storages.backends.s3boto3 import S3Boto3Storage
 from pathlib import Path
-
 from decouple import config
+import os
+from django.utils.translation import gettext_lazy as _
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.from django.utils.translation import gettext_lazy as _
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -48,12 +51,13 @@ INSTALLED_APPS = [
     "django_filters",
     "widget_tweaks",
     "storages",
-    'compressor',
+    'whitenoise',
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # Добавьте эту строку
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -63,16 +67,14 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+
 
 ROOT_URLCONF = "cb_portal.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -135,40 +137,69 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
+# Настройка доступных языков
+
+
+LANGUAGES = [
+    ('ru', ('Russian')),
+    ('en', ('English')),
+    # В дальнейшем добавляйте новые языки здесь
+]
+
+# Укажите путь к файлам переводов
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
+# Включите международализацию
 USE_I18N = True
 
+# Включите локализацию дат, чисел и т.д.
+USE_L10N = True
+
+# Включите форматирование времени
 USE_TZ = True
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
+
 STATICFILES_DIRS = [
     BASE_DIR / "bike_rental/static",
 ]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+}
+# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 ]
-
-COMPRESS_ENABLED = True
-COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = config("AWS_S3_ENDPOINT_URL") + "/media/"
+MEDIA_URL = f"https://{config('AWS_S3_PUBLIC_URL')}/media/"
 # MEDIA_ROOT = BASE_DIR / "media"
 
 THEME_COLOR = "sandstone"
 CUSTOM_CSS = "css/bikes.css"
 
 # Use django-storages to manage static and media files with R2
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 AWS_ACCESS_KEY_ID = config("R2_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = config("R2_SECRET_ACCESS_KEY")
@@ -177,11 +208,12 @@ AWS_STORAGE_BUCKET_NAME = config("R2_BUCKET_NAME")
 # Cloudflare R2 uses custom endpoints, so you need to specify it
 AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL")
 
+AWS_S3_CUSTOM_DOMAIN = config("AWS_S3_PUBLIC_URL")
 # You can set these optional configurations to enhance the performance and security
 AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=86400",
 }
 
 AWS_LOCATION = "media/"  # If you want to separate media files from others
-AWS_DEFAULT_ACL = None  # To avoid issues with ACLs, set to None
+# AWS_DEFAULT_ACL = None  # To avoid issues with ACLs, set to None
 AWS_QUERYSTRING_AUTH = False  # Disable querystring authentication for public files
