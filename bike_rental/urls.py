@@ -15,15 +15,11 @@ from .views import (
     order_confirmation,
     autocomplete,
     remove_filter,
-    BikeFilterView,  # Импортируем новое представление
-    
+    BikeFilterView,
 )
 
 urlpatterns = [
-    # Существующие маршруты
-    path(
-        "", BikeModelListView.as_view(), name="bike_rental"
-    ),  # Обновите name, если необходимо
+    path("", BikeModelListView.as_view(), name="bike_rental"),
     path("bike_rental/", BikeModelListView.as_view(), name="bike_rental"),
     path(
         "bike_rental_offers/<str:brand>/<int:id>/",
@@ -45,7 +41,6 @@ urlpatterns = [
     path('autocomplete/', autocomplete, name='autocomplete'),
     path('remove-filter/', remove_filter, name='remove_filter'),
     path('filter/', BikeFilterView.as_view(), name='filter_view'),
-
 ]
 # from django.conf import settings
 # from django.conf.urls.static import static

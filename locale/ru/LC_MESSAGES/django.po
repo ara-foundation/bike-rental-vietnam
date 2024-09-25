@@ -1,0 +1,250 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-25 18:08+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+#: .\bike_rental\templates\base.html:9 .\bike_rental\templates\base.html:64
+#: .\bike_rental\templates\bike_rental.html:3
+msgid "Bike Rental"
+msgstr "Аренда Байков"
+
+#: .\bike_rental\templates\base.html:23
+msgid "Demo"
+msgstr "Демо"
+
+#: .\bike_rental\templates\base.html:53
+msgid "Login"
+msgstr "Вход"
+
+#: .\bike_rental\templates\base.html:65
+msgid "Bike Tours"
+msgstr "Мото-туры"
+
+#: .\bike_rental\templates\base.html:66
+msgid "Car Tours"
+msgstr "Автотуры"
+
+#: .\bike_rental\templates\base.html:67
+msgid "Boat Tours"
+msgstr "Лодочные туры"
+
+#: .\bike_rental\templates\bike_rental.html:5
+msgid "Bikes for rent"
+msgstr "Аренда Байков"
+
+#: .\bike_rental\templates\bike_rental.html:10
+msgid "Get the Ride You Deserve"
+msgstr "Получи поездку, которую вы заслуживаете"
+
+#: .\bike_rental\templates\bike_rental.html:12
+msgid ""
+"Thousands of Motorcycles / Unbeatable Prices / Official Rental Providers "
+"Only!"
+msgstr "Тысячи мотоциклов / Непревзойденные цены / Только официальные поставщики байков!"
+
+#: .\bike_rental\templates\bike_rental.html:17
+msgid "Choose your style:"
+msgstr "Выберите свой стиль:"
+
+#: .\bike_rental\templates\bike_rental.html:31
+msgid "What type of ride are you planning?"
+msgstr "Какой тип поездки вы планируете?"
+
+#: .\bike_rental\templates\bike_rental.html:48
+msgid "Brand"
+msgstr "Бренд"
+
+#: .\bike_rental\templates\bike_rental.html:59
+msgid "Search by model"
+msgstr "Поиск по модели"
+
+#: .\bike_rental\templates\bike_rental.html:63
+msgid "Price"
+msgstr "Цена"
+
+#: .\bike_rental\templates\bike_rental.html:66
+msgid "Budget"
+msgstr "Бюджетный"
+
+#: .\bike_rental\templates\bike_rental.html:68
+msgid "<=$50"
+msgstr "<=50$"
+
+#: .\bike_rental\templates\bike_rental.html:71
+msgid "Standard"
+msgstr "Стандартный"
+
+#: .\bike_rental\templates\bike_rental.html:73
+msgid "$51-$100"
+msgstr "51$-100$"
+
+#: .\bike_rental\templates\bike_rental.html:76
+msgid "Premium"
+msgstr "Премиум"
+
+#: .\bike_rental\templates\bike_rental.html:78
+msgid ">$100"
+msgstr ">100$"
+
+#: .\bike_rental\templates\bike_rental.html:84
+msgid "Pick your height:"
+msgstr "Выберите свой рост:"
+
+#: .\bike_rental\templates\bike_rental.html:87
+msgid "Low"
+msgstr "Низкий"
+
+#: .\bike_rental\templates\bike_rental.html:89
+msgid "<170 cm"
+msgstr "<170 см"
+
+#: .\bike_rental\templates\bike_rental.html:92
+#: .\bike_rental\templates\bike_rental.html:113
+msgid "Middle"
+msgstr "Средний"
+
+#: .\bike_rental\templates\bike_rental.html:94
+msgid "170-180 cm"
+msgstr "170-180 см"
+
+#: .\bike_rental\templates\bike_rental.html:97
+msgid "High"
+msgstr "Высокий"
+
+#: .\bike_rental\templates\bike_rental.html:99
+msgid ">180 cm"
+msgstr ">180 см"
+
+#: .\bike_rental\templates\bike_rental.html:106
+msgid "Bike weight:"
+msgstr "Вес байка:"
+
+#: .\bike_rental\templates\bike_rental.html:108
+msgid "Light"
+msgstr "Легкий"
+
+#: .\bike_rental\templates\bike_rental.html:110
+msgid "<=120 kg"
+msgstr "<=120 кг"
+
+#: .\bike_rental\templates\bike_rental.html:115
+msgid "121-180 kg"
+msgstr "121-180 кг"
+
+#: .\bike_rental\templates\bike_rental.html:118
+msgid "Heavy"
+msgstr "Тяжелый"
+
+#: .\bike_rental\templates\bike_rental.html:120
+msgid ">180 kg"
+msgstr ">180 кг"
+
+#: .\bike_rental\templates\bike_rental.html:127
+msgid "Expert Filters"
+msgstr "Экспертные фильтры"
+
+#: .\bike_rental\templates\bike_rental.html:133
+msgid "Transmission"
+msgstr "Трансмиссия"
+
+#: .\bike_rental\templates\bike_rental.html:135
+msgid "All Transmissions"
+msgstr "Все трансмиссии"
+
+#: .\bike_rental\templates\bike_rental.html:142
+msgid "Number of Gears"
+msgstr "Количество передач"
+
+#: .\bike_rental\templates\bike_rental.html:144
+#: .\bike_rental\templates\bike_rental.html:153
+#: .\bike_rental\templates\bike_rental.html:162
+#: .\bike_rental\templates\bike_rental.html:171
+msgid "All"
+msgstr "Все"
+
+#: .\bike_rental\templates\bike_rental.html:151
+msgid "Fuel System"
+msgstr "Топливная система"
+
+#: .\bike_rental\templates\bike_rental.html:160
+msgid "Engine (cc)"
+msgstr "Объем двигателя (куб. см)"
+
+#: .\bike_rental\templates\bike_rental.html:169
+msgid "Clearance (mm)"
+msgstr "Клиренс (мм)"
+
+#: .\bike_rental\templates\bike_rental.html:180
+msgid "Apply Filters"
+msgstr "Применить фильтры"
+
+#: .\bike_rental\templates\bike_rental.html:195
+msgid "Applied Filters:"
+msgstr "Примененные фильтры:"
+
+#: .\bike_rental\templates\bike_rental.html:217
+msgid "model"
+msgstr "модель"
+
+#: .\bike_rental\templates\bike_rental.html:217
+msgid "models"
+msgstr "моделей"
+
+#: .\bike_rental\templates\bike_rental.html:217
+msgid "available."
+msgstr "доступно."
+
+#: .\bike_rental\templates\bike_rental.html:246
+msgid "Price per day"
+msgstr "Цена за день"
+
+#: .\bike_rental\templates\bike_rental.html:246
+msgid "from:"
+msgstr "от:"
+
+#: .\bike_rental\templates\bike_rental.html:276
+msgid "offer"
+msgstr "предложение"
+
+#: .\bike_rental\templates\bike_rental.html:276
+msgid "offers"
+msgstr "предложений"
+
+#: .\bike_rental\templates\bike_rental.html:278
+msgid "View Offers"
+msgstr "Посмотреть предложения"
+
+#: .\bike_rental\templates\bike_rental.html:285
+msgid "No motorcycles found"
+msgstr "Мотоциклы не найдены"
+
+#: .\bike_rental\templates\bike_rental.html:294
+msgid "First"
+msgstr "Первая"
+
+#: .\bike_rental\templates\bike_rental.html:295
+msgid "Previous"
+msgstr "Предыдущая"
+
+#: .\bike_rental\templates\bike_rental.html:307
+msgid "Next"
+msgstr "Следующая"
+
+#: .\bike_rental\templates\bike_rental.html:308
+msgid "Last"
+msgstr "Последняя"

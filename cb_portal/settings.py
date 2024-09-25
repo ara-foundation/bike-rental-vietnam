@@ -133,22 +133,19 @@ REST_FRAMEWORK = {
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = "UTC"
 
 # Настройка доступных языков
-
-
 LANGUAGES = [
-    ('ru', ('Russian')),
-    ('en', ('English')),
-    # В дальнейшем добавляйте новые языки здесь
+    ('en', _('English')),
+    ('ru', _('Russian')),
 ]
 
 # Укажите путь к файлам переводов
 LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale'),
+    BASE_DIR / 'locale',
 ]
 
 # Включите международализацию
