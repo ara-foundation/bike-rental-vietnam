@@ -10,13 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from storages.backends.s3boto3 import S3Boto3Storage
-
-
 from pathlib import Path
-
 from decouple import config
+import os
+from django.utils.translation import gettext_lazy as _
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.from django.utils.translation import gettext_lazy as _
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -50,13 +51,13 @@ INSTALLED_APPS = [
     "django_filters",
     "widget_tweaks",
     "storages",
-    'compressor',
     'whitenoise',
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # Добавьте эту строку
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -66,16 +67,14 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+
 
 ROOT_URLCONF = "cb_portal.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -138,14 +137,38 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
+# Настройка доступных языков
+
+
+LANGUAGES = [
+    ('ru', ('Russian')),
+    ('en', ('English')),
+    # В дальнейшем добавляйте новые языки здесь
+]
+
+# Укажите путь к файлам переводов
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
+# Включите международализацию
 USE_I18N = True
 
+# Включите локализацию дат, чисел и т.д.
+USE_L10N = True
+
+# Включите форматирование времени
 USE_TZ = True
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
+
 STATICFILES_DIRS = [
     BASE_DIR / "bike_rental/static",
 ]
@@ -162,11 +185,7 @@ STORAGES = {
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 ]
-
-COMPRESS_ENABLED = False
-COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

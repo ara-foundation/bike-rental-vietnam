@@ -15,7 +15,8 @@ from .views import (
     order_confirmation,
     autocomplete,
     remove_filter,
-    filter_view
+    BikeFilterView,  # Импортируем новое представление
+    
 )
 
 urlpatterns = [
@@ -43,7 +44,7 @@ urlpatterns = [
     path("bike-tour/<int:tour_id>/", bike_tour, name="bike_tour"),
     path('autocomplete/', autocomplete, name='autocomplete'),
     path('remove-filter/', remove_filter, name='remove_filter'),
-    path('filter/', filter_view, name='filter_view'),
+    path('filter/', BikeFilterView.as_view(), name='filter_view'),
 
 ]
 # from django.conf import settings

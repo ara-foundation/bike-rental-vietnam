@@ -1,8 +1,6 @@
 import random
 from datetime import datetime, timedelta
-
 from django.conf import settings
-
 from django_filters.views import FilterView
 from django.core.paginator import Paginator
 from django.db.models import Count, Min, Q, Value
@@ -11,11 +9,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
 from django.http import JsonResponse
+from django.views import View
 from .forms import ClientForm, OrderForm
 from .models import Bike, BikeBrand, BikeModel, BikeOrder, BikeType, RidePurpose, BikeProvider, ProviderService
 from .utils import get_total_bikes_for_brand
 from django.utils.http import urlencode
-
 
 
 class BikeModelListView(ListView):
@@ -149,21 +147,6 @@ def remove_filter(request):
     filter_to_remove = request.GET.get('filter_to_remove')
     value_to_remove = request.GET.get('value_to_remove')
     print(f"Удаляем фильтр: {filter_to_remove}, значение: {value_to_remove}")  # Отладка
-
-    # if filter_to_remove and value_to_remove:
-    #     if filter_to_remove in current_filters:
-    #         values = current_filters[filter_to_remove]
-    #         print(f"Текущие значения для {filter_to_remove}: {values}")  # Отладка
-    #         # Удаляем значение, если оно есть в списке
-    #         if value_to_remove in values:
-    #             values.remove(value_to_remove)
-    #             print(f"Значение {value_to_remove} удалено из {filter_to_remove}.")  # Отладка
-    #             # Если список пустой, удаляем ключ
-    #             if not values:
-    #                 del current_filters[filter_to_remove]
-    #                 print(f"Фильтр {filter_to_remove} удален, так как больше нет значений.")  # Отладка
-    #         # Обновляем список, удаляя пустые строки
-    #         current_filters[filter_to_remove] = [v for v in values if v]
     if filter_to_remove in current_filters:
         current_filters[filter_to_remove] = [v for v in current_filters[filter_to_remove] if v != value_to_remove]
         if not current_filters[filter_to_remove]:
@@ -174,8 +157,13 @@ def remove_filter(request):
     return redirect('bike_rental')
 
     
-def filter_view(request):
-    if request.method == 'GET':
+class BikeFilterView(View):
+    """
+    Класс-представление для обработки фильтрации байков.
+    Сохраняет примененные фильтры в сессии и перенаправляет на страницу результатов.
+    """
+
+    def get(self, request, *args, **kwargs):
         print("Данные GET-запроса:", request.GET)  # Отладка: вывод данных GET-запроса
         filter_data = {}
         for key, value in request.GET.items():
