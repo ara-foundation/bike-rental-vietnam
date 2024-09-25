@@ -162,21 +162,34 @@
 /* Отвечает за стиль кнопок "Демо" и "Войти" */
 
 .language-dropdown {
-    display: none; /* Скрывает элемент */
     position: absolute; /* Позиционирует элемент абсолютно */
     top: 100%; /* Располагает элемент ниже родительского элемента */
     right: 0; /* Прижимает элемент к правому краю родительского элемента */
     background-color: #ffffff; /* Задает белый фон */
     border: 1px solid #cccccc; /* Добавляет границу */
     padding: 10px; /* Добавляет внутренние отступы */
+    z-index: 1000; /* Устанавливает индекс Z */
     list-style-type: none; /* Убирает маркеры списка */
 }
-/* Отвечает за стиль выпадающего списка языков */
 
-.language-dropdown.show {
+.language-dropdown:not(.d-none) {
     display: block; /* Показывает элемент */
 }
 /* Отвечает за отображение выпадающего списка языков */
+
+.language-dropdown button {
+    display: block; /* Показывает кнопку */
+    width: 100%; /* Устанавливает ширину */
+    text-align: left; /* Выравнивает текст по левому краю */
+    padding: 5px 10px; /* Добавляет внутренние отступы */
+    border: none; /* Убирает границу */
+    background: none; /* Убирает фон */
+    cursor: pointer; /* Изменяет курсор на указатель при наведении */
+}
+
+.language-dropdown button:hover {
+    background-color: #f0f0f0; /* Задает светло-серый фон при наведении */
+}
 
 
 .main-menu a.active,

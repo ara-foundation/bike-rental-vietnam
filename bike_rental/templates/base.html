@@ -22,20 +22,25 @@
                     <a href="#" class="demo-button">{% trans "Demo" %}</a>
                     <div class="right-nav">
                         <div class="language-selector">
-                            <form action="{% url 'set_language' %}" method="post">
-                                {% csrf_token %}
-                                <input name="next" type="hidden" value="{{ request.path }}">
-                                <select name="language" onchange="this.form.submit()">
-                                    {% get_current_language as LANGUAGE_CODE %}
+                            <button class="language-selector-button" aria-expanded="false" aria-controls="language-dropdown">
+                                <i class="bi bi-globe"></i>
+                                <span>{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE|language_name_local }}</span>
+                            </button>
+                            <div id="language-dropdown" class="language-dropdown">
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ request.path }}">
                                     {% get_available_languages as LANGUAGES %}
                                     {% get_language_info_list for LANGUAGES as languages %}
                                     {% for language in languages %}
-                                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                                            {{ language.name_local }}
-                                        </option>
+                                        {% if language.code != LANGUAGE_CODE %}
+                                            <button type="submit" name="language" value="{{ language.code }}">
+                                                {{ language.name_local }}
+                                            </button>
+                                        {% endif %}
                                     {% endfor %}
-                                </select>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                         <button class="currency-selector">
                             <i class="bi bi-currency-exchange"></i>
@@ -67,6 +72,25 @@
     </div>
   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var languageButton = document.querySelector('.language-selector-button');
+            var dropdown = document.getElementById('language-dropdown');
+            
+            if (languageButton && dropdown) {
+                languageButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    console.log('Language button clicked');
+                    var expanded = this.getAttribute('aria-expanded') === 'true' || false;
+                    this.setAttribute('aria-expanded', !expanded);
+                    dropdown.style.display = expanded ? 'none' : 'block';
+                    console.log('Dropdown display:', dropdown.style.display);
+                });
+            } else {
+                console.error('Language button or dropdown not found');
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
