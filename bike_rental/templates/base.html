@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %}
-
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
@@ -23,29 +22,20 @@
                     <a href="#" class="demo-button">{% trans "Demo" %}</a>
                     <div class="right-nav">
                         <div class="language-selector">
-                            <button class="language-selector-button" aria-expanded="false" aria-controls="language-dropdown">
-                                <i class="bi bi-globe"></i>
-                                <span>{% get_current_language as LANGUAGE_CODE %}
+                            <form action="{% url 'set_language' %}" method="post">
+                                {% csrf_token %}
+                                <input name="next" type="hidden" value="{{ request.path }}">
+                                <select name="language" onchange="this.form.submit()">
+                                    {% get_current_language as LANGUAGE_CODE %}
                                     {% get_available_languages as LANGUAGES %}
-                                    {% get_language_info for LANGUAGE_CODE as lang %}
-                                    {{ lang.name_local }}
-                                </span>
-                            </button>
-                            <ul id="language-dropdown" class="language-dropdown">
-                                {% for language in LANGUAGES %}
-                                    <li>
-                                        <a href="{% url 'set_language' %}" 
-                                           onclick="event.preventDefault(); document.getElementById('language-form-{{ language.0 }}').submit();">
-                                            {{ language.1 }}
-                                        </a>
-                                        <form id="language-form-{{ language.0 }}" action="{% url 'set_language' %}" method="post" style="display: none;">
-                                            {% csrf_token %}
-                                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                                            <input name="language" type="hidden" value="{{ language.0 }}">
-                                        </form>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                                    {% get_language_info_list for LANGUAGES as languages %}
+                                    {% for language in languages %}
+                                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                            {{ language.name_local }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </form>
                         </div>
                         <button class="currency-selector">
                             <i class="bi bi-currency-exchange"></i>

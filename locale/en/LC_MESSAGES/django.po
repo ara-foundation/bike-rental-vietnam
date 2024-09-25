@@ -1,0 +1,251 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-25 18:10+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: .\bike_rental\templates\base.html:9 .\bike_rental\templates\base.html:64
+#: .\bike_rental\templates\bike_rental.html:3
+msgid "Bike Rental"
+msgstr "Bike Rental"
+
+#: .\bike_rental\templates\base.html:23
+msgid "Demo"
+msgstr "Demo"
+
+#: .\bike_rental\templates\base.html:53
+msgid "Login"
+msgstr "Login"
+
+#: .\bike_rental\templates\base.html:65
+msgid "Bike Tours"
+msgstr "Bike Tours"
+
+#: .\bike_rental\templates\base.html:66
+msgid "Car Tours"
+msgstr "Car Tours"
+
+#: .\bike_rental\templates\base.html:67
+msgid "Boat Tours"
+msgstr "Boat Tours"
+
+#: .\bike_rental\templates\bike_rental.html:5
+msgid "Bikes for rent"
+msgstr "Bikes for rent"
+
+#: .\bike_rental\templates\bike_rental.html:10
+msgid "Get the Ride You Deserve"
+msgstr "Get the Ride You Deserve"
+
+#: .\bike_rental\templates\bike_rental.html:12
+msgid ""
+"Thousands of Motorcycles / Unbeatable Prices / Official Rental Providers "
+"Only!"
+msgstr ""
+"Thousands of Motorcycles / Unbeatable Prices / Official Rental Providers "
+"Only!"
+
+#: .\bike_rental\templates\bike_rental.html:17
+msgid "Choose your style:"
+msgstr "Choose your style:"
+
+#: .\bike_rental\templates\bike_rental.html:31
+msgid "What type of ride are you planning?"
+msgstr "What type of ride are you planning?"
+
+#: .\bike_rental\templates\bike_rental.html:48
+msgid "Brand"
+msgstr "Brand"
+
+#: .\bike_rental\templates\bike_rental.html:59
+msgid "Search by model"
+msgstr "Search by model"
+
+#: .\bike_rental\templates\bike_rental.html:63
+msgid "Price"
+msgstr "Price"
+
+#: .\bike_rental\templates\bike_rental.html:66
+msgid "Budget"
+msgstr "Budget"
+
+#: .\bike_rental\templates\bike_rental.html:68
+msgid "<=$50"
+msgstr "<=$50"
+
+#: .\bike_rental\templates\bike_rental.html:71
+msgid "Standard"
+msgstr "Standard"
+
+#: .\bike_rental\templates\bike_rental.html:73
+msgid "$51-$100"
+msgstr "$51-$100"
+
+#: .\bike_rental\templates\bike_rental.html:76
+msgid "Premium"
+msgstr "Premium"
+
+#: .\bike_rental\templates\bike_rental.html:78
+msgid ">$100"
+msgstr ">$100"
+
+#: .\bike_rental\templates\bike_rental.html:84
+msgid "Pick your height:"
+msgstr "Pick your height:"
+
+#: .\bike_rental\templates\bike_rental.html:87
+msgid "Low"
+msgstr "Low"
+
+#: .\bike_rental\templates\bike_rental.html:89
+msgid "<170 cm"
+msgstr "<170 cm"
+
+#: .\bike_rental\templates\bike_rental.html:92
+#: .\bike_rental\templates\bike_rental.html:113
+msgid "Middle"
+msgstr "Middle"
+
+#: .\bike_rental\templates\bike_rental.html:94
+msgid "170-180 cm"
+msgstr "170-180 cm"
+
+#: .\bike_rental\templates\bike_rental.html:97
+msgid "High"
+msgstr "High"
+
+#: .\bike_rental\templates\bike_rental.html:99
+msgid ">180 cm"
+msgstr ">180 cm"
+
+#: .\bike_rental\templates\bike_rental.html:106
+msgid "Bike weight:"
+msgstr "Bike weight:"
+
+#: .\bike_rental\templates\bike_rental.html:108
+msgid "Light"
+msgstr "Light"
+
+#: .\bike_rental\templates\bike_rental.html:110
+msgid "<=120 kg"
+msgstr "<=120 kg"
+
+#: .\bike_rental\templates\bike_rental.html:115
+msgid "121-180 kg"
+msgstr "121-180 kg"
+
+#: .\bike_rental\templates\bike_rental.html:118
+msgid "Heavy"
+msgstr "Heavy"
+
+#: .\bike_rental\templates\bike_rental.html:120
+msgid ">180 kg"
+msgstr ">180 kg"
+
+#: .\bike_rental\templates\bike_rental.html:127
+msgid "Expert Filters"
+msgstr "Expert Filters"
+
+#: .\bike_rental\templates\bike_rental.html:133
+msgid "Transmission"
+msgstr "Transmission"
+
+#: .\bike_rental\templates\bike_rental.html:135
+msgid "All Transmissions"
+msgstr "All Transmissions"
+
+#: .\bike_rental\templates\bike_rental.html:142
+msgid "Number of Gears"
+msgstr "Number of Gears"
+
+#: .\bike_rental\templates\bike_rental.html:144
+#: .\bike_rental\templates\bike_rental.html:153
+#: .\bike_rental\templates\bike_rental.html:162
+#: .\bike_rental\templates\bike_rental.html:171
+msgid "All"
+msgstr "All"
+
+#: .\bike_rental\templates\bike_rental.html:151
+msgid "Fuel System"
+msgstr "Fuel System"
+
+#: .\bike_rental\templates\bike_rental.html:160
+msgid "Engine (cc)"
+msgstr "Engine (cc)"
+
+#: .\bike_rental\templates\bike_rental.html:169
+msgid "Clearance (mm)"
+msgstr "Clearance (mm)"
+
+#: .\bike_rental\templates\bike_rental.html:180
+msgid "Apply Filters"
+msgstr "Apply Filters"
+
+#: .\bike_rental\templates\bike_rental.html:195
+msgid "Applied Filters:"
+msgstr "Applied Filters:"
+
+#: .\bike_rental\templates\bike_rental.html:217
+msgid "model"
+msgstr "model"
+
+#: .\bike_rental\templates\bike_rental.html:217
+msgid "models"
+msgstr "models"
+
+#: .\bike_rental\templates\bike_rental.html:217
+msgid "available."
+msgstr "available."
+
+#: .\bike_rental\templates\bike_rental.html:246
+msgid "Price per day"
+msgstr "Price per day"
+
+#: .\bike_rental\templates\bike_rental.html:246
+msgid "from:"
+msgstr "from:"
+
+#: .\bike_rental\templates\bike_rental.html:276
+msgid "offer"
+msgstr "offer"
+
+#: .\bike_rental\templates\bike_rental.html:276
+msgid "offers"
+msgstr "offers"
+
+#: .\bike_rental\templates\bike_rental.html:278
+msgid "View Offers"
+msgstr "View Offers"
+
+#: .\bike_rental\templates\bike_rental.html:285
+msgid "No motorcycles found"
+msgstr "No motorcycles found"
+
+#: .\bike_rental\templates\bike_rental.html:294
+msgid "First"
+msgstr "First"
+
+#: .\bike_rental\templates\bike_rental.html:295
+msgid "Previous"
+msgstr "Previous"
+
+#: .\bike_rental\templates\bike_rental.html:307
+msgid "Next"
+msgstr "Next"
+
+#: .\bike_rental\templates\bike_rental.html:308
+msgid "Last"
+msgstr "Last"
