@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 import datetime
+
+from django.forms import ValidationError
 User = get_user_model()
 
 
@@ -65,12 +67,6 @@ class BikeModel(models.Model):
     def __str__(self):
         return f"{self.brand.name} {self.model}"
 
-        # def get_min_price_per_day(self):
-    #     bikes = self.bike_set.all()
-    #     if bikes:
-    #         return min(bike.price_per_day for bike in bikes)
-    #     return None
-
     def get_weight_category(self):
         if self.weight is None:
             return "Unknown"
@@ -118,6 +114,15 @@ class BikeModel(models.Model):
         else:
             return "Premium"
 
+class BikeProvider(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.TextField()
+    contact = models.CharField(max_length=255)
+    contract = models.CharField(max_length=255)
+    working_hours = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class Bike(models.Model):
     bike_model = models.ForeignKey(
@@ -132,7 +137,7 @@ class Bike(models.Model):
     amount = models.IntegerField()
     availability = models.BooleanField(default=True)
     description = models.TextField()
-    bike_provider = models.ForeignKey(User, on_delete=models.CASCADE)
+    bike_provider = models.ForeignKey(BikeProvider, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.bike_model} - {self.amount} available"
@@ -153,21 +158,25 @@ class BikeOrder(models.Model):
     amount_bikes = models.IntegerField(validators=[MinValueValidator(1)])
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+    source = models.CharField(max_length=50, blank=True, null=True)
+    first_source = models.CharField(max_length=50, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # Получаем сессию из kwargs
+        session = kwargs.pop('session', None)
+        if session:
+            if not self.source:
+                self.source = session.get('source', 'unknown')
+            if not self.first_source:
+                self.first_source = session.get('first_source', 'unknown')
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Order {self.id} - {self.client.name}"
 
 
 
-class BikeProvider(models.Model):
-    name = models.CharField(max_length=255)
-    address = models.TextField()
-    contact = models.CharField(max_length=255)
-    contract = models.CharField(max_length=255)
-    working_hours = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.name
 
 class ProviderService(models.Model):
     name = models.CharField(max_length=255)
@@ -178,19 +187,70 @@ class ProviderService(models.Model):
     def __str__(self):
         return f"{self.name} - {self.provider.name}"
 
-
-
-class Price(models.Model):
-    bike = models.ForeignKey(Bike, on_delete=models.CASCADE, related_name='prices')
-    day1_price = models.DecimalField(max_digits=10, decimal_places=2)
-    day2_price = models.DecimalField(max_digits=10, decimal_places=2)
-    day3_price = models.DecimalField(max_digits=10, decimal_places=2)
-    day4_price = models.DecimalField(max_digits=10, decimal_places=2)
-    day5_price = models.DecimalField(max_digits=10, decimal_places=2)
-    week_price = models.DecimalField(max_digits=10, decimal_places=2)
-    month_price = models.DecimalField(max_digits=10, decimal_places=2)
+class Season(models.Model):
+    SEASON_NAMES = [
+        ('High', 'High season'),
+        ('Normal', 'Normal season'),
+        ('Low', 'Low season'),
+    ]
+    name = models.CharField(max_length=100, choices=SEASON_NAMES)
+    start_date = models.DateField()
+    close_date = models.DateField()
+    bike_provider = models.ForeignKey('BikeProvider', on_delete=models.CASCADE, related_name='seasons')
 
     def __str__(self):
-        return f"Price for {self.bike}"
+        return f"{self.name} ({self.start_date} - {self.close_date})"
+
+    def clean(self):
+        if self.start_date and self.close_date and self.start_date > self.close_date:
+            raise ValidationError(_('Start date must be before close date.'))
+
+    class Meta:
+        ordering = ['start_date']
+
+class Price(models.Model):
+    DURATION_PRISES = [
+        (1, '1 day'),
+        (2, '2 days'),
+        (3, '3 days'),
+        (4, '4 days'),
+        (5, '5 days'),
+        (6, '7 days'),
+        (7, '1 week'),
+        (14, '2 weeks'),
+        (21, '3 weeks'),
+        (30, '1 month'),
+    ]
+    
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE, related_name='prices')
+    season = models.ForeignKey(Season, on_delete=models.CASCADE, null=True, blank=True)
+    duration = models.IntegerField(choices=DURATION_PRISES, validators=[MinValueValidator(1)], default=1)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        season_name = self.season.name if self.season else "No season"
+        return f"Price for {self.bike} - {season_name} - {self.duration} days"
+
+    class Meta:
+        unique_together = ('bike', 'season', 'duration')
+        ordering = ['bike', 'season', 'duration']
+        
+class Promouter(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='promouter_profile')
+    promo_pyte = models.CharField(max_length=255, blank=True, null=True)
+    comition_percent = models.DecimalField(max_digits=5, decimal_places=2)
+    utm_code = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    qr_codes = models.TextField()
+    bike_orders = models.ManyToManyField('BikeOrder', related_name='promouters', blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.id}"
+
+    def generate_utm_url(self, base_url):
+        return f"{base_url}?utm_source=promouter&utm_medium=referral&utm_campaign={self.utm_code}"
+
+
+
+
 
 

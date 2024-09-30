@@ -16,9 +16,11 @@ from .views import (
     autocomplete,
     remove_filter,
     BikeFilterView,
+    track_promouter,
 )
 
 urlpatterns = [
+    path('track/', track_promouter, name='track_promouter'),
     path("", BikeModelListView.as_view(), name="bike_rental"),
     path("bike_rental/", BikeModelListView.as_view(), name="bike_rental"),
     path(

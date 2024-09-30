@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="totalPrice">Total Price: $<span id="totalPriceValue"></span></div>
+                    <div id="totalPrice">Total Price: $<span id="totalPriceValue">0.00</span></div>
                     <input type="hidden" name="client_total_price" id="client_total_price" value="0">
                     <button type="submit" class="btn btn-primary mt-3 w-100">Submit Order</button>
                 </form>
@@ -118,88 +118,63 @@
 {% endblock %}
 
 {% block extra_js %}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-{{ prices|json_script:"prices-data" }}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const calendarIcon = document.querySelector('#calendar-icon');
-    const startDateInput = document.querySelector('#id_start_date');
-    const prices = JSON.parse(document.getElementById('prices-data').textContent);
-    console.log('Prices data:', prices);
-    const durationInput = document.querySelector('#customRange3');
-    const durationValueSpan = document.querySelector('#durationValue');
-    const amountBikesInput = document.querySelector('#id_amount_bikes');
-    const totalPriceSpan = document.querySelector('#totalPriceValue');
-
-    if (startDateInput && durationInput && amountBikesInput && totalPriceSpan) {
+        console.log('DOM fully loaded');
+        const calendarIcon = document.querySelector('#calendar-icon');
+        const startDateInput = document.querySelector('#id_start_date');       
+        const prices = {{ prices|safe }}; // Получите цены из контекста
+        const durationInput = document.querySelector('#customRange3');
+        const amountBikesInput = document.querySelector('#id_amount_bikes');
+        const totalPriceSpan = document.querySelector('#totalPriceValue');
+        console.log('startDateInput:', startDateInput);
+        console.log('durationInput:', durationInput);
+        console.log('amountBikesInput:', amountBikesInput);
+        console.log('totalPriceSpan:', totalPriceSpan);// Установка начального значения
+        // Инициализация datepicker (если используется Bootstrap Datepicker)
         $(startDateInput).datepicker({
             format: 'dd-mm-yy',
             todayHighlight: true,
             autoclose: true,
         });
 
-        calendarIcon.addEventListener('click', function () {
-            $(startDateInput).datepicker('show');
-        });
+        // Установка начального значения
+        durationValueSpan.textContent = durationInput.value;
 
-        if (durationValueSpan) {
-            durationValueSpan.textContent = durationInput.value;
+        function calculateLocalTotalPrice(duration, amountBikes) {
+            let totalPrice = Infinity;
+            prices.forEach(price => {
+                let localTotalPrice = 0;
+                if (price.duration <= duration) {
+                    localTotalPrice = (price.cost / price.duration) * duration * amountBikes;
+                    if (price.duration > duration) {
+                
+                    localTotalPrice = price.cost * amountBikes;
+                    totalPrice = Math.min(localTotalPrice, price.cost * amountBikes);
+                }
+            });
+            return totalPrice === Infinity ? 0 : totalPrice; // Если не найдено, возвращаем 0
         }
 
-        function parseDate(dateString) {
-            const parts = dateString.split('-');
-            return new Date(parts[2], parts[1] - 1, parts[0]);
+        function updateTotalPrice() {
+            const duration = parseInt(durationInput.value);
+            const amountBikes = parseInt(amountBikesInput.value);
+            const localTotalPrice = calculateLocalTotalPrice(duration, amountBikes);
+            totalPriceSpan.textContent = localTotalPrice.toFixed(2);
+            document.getElementById('client_total_price').value = localTotalPrice.toFixed(2);
         }
-
-        function calculateTotalPrice() {
-    const duration = parseInt(durationInput.value);
-    const amountBikes = parseInt(amountBikesInput.value);
-    const startDate = parseDate(startDateInput.value);
-    
-    if (isNaN(duration) || isNaN(amountBikes) || isNaN(startDate.getTime())) {
-        totalPriceSpan.textContent = "0.00";
-        return;
-    }
-
-    let totalPrice = Infinity;
-    let calculatedPrice1 = Infinity;
-    let calculatedPrice2 = Infinity;
-    prices.forEach(price => {
-        if (price.duration <= duration) {
-            calculatedPrice1 = (price.cost / price.duration) * duration * amountBikes;
-        }
-        
-        if (price.duration > duration) {
-            calculatedPrice2 = price.cost * amountBikes;
-        }
-        
-        let minPrice = Math.min(calculatedPrice1, calculatedPrice2);
-        totalPrice = minPrice;
-        
-        console.log(`Duration: ${price.duration}, Price1: ${calculatedPrice1}, Price2: ${calculatedPrice2}, Min: ${minPrice}, Total: ${totalPrice}`);
-    });
-
-    totalPriceSpan.textContent = totalPrice === Infinity ? "0.00" : totalPrice.toFixed(2);
-    document.getElementById('client_total_price').value = totalPriceSpan.textContent;
-}
 
         [startDateInput, durationInput, amountBikesInput].forEach(input => {
-            input.addEventListener('change', calculateTotalPrice);
+            input.addEventListener('change', updateTotalPrice);
         });
 
         durationInput.addEventListener('input', function() {
-            if (durationValueSpan) {
-                durationValueSpan.textContent = this.value;
-            }
-            calculateTotalPrice();
+            durationValueSpan.textContent = this.value;
+            updateTotalPrice(); // Обновляем цену при изменении значения
         });
 
-        calculateTotalPrice();
-    } else {
-        console.error('One or more required elements not found in the DOM');
-    }
-});
-
+        updateTotalPrice();  // Начальный расчет
+    });
 </script>
 {% endblock %}

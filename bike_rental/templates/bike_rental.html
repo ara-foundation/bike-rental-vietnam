@@ -104,8 +104,8 @@
             </div>
             
             <div class="mb-3">
+                <label class="form-label">{% trans "Bike weight:" %}</label>
                 <div id="weight-filter" class="d-flex justify-content-between">
-                    <label class="form-label">{% trans "Bike weight:" %}</label>
                     <div class="weight-category-item {% if 'Light' in selected_weights %}selected{% endif %}" data-weight="Light">
                         <span>{% trans "Light" %}</span>
                         <i class="bi bi-cloud"></i>
@@ -181,7 +181,7 @@
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary w-100">{% trans "Apply Filters" %}</button>
             </div>
-            <input type="hidden" name="bike_type" id="bike_type" value="{% if selected_bike_types and selected_bike_types|join:',' %}{% endif %}">
+            <input type="hidden" name="bike_type" id="bike_type" value="{% if selected_bike_types and selected_bike_types|join:',' %}{{ selected_bike_types|join:',' }}{% endif %}">
             <input type="hidden" name="ride_purpose" id="ride_purpose" value="{% if selected_ride_purposes and selected_ride_purposes|join:',' %}{{ selected_ride_purposes|join:',' }}{% endif %}">
             <input type="hidden" name="brand" id="brand" value="{% if selected_brands and selected_brands|join:',' %}{{ selected_brands|join:',' }}{% endif %}">
             <input type="hidden" name="price_category" id="price_category" value="{% if selected_price_categories and selected_price_categories|join:',' %}{{ selected_price_categories|join:',' }}{% endif %}">
@@ -189,7 +189,6 @@
             <input type="hidden" name="weight" id="weight" value="{% if selected_weights and selected_weights|join:',' %}{{ selected_weights|join:',' }}{% endif %}">
         </form>
     </div>
-    
     <div class="col-md-9">
         {% if applied_filters %}
         <div class="row mb-4">
@@ -242,13 +241,11 @@
                             {% else %}
                                 <span class="text-muted">Photo not available</span>
                             {% endif %}
-                            {% with min_price=bikemodel.get_min_price_per_day %}
-                                {% if min_price %}
-                                    <div class="price-overlay">
-                                        <p class="mb-0"><i class="bi bi-currency-dollar" title="{% trans "Price per day" %}"></i> {% trans "from:" %} <br> {{ min_price }} $/day</p>
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
+                            {% if bikemodel.min_price_per_day %}
+                                <div class="price-overlay">
+                                    <p class="mb-0"><i class="bi bi-currency-dollar" title="{% trans "Price per day" %}"></i> {% trans "from:" %} <br> {{ bikemodel.min_price_per_day|floatformat:2 }} $/day</p>
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <div class="brand-model-overlay">
@@ -257,6 +254,9 @@
                                 {% endif %}
                                 <h5 class="card-title">{{ bikemodel.model }}</h5>
                             </div>
+                            {% if bikemodel.min_price_per_day %}
+                                <p class="text-end mb-0"><strong>{{ bikemodel.min_price_per_day|floatformat:2 }} $/day</strong></p>
+                            {% endif %}
                 
                             <div class="specs-container">
                                 <div class="row specs-row mb-2">
@@ -321,7 +321,7 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded');
+    console.log('DOM полностью загружен');
     const expertFiltersBtn = document.getElementById('expertFiltersBtn');
     const expertFilters = document.getElementById('expertFilters');
     const expertFiltersIcon = document.querySelector('#expertFiltersBtn i');
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function toggleSelection(element, inputId) {
-        console.log('Toggling selection for:', inputId, element);
+        console.log('Переключение выбора для:', inputId, element);
         element.classList.toggle('selected');
         updateHiddenInput(inputId);
     }
