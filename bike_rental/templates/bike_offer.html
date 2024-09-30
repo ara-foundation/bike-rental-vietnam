@@ -51,31 +51,4 @@
         <p class="card-text">{{ bike.description }}</p>
     </div>
 </div>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const startDateInput = document.querySelector('#id_start_date');
-
-        startDateInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 4) value = value.slice(0, 4);
-            if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
-            e.target.value = value;
-        });
-
-        document.querySelector('form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const dateValue = startDateInput.value;
-            if (dateValue.length === 5) {
-                const [day, month] = dateValue.split('-');
-                const currentYear = new Date().getFullYear();
-                startDateInput.value = `${currentYear}-${month}-${day}`;
-                this.submit();
-            } else {
-                alert('Please enter the date in DD-MM format');
-            }
-        });
-    });
-</script>
 {% endblock %}

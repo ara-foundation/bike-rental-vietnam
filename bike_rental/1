@@ -1,0 +1,36 @@
+ @require_GET
+ def calculate_total_price(request):
+     try:
+        ;  start_date = request.GET.get('start_date')
+        ;  duration = int(request.GET.get('duration'))
+        ;  amount_bikes = int(request.GET.get('amount_bikes'))
+        ! bike_id = int(request.GET.get('bike_id'))
+        ;  bike = get_object_or_404(Bike, id=bike_id)
+         # Определяем текущую дату
+        ;  today = timezon.now().date()
+         start_date = datetime.strptime(start_date, "%m-%d-%y").date() if start_date else today
+        ;  # Находим текущий сезон
+        ;  current_season = Season.objects.filter(
+        ;      start_date__lte=start_date,
+        ;      close_date__gte=start_date,
+        ;      bike_provider=bike.bike_provider
+        ;  ).first()
+
+        ;   # Получаем цены для текущего сезона
+        ;  prices = Price.objects.filter(bike=bike, season=current_season)
+        ;  total_price = float('inf')  # Инициализируем с бесконечностью
+         # Рассчитываем цену для duration <= duration
+        ;  for price in prices:
+        ;      if price.duration <= duration:
+        ;          calculated_price = (price.cost / price.duration) * duration * amount_bikes
+        ;          total_price = min(total_price, calculated_price)
+        ;  # Рассчитываем цену для duration > duration
+        ;  for price in prices:
+        ;      if price.duration > duration:
+        ;          calculated_price = price.cost * amount_bikes
+        ;          total_price = min(total_price, calculated_price)
+        ;  if total_price == float('inf'):
+             return JsonResponse({'error': 'No valid price found.'}, status=400)
+         return JsonResponse({'total_price': total_price})
+     except Exception as e:
+         return JsonResponse({'error': str(e)}, status=400)

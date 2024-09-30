@@ -78,6 +78,10 @@
             var dropdown = document.getElementById('language-dropdown');
             
             if (languageButton && dropdown) {
+                // Устанавливаем начальное состояние
+                dropdown.style.display = 'none';
+                languageButton.setAttribute('aria-expanded', 'false');
+
                 languageButton.addEventListener('click', function(event) {
                     event.preventDefault();
                     console.log('Language button clicked');
