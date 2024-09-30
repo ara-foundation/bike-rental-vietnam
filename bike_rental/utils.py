@@ -23,7 +23,7 @@ def calculate_total_price(duration, amount_bikes, prices):
     for price in prices:
         if price.duration <= duration:
             calculated_price = (Decimal(price.cost) / Decimal(price.duration)) * int(duration) * int(amount_bikes)
-            print(f"Цена для {price.duration} дней: {calculated_price}")
+            print(f"Цена для {duration} дней: {calculated_price}")
 
     # Логируем рассчитанную цену
     print(f"Рассчитанная цена для duration <= duration: {calculated_price}")
@@ -32,7 +32,11 @@ def calculate_total_price(duration, amount_bikes, prices):
     for price in prices:
         if price.duration > duration:
             total_price = min((Decimal(price.cost) * int(amount_bikes)), calculated_price)
-            print(f"Обновленная цена для {price.duration} дней: {total_price}")
+            print(f"Обновленная цена для {duration} дней: {total_price}")
+        else:
+            total_price = calculated_price
+        print(f"Нет цен с duration > {duration}, используем calculated_price: {total_price}")
+            
 
     # Логируем итоговую цену
     if total_price == float(inf):

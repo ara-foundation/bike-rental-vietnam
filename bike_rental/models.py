@@ -1,10 +1,15 @@
-# from django.core.files.storage import default_storage
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
-import datetime
-
 from django.forms import ValidationError
+import datetime
+import uuid
+import qrcode
+import io
+
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+
 User = get_user_model()
 
 
@@ -164,6 +169,7 @@ class BikeOrder(models.Model):
     def save(self, *args, **kwargs):
         # Получаем сессию из kwargs
         session = kwargs.pop('session', None)
+        print("Session data:", session)  # Добавьте эту строку для отладки
         if session:
             if not self.source:
                 self.source = session.get('source', 'unknown')
@@ -240,7 +246,6 @@ class Promouter(models.Model):
     promo_pyte = models.CharField(max_length=255, blank=True, null=True)
     comition_percent = models.DecimalField(max_digits=5, decimal_places=2)
     utm_code = models.CharField(max_length=50, unique=True, blank=True, null=True)
-    qr_codes = models.TextField()
     bike_orders = models.ManyToManyField('BikeOrder', related_name='promouters', blank=True)
 
     def __str__(self):
@@ -249,8 +254,44 @@ class Promouter(models.Model):
     def generate_utm_url(self, base_url):
         return f"{base_url}?utm_source=promouter&utm_medium=referral&utm_campaign={self.utm_code}"
 
+    def generate_unique_utm_code(self):
+        code = str(uuid.uuid4())[:8]  # Используем первые 8 символов UUID для краткости
+        while Promouter.objects.filter(utm_code=code).exists():
+            code = str(uuid.uuid4())[:8]
+        return code
 
+    def save(self, *args, **kwargs):
+        # Генерация уникального UTM-кода, если он отсутствует
+        if not self.utm_code:
+            self.utm_code = self.generate_unique_utm_code()
+            super().save(*args, **kwargs)  # Сохранение промоутера с новым utm_code
 
+        # Генерация UTM URL
+        base_url = "http://127.0.0.1:8000/track/"  # Замените на ваш базовый URL
+        utm_url = self.generate_utm_url(base_url)
 
+        # Генерация QR-кода
+        qr = qrcode.make(utm_url)
+        buffer = io.BytesIO()
+        qr.save(buffer, format='PNG')
+        qr_filename = f'qr_codes/promouter_{self.id}_{self.utm_code}.png'
+        qr_file = ContentFile(buffer.getvalue(), qr_filename)
 
+        # Сохранение QR-кода в медиа-хранилище и создание записи в модели QRCode
+        saved_path = default_storage.save(qr_filename, qr_file)
+        QRCode.objects.create(
+            promouter=self,
+            qr_link=utm_url,
+            image=saved_path
+        )
 
+        super().save(*args, **kwargs)  # Сохранение промоутера без обновления qr_codes
+
+class QRCode(models.Model):
+    promouter = models.ForeignKey(Promouter, on_delete=models.CASCADE, related_name='qr_codes')
+    qr_link = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='qr_codes/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"QR Code for {self.promouter.user.username} - {self.id}"

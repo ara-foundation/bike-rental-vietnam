@@ -260,7 +260,7 @@ def bike_order(request, id):
                 else:
                     order = BikeOrder(client=client_form.save(), bike=bike, start_date=start_date,
                                       duration=duration, amount_bikes=amount_bikes, total_price=total_price)
-                    order.save()
+                    order.save(session=request.session)
                     print(f"Заказ создан: {order}")
                     return redirect(reverse("order_confirmation", kwargs={"order_id": order.id}))
         else:
@@ -467,14 +467,19 @@ def track_promouter(request):
     if utm_code:
         promouter = Promouter.objects.filter(utm_code=utm_code).first()
         if promouter:
-            request.session['promouter_id'] = promouter.id
+            if 'first_source' not in request.session:
+                request.session['first_source'] = promouter.id
+            request.session['source'] = promouter.id
         else:
             request.session['source'] = 'direct'
+            if 'first_source' not in request.session:
+                request.session['first_source'] = 'direct'
     
     # Сохраняем источник в куки, если это первое посещение
-    if 'first_source' not in request.COOKIES:
+    if 'first_visit' not in request.COOKIES:
         response = redirect('bike_rental')
-        response.set_cookie('first_source', request.session['source'], max_age=90*24*60*60)  # 90 дней
+        first_source = request.session.get('first_source', 'direct')
+        response.set_cookie('first_visit', first_source, max_age=90*24*60*60)  # 90 дней
         return response
 
     return redirect('bike_rental')  # Перенаправление на главную страницу

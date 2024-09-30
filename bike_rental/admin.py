@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
-from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType, RidePurpose, BikeProvider, ProviderService, Price, Promouter, Season
+from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType, RidePurpose, BikeProvider, ProviderService, Price, Promouter, Season, QRCode
 from .resources import BikeModelResource, BikeResource, PriceResource, PromouterResource, BikeOrderResource, SeasonResource
 # import datetime
 @admin.register(BikeBrand)
@@ -154,8 +154,13 @@ class PriceAdmin(ImportExportModelAdmin):
 @admin.register(Promouter)
 class PromouterAdmin(ImportExportModelAdmin):
     resource_class = PromouterResource
-    list_display = ['user', 'promo_pyte', 'id', 'comition_percent']
+    list_display = ['user', 'promo_pyte', 'comition_percent', 'utm_code']
     search_fields = ['user__username', 'id']
+
+@admin.register(QRCode)
+class QRCodeAdmin(admin.ModelAdmin):
+    list_display = ['promouter', 'qr_link', 'image', 'created_at']
+    readonly_fields = ['qr_link', 'image', 'created_at']
 
 class SeasonInline(admin.TabularInline):
     model = Season

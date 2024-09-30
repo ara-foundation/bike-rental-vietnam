@@ -77,7 +77,6 @@ class OrderForm(forms.ModelForm):
             price = Price.objects.filter(
                 bike=self.bike,
                 season=season,
-                duration=duration
             ).first()
             
             if not price:
