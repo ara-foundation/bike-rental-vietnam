@@ -454,13 +454,13 @@
     font-weight: bold;
     z-index: 1;
     width: 100px;
-    height: 50px;
+    height: 15px;
 }
 
 .price-overlay p {
     margin: 0;
     color: #d82121;
-    font-size: 1.2rem;
+    font-size: 50px;
 }
 
 
