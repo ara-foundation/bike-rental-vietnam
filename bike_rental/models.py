@@ -6,7 +6,7 @@ import datetime
 import uuid
 import qrcode
 import io
-
+from decouple import config
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
@@ -267,7 +267,7 @@ class Promouter(models.Model):
             super().save(*args, **kwargs)  # Сохранение промоутера с новым utm_code
 
         # Генерация UTM URL
-        base_url = "http://127.0.0.1:8000/track/"  # Замените на ваш базовый URL
+        base_url = config('BOOKBIKE_URL')+"/track/"  # Замените на ваш базовый URL
         utm_url = self.generate_utm_url(base_url)
 
         # Генерация QR-кода
