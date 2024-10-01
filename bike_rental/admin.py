@@ -3,6 +3,8 @@ from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from .models import Bike, BikeBrand, BikeModel, BikeOrder, Client, BikeType, RidePurpose, BikeProvider, ProviderService, Price, Promouter, Season, QRCode
 from .resources import BikeModelResource, BikeResource, PriceResource, PromouterResource, BikeOrderResource, SeasonResource
+from django.utils import timezone  # Добавлен импорт timezone
+
 # import datetime
 @admin.register(BikeBrand)
 class BikeBrandAdmin(ImportExportModelAdmin):
